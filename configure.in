@@ -74,9 +74,9 @@ TEA_SETUP_COMPILER
 #-----------------------------------------------------------------------
 
 TEA_ADD_SOURCES([info.c tclhwloc.c])
-TEA_ADD_HEADERS([info.h])
-TEA_ADD_INCLUDES([$(pkg-config --cflags hwloc)])
-TEA_ADD_LIBS($(pkg-config --libs hwloc)[])
+TEA_ADD_HEADERS([generic/info.h])
+TEA_ADD_INCLUDES([\$(shell pkg-config --cflags hwloc)])
+TEA_ADD_LIBS([\$(shell pkg-config --libs hwloc)])
 TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
 TEA_ADD_TCL_SOURCES([])
