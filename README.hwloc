@@ -1,0 +1,32 @@
+tcl-hwloc - Hierachical access to the hardware topology of modern architectures.
+
+A Tcl interface to the Portable Hardware Locality (hwloc).
+
+The Portable Hardware Locality (hwloc) software package 
+provides a portable abstraction (across OS, versions, 
+architectures, ...) of the hierarchical topology of modern 
+architectures, including NUMA memory nodes, sockets, shared 
+caches, cores and simultaneous multithreading. It also 
+gathers various system attributes such as cache and memory 
+information. It primarily aims at helping applications with 
+gathering information about modern computing hardware so as 
+to exploit it accordingly and efficiently.
+
+For instructions on how to use, consult the tcl-hwloc (n) man page.
+
+To make type:
+
+      ./configure
+      make 
+      make install
+
+The configure script will deduce $PREFIX from the tcl installation.
+The generated Makefile uses the file $PREFIX/lib/tclConfig.sh that was left by
+the make of tcl for most of its configuration parameters.
+
+The Makefile generates pkgIndex.tcl files that are compatible with tcl >= 7.6.
+
+Written by: George Andreou
+
+Distributed under the terms of the New BSD License.
+Use at your own risk.
