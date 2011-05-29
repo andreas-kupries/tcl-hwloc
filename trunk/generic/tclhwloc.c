@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "sample.h"
+#include "info.h"
 
 #define TCL_READ_CHUNK_SIZE 4096
 

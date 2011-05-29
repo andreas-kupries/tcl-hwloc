@@ -16,6 +16,7 @@
 #define _SAMPLE
 
 #include <tcl.h>
+#include <hwloc.h>
 
 /*
  * Windows needs to know which symbols to export.

@@ -205,8 +205,8 @@ libraries:
 doc:
 	@echo "If you have documentation to create, place the commands to"
 	@echo "build the docs in the 'doc:' target.  For example:"
-	@echo "        xml2nroff sample.xml > sample.n"
-	@echo "        xml2html sample.xml > sample.html"
+	@echo "        xml2nroff tcl-hwloc.xml > tcl-hwloc.n"
+	@echo "        xml2html tcl-hwloc.xml > tcl-hwloc.html"
 
 install: all install-binaries install-libraries install-doc
 
