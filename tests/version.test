@@ -1,0 +1,2 @@
+load ./libhwloc1.0.so
+puts [hwloc version]
