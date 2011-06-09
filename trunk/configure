@@ -4687,7 +4687,7 @@ done
 #-----------------------------------------------------------------------
 
 
-    vars="info.c tclhwloc.c"
+    vars="topology.c hwloc.c"
     for i in $vars; do
 	case $i in
 	    \$*)
@@ -4722,7 +4722,7 @@ done
 
 
 
-    vars="generic/info.h"
+    vars="generic/topology.h"
     for i in $vars; do
 	# check for existence, be strict because it is installed
 	if test ! -f "${srcdir}/$i" ; then
@@ -4751,7 +4751,7 @@ done
 
 
 
-    PKG_CFLAGS="$PKG_CFLAGS "
+    PKG_CFLAGS="$PKG_CFLAGS \$(shell pkg-config --libs hwloc)"
 
 
 
