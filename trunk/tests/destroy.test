@@ -1,0 +1,3 @@
+load ./libhwloc1.0.so
+hwloc create topo
+rename topo {}

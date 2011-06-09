@@ -4687,7 +4687,7 @@ done
 #-----------------------------------------------------------------------
 
 
-    vars="topology.c hwloc.c"
+    vars="convert.c topology.c hwloc.c"
     for i in $vars; do
 	case $i in
 	    \$*)
@@ -4722,7 +4722,7 @@ done
 
 
 
-    vars="generic/topology.h"
+    vars="generic/convert.h generic/topology.h"
     for i in $vars; do
 	# check for existence, be strict because it is installed
 	if test ! -f "${srcdir}/$i" ; then
