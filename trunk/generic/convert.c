@@ -10,7 +10,7 @@ int convert_obj2obj_type(Tcl_Interp *interp, Tcl_Obj *obj) {
     int index;
 
     if (Tcl_GetIndexFromObj(interp, obj, types, "obj_type", 0, &index) != TCL_OK)
-        return -1;
+        return TCL_ERROR;
 
     switch (index) {
         case 0: return HWLOC_OBJ_SYSTEM;
@@ -25,5 +25,5 @@ int convert_obj2obj_type(Tcl_Interp *interp, Tcl_Obj *obj) {
     }
 
     /* else */
-    return -1;
+    return TCL_ERROR;
 }
