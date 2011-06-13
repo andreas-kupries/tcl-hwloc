@@ -26,12 +26,13 @@ int Hwloc_Init(Tcl_Interp *interp) {
     Tcl_CreateObjCommand(interp, "hwloc", HwlocCmd, (ClientData) NULL, NULL);
 
     sprintf(buffer, "%ld", (long) HWLOC_TOPOLOGY_FLAG_WHOLE_SYSTEM);
-    Tcl_SetVar(interp, "hwloc::HWLOC_TOPOLOGY_FLAG_WHOLE_SYSTEM", buffer, TCL_NAMESPACE_ONLY);
+    Tcl_SetVar(interp, "HWLOC_TOPOLOGY_FLAG_WHOLE_SYSTEM", buffer, TCL_GLOBAL_ONLY);
 
     sprintf(buffer, "%ld", (long) HWLOC_TOPOLOGY_FLAG_IS_THISSYSTEM);
-    Tcl_SetVar(interp, "hwloc::HWLOC_TOPOLOGY_FLAG_IS_THISSYSTEM", buffer, TCL_NAMESPACE_ONLY);
+    Tcl_SetVar(interp, "HWLOC_TOPOLOGY_FLAG_IS_THISSYSTEM", buffer, TCL_GLOBAL_ONLY);
 
     Tcl_PkgProvide(interp, "hwloc", "1.0");
+
     return TCL_OK;
 }
 
@@ -128,7 +129,7 @@ static int parse_create_args(struct topo_data *data, ClientData clientData, Tcl_
                 goto on_error;
             }
 
-            int type = convert_obj2obj_type(interp, objv[4]);
+            hwloc_obj_type_t type = convert_obj2obj_type(interp, objv[4]);
             if (type == TCL_ERROR) goto on_error; /* Error message is set */
 
             if (hwloc_topology_ignore_type(data->topology, type) == -1) {
@@ -144,7 +145,7 @@ static int parse_create_args(struct topo_data *data, ClientData clientData, Tcl_
                 goto on_error;
             }
 
-            int type = convert_obj2obj_type(interp, objv[4]);
+            hwloc_obj_type_t type = convert_obj2obj_type(interp, objv[4]);
             if (type == TCL_ERROR) goto on_error; /* Error message is set */
 
             if (hwloc_topology_ignore_type_keep_structure(data->topology, type) == -1) {
