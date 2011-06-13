@@ -3,7 +3,7 @@
 #include "convert.h"
 
 /* A returned -1 indicates a conversion error */
-int convert_obj2obj_type(Tcl_Interp *interp, Tcl_Obj *obj) {
+hwloc_obj_type_t convert_obj2obj_type(Tcl_Interp *interp, Tcl_Obj *obj) {
     static const char *types[] = {
         "system", "machine", "node", "socket", "cache", "pu", "obj_group", "obj_misc", "obj_type_max", NULL
     };
