@@ -18,11 +18,18 @@ static int parse_create_args(struct topo_data *data, ClientData clientData, Tcl_
  */
 
 int Hwloc_Init(Tcl_Interp *interp) {
+    char buffer[100];
     if (Tcl_InitStubs(interp, "8.5", 0) == NULL) {
         return TCL_ERROR;
     }
 
     Tcl_CreateObjCommand(interp, "hwloc", HwlocCmd, (ClientData) NULL, NULL);
+
+    sprintf(buffer, "%ld", (long) HWLOC_TOPOLOGY_FLAG_WHOLE_SYSTEM);
+    Tcl_SetVar(interp, "hwloc::HWLOC_TOPOLOGY_FLAG_WHOLE_SYSTEM", buffer, TCL_NAMESPACE_ONLY);
+
+    sprintf(buffer, "%ld", (long) HWLOC_TOPOLOGY_FLAG_IS_THISSYSTEM);
+    Tcl_SetVar(interp, "hwloc::HWLOC_TOPOLOGY_FLAG_IS_THISSYSTEM", buffer, TCL_NAMESPACE_ONLY);
 
     Tcl_PkgProvide(interp, "hwloc", "1.0");
     return TCL_OK;
@@ -70,15 +77,15 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
                     return TCL_ERROR;
             }
 
+            if (objc > 3) {
+                    if (parse_create_args(data, clientData, interp, objc, objv) == TCL_ERROR)
+                        return TCL_ERROR;
+            }
+
             if (hwloc_topology_load(data->topology) == -1) {
                     Tcl_SetResult(interp, "failed to load topology", TCL_STATIC);
                     ckfree((char *) data);
                     return TCL_ERROR;
-            }
-
-            if (objc > 3) {
-                    if (parse_create_args(data, clientData, interp, objc, objv) == TCL_ERROR)
-                        return TCL_ERROR;
             }
 
             /* Run some internal consistency checks */
@@ -99,6 +106,13 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 static int parse_create_args(struct topo_data *data, ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     static const char* cmds[] = {
         "-ignore_type",
+	"-ignore_type_keep_structure",
+	"-ignore_all_keep_structure",
+	"-set_flags",
+	"-set_fsroot",
+	"-set_pid",
+	"-set_synthetic",
+	"-set_xml",
         NULL
     };
     int index;
@@ -111,24 +125,127 @@ static int parse_create_args(struct topo_data *data, ClientData clientData, Tcl_
         {
             if (objc != 5) {
                 Tcl_WrongNumArgs(interp, 4, objv, NULL);
-                return TCL_ERROR;
+                goto on_error;
             }
 
             int type = convert_obj2obj_type(interp, objv[4]);
-            if (type == -1) {
-                Tcl_SetResult(interp, "object type not recognized", TCL_STATIC);
-                ckfree((char *) data);
-                return TCL_ERROR;
-            }
+            if (type == TCL_ERROR) goto on_error; /* Error message is set */
 
             if (hwloc_topology_ignore_type(data->topology, type) == -1) {
                 Tcl_SetResult(interp, "hwloc_topology_ignore_type() failed", TCL_STATIC);
-                ckfree((char *) data);
-                return TCL_ERROR;
+                goto on_error;
             }
+            break;
+        }
+        case 1: /* -ignore_type_keep_structure */
+	{
+            if (objc != 5) {
+                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                goto on_error;
+            }
+
+            int type = convert_obj2obj_type(interp, objv[4]);
+            if (type == TCL_ERROR) goto on_error; /* Error message is set */
+
+            if (hwloc_topology_ignore_type_keep_structure(data->topology, type) == -1) {
+                Tcl_SetResult(interp, "hwloc_topology_ignore_type_keep_structure() failed", TCL_STATIC);
+                goto on_error;
+            }
+            break;
+        }
+        case 2: /* -ignore_all_keep_structure */
+	{
+            if (objc != 4) {
+                Tcl_WrongNumArgs(interp, 3, objv, NULL);
+                goto on_error;
+            }
+            if (hwloc_topology_ignore_all_keep_structure(data->topology) == -1) {
+                Tcl_SetResult(interp, "hwloc_topology_ignore_all_keep_structure() failed", TCL_STATIC);
+                goto on_error;
+            }
+            break;
+	}
+        case 3: /* -set_flags */
+	{
+            if (objc != 5) {
+                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                goto on_error;
+            }
+
+            long flags = 0;
+            if (Tcl_GetLongFromObj(interp, objv[4], &flags) == TCL_ERROR) goto on_error;
+
+            if (hwloc_topology_set_flags(data->topology, flags) == -1) {
+                Tcl_SetResult(interp, "hwloc_topology_set_flags() failed", TCL_STATIC);
+                goto on_error;
+            }
+
+            break;
+        }
+        case 4: /* -set_fsroot */
+	{
+            if (objc != 5) {
+                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                goto on_error;
+            }
+
+            if (hwloc_topology_set_fsroot(data->topology, Tcl_GetString(objv[4])) == -1) {
+                Tcl_SetResult(interp, "hwloc_topology_set_fsroot() failed", TCL_STATIC);
+                goto on_error;
+            }
+
+            break;
+        }
+        case 5: /* -set_pid */
+	{
+            if (objc != 5) {
+                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                goto on_error;
+            }
+
+            int pid = 0;
+            if (Tcl_GetIntFromObj(interp, objv[4], &pid) == TCL_ERROR) goto on_error;
+
+            if (hwloc_topology_set_pid(data->topology, (hwloc_pid_t) pid) == -1) {
+                Tcl_SetResult(interp, "hwloc_topology_set_pid() failed", TCL_STATIC);
+                goto on_error;
+            }
+            
+            break;
+        }
+        case 6: /* -set_synthetic */
+	{
+            if (objc != 5) {
+                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                goto on_error;
+            }
+
+            if (hwloc_topology_set_synthetic(data->topology, Tcl_GetString(objv[4])) == -1) {
+                Tcl_SetResult(interp, "hwloc_topology_set_synthetic() failed", TCL_STATIC);
+                goto on_error;
+            }
+
+            break;
+        }
+        case 7: /* -set_xml */
+	{
+            if (objc != 5) {
+                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                goto on_error;
+            }
+
+            if (hwloc_topology_set_xml(data->topology, Tcl_GetString(objv[4])) == -1) {
+                Tcl_SetResult(interp, "hwloc_topology_set_xml() failed", TCL_STATIC);
+                goto on_error;
+            }
+
             break;
         }
     }
 
     return TCL_OK;
+
+on_error:
+    ckfree((char *) data);
+    return TCL_ERROR;
 }
