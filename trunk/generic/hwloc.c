@@ -11,7 +11,7 @@
  */
 
 static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
-static int parse_create_args(struct topo_data *data, ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
+static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
 
 /*
  * Function Bodies
@@ -79,7 +79,7 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
             }
 
             if (objc > 3) {
-                    if (parse_create_args(data, clientData, interp, objc, objv) == TCL_ERROR)
+                    if (parse_create_args(data, interp, objc, objv) == TCL_ERROR)
                         return TCL_ERROR;
             }
 
@@ -104,16 +104,16 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 }
 
 /* Already have processed the 3 first arguments */
-static int parse_create_args(struct topo_data *data, ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     static const char* cmds[] = {
         "-ignore_type",
-	"-ignore_type_keep_structure",
-	"-ignore_all_keep_structure",
-	"-set_flags",
-	"-set_fsroot",
-	"-set_pid",
-	"-set_synthetic",
-	"-set_xml",
+        "-ignore_type_keep_structure",
+        "-ignore_all_keep_structure",
+        "-set_flags",
+        "-set_fsroot",
+        "-set_pid",
+        "-set_synthetic",
+        "-set_xml",
         NULL
     };
     int index;
@@ -129,8 +129,11 @@ static int parse_create_args(struct topo_data *data, ClientData clientData, Tcl_
                 goto on_error;
             }
 
-            hwloc_obj_type_t type = convert_obj2obj_type(interp, objv[4]);
-            if (type == TCL_ERROR) goto on_error; /* Error message is set */
+            hwloc_obj_type_t type = hwloc_obj_type_of_string(Tcl_GetString(objv[4]));
+            if (type == -1) {
+                Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
+                goto on_error;
+            }
 
             if (hwloc_topology_ignore_type(data->topology, type) == -1) {
                 Tcl_SetResult(interp, "hwloc_topology_ignore_type() failed", TCL_STATIC);
@@ -145,8 +148,11 @@ static int parse_create_args(struct topo_data *data, ClientData clientData, Tcl_
                 goto on_error;
             }
 
-            hwloc_obj_type_t type = convert_obj2obj_type(interp, objv[4]);
-            if (type == TCL_ERROR) goto on_error; /* Error message is set */
+            hwloc_obj_type_t type = hwloc_obj_type_of_string(Tcl_GetString(objv[4]));
+            if (type == -1) {
+                Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
+                goto on_error;
+            }
 
             if (hwloc_topology_ignore_type_keep_structure(data->topology, type) == -1) {
                 Tcl_SetResult(interp, "hwloc_topology_ignore_type_keep_structure() failed", TCL_STATIC);
