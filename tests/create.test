@@ -1,3 +1,13 @@
 load ./libhwloc1.0.so
 hwloc create topo0
+puts [topo0 type -depth 1]
+puts [topo0 root]
+puts [set a [topo0 object_by -type socket 0]]
+puts "[topo0 object $a depth] [topo0 object $a logical_index]"
+puts [set a [topo0 object_by -depth 2 0]]
+puts "[topo0 object $a depth] [topo0 object $a logical_index]"
+puts [topo0 object $a parent]
+puts [topo0 object $a children]
+puts [topo0 object $a type]
+
 hwloc create topo1 -ignore_type system
