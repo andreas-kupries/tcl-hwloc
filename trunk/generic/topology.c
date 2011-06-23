@@ -139,10 +139,15 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             Tcl_SetObjResult(interp, listPtr);
             break;
         }
-        case 7: /* object_by {-depth num|-type num} index */
+        case 7: /* object_by {-depth value|-type value} index */
         {
+            if (objc != 5) {
+                Tcl_WrongNumArgs(interp, 2, objv, "{-depth value|-type value} index");
+                return TCL_ERROR;
+            }
+
             hwloc_obj_t obj = NULL;
-            if (objc == 5 && strcmp(Tcl_GetString(objv[2]), "-depth") == 0) {
+            if (strcmp(Tcl_GetString(objv[2]), "-depth") == 0) {
                 int depth = 0;
                 if (Tcl_GetIntFromObj(interp, objv[3], &depth) == TCL_ERROR) 
                     return TCL_ERROR;
@@ -155,7 +160,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
                     Tcl_SetResult(interp, "object does not exist", TCL_STATIC);
                     return TCL_ERROR;
                 }
-            } else if (objc == 5 && strcmp(Tcl_GetString(objv[2]), "-type") == 0) {
+            } else if (strcmp(Tcl_GetString(objv[2]), "-type") == 0) {
                 hwloc_obj_type_t type = hwloc_obj_type_of_string(Tcl_GetString(objv[3]));
                 if (type == -1) {
                     Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
@@ -171,7 +176,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
                     return TCL_ERROR;
                 }
             } else {
-                Tcl_WrongNumArgs(interp, 2, objv, "{-depth|-type} arg");
+                Tcl_SetResult(interp, "must specify -depth or -type", TCL_STATIC);
                 return TCL_ERROR;
             }
 
@@ -347,7 +352,7 @@ static int parse_object_args(struct topo_data *data, Tcl_Interp *interp, int obj
 
 return_obj:
     if (obj == NULL) {
-        Tcl_SetResult(interp, "invalid operation", TCL_STATIC);
+        Tcl_SetResult(interp, "requested object does not exist", TCL_STATIC);
         return TCL_ERROR;
     }
     Tcl_Obj *depthPtr = Tcl_NewIntObj((int) obj->depth);
