@@ -9,5 +9,9 @@ puts "[topo0 object $a depth] [topo0 object $a logical_index]"
 puts [topo0 object $a parent]
 puts [topo0 object $a children]
 puts [topo0 object $a type]
+puts [topo0 type -depth 0]
+topo0 export delme
+topo0 destroy
 
 hwloc create topo1 -ignore_type system
+rename topo1 {}
