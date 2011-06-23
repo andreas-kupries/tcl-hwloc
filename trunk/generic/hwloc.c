@@ -122,10 +122,10 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
         return TCL_ERROR;
 
     switch (index) {
-        case 0: /* -ignore_type */
+        case 0: /* -ignore_type type */
         {
             if (objc != 5) {
-                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                Tcl_WrongNumArgs(interp, 4, objv, "type");
                 goto on_error;
             }
 
@@ -141,10 +141,10 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
             }
             break;
         }
-        case 1: /* -ignore_type_keep_structure */
+        case 1: /* -ignore_type_keep_structure type */
 	{
             if (objc != 5) {
-                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                Tcl_WrongNumArgs(interp, 4, objv, "type");
                 goto on_error;
             }
 
@@ -172,10 +172,10 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
             }
             break;
 	}
-        case 3: /* -set_flags */
+        case 3: /* -set_flags flags */
 	{
             if (objc != 5) {
-                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                Tcl_WrongNumArgs(interp, 4, objv, "flags");
                 goto on_error;
             }
 
@@ -189,10 +189,10 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
 
             break;
         }
-        case 4: /* -set_fsroot */
+        case 4: /* -set_fsroot path */
 	{
             if (objc != 5) {
-                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                Tcl_WrongNumArgs(interp, 4, objv, "path");
                 goto on_error;
             }
 
@@ -203,10 +203,10 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
 
             break;
         }
-        case 5: /* -set_pid */
+        case 5: /* -set_pid pid */
 	{
             if (objc != 5) {
-                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                Tcl_WrongNumArgs(interp, 4, objv, "pid");
                 goto on_error;
             }
 
@@ -220,10 +220,10 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
             
             break;
         }
-        case 6: /* -set_synthetic */
+        case 6: /* -set_synthetic value */
 	{
             if (objc != 5) {
-                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                Tcl_WrongNumArgs(interp, 4, objv, "value");
                 goto on_error;
             }
 
@@ -234,10 +234,10 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
 
             break;
         }
-        case 7: /* -set_xml */
+        case 7: /* -set_xml value */
 	{
             if (objc != 5) {
-                Tcl_WrongNumArgs(interp, 4, objv, NULL);
+                Tcl_WrongNumArgs(interp, 4, objv, "value");
                 goto on_error;
             }
 
