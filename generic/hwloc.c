@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <hwloc.h>
-#include "convert.h"
 #include "topology.h"
 
 /*
@@ -42,6 +41,10 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
         "create",
         NULL
     };
+    enum options {
+        HWLOC_VERSION,
+        HWLOC_CREATE
+    };
     int index;
 
     if (objc < 2) {
@@ -53,7 +56,7 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
         return TCL_ERROR;
 
     switch (index) {
-        case 0: /* version */
+        case HWLOC_VERSION:
         {
             if (objc > 2) {
                 Tcl_WrongNumArgs(interp, 2, objv, NULL);
@@ -64,7 +67,7 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
             Tcl_SetObjResult(interp, objPtr);
             break;
         }
-        case 1: /* create */
+        case HWLOC_CREATE:
         {
             if (objc < 3) {
                 Tcl_WrongNumArgs(interp, 2, objv, "name ?arg? ...");
@@ -116,13 +119,23 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
         "-set_xml",
         NULL
     };
+    enum options {
+        CREATE_IGNORE_TYPE,
+        CREATE_IGNORE_TYPE_KEEP_STRUCTURE,
+        CREATE_IGNORE_ALL_KEEP_STRUCTURE,
+        CREATE_SET_FLAGS,
+        CREATE_SET_FSROOT,
+        CREATE_SET_PID,
+        CREATE_SET_SYNTHETIC,
+        CREATE_SET_XML
+    };
     int index;
 
     if (Tcl_GetIndexFromObj(interp, objv[3], cmds, "option", 2, &index) != TCL_OK)
         return TCL_ERROR;
 
     switch (index) {
-        case 0: /* -ignore_type type */
+        case CREATE_IGNORE_TYPE: /* -ignore_type type */
         {
             if (objc != 5) {
                 Tcl_WrongNumArgs(interp, 4, objv, "type");
@@ -141,8 +154,8 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
             }
             break;
         }
-        case 1: /* -ignore_type_keep_structure type */
-	{
+        case CREATE_IGNORE_TYPE_KEEP_STRUCTURE: /* -ignore_type_keep_structure type */
+        {
             if (objc != 5) {
                 Tcl_WrongNumArgs(interp, 4, objv, "type");
                 goto on_error;
@@ -160,8 +173,8 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
             }
             break;
         }
-        case 2: /* -ignore_all_keep_structure */
-	{
+        case CREATE_IGNORE_ALL_KEEP_STRUCTURE: /* -ignore_all_keep_structure */
+        {
             if (objc != 4) {
                 Tcl_WrongNumArgs(interp, 3, objv, NULL);
                 goto on_error;
@@ -171,9 +184,9 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
                 goto on_error;
             }
             break;
-	}
-        case 3: /* -set_flags flags */
-	{
+        }
+        case CREATE_SET_FLAGS: /* -set_flags flags */
+        {
             if (objc != 5) {
                 Tcl_WrongNumArgs(interp, 4, objv, "flags");
                 goto on_error;
@@ -189,8 +202,8 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
 
             break;
         }
-        case 4: /* -set_fsroot path */
-	{
+        case CREATE_SET_FSROOT: /* -set_fsroot path */
+        {
             if (objc != 5) {
                 Tcl_WrongNumArgs(interp, 4, objv, "path");
                 goto on_error;
@@ -203,8 +216,8 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
 
             break;
         }
-        case 5: /* -set_pid pid */
-	{
+        case CREATE_SET_PID: /* -set_pid pid */
+        {
             if (objc != 5) {
                 Tcl_WrongNumArgs(interp, 4, objv, "pid");
                 goto on_error;
@@ -220,8 +233,8 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
             
             break;
         }
-        case 6: /* -set_synthetic value */
-	{
+        case CREATE_SET_SYNTHETIC: /* -set_synthetic value */
+        {
             if (objc != 5) {
                 Tcl_WrongNumArgs(interp, 4, objv, "value");
                 goto on_error;
@@ -234,8 +247,8 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
 
             break;
         }
-        case 7: /* -set_xml value */
-	{
+        case CREATE_SET_XML: /* -set_xml value */
+        {
             if (objc != 5) {
                 Tcl_WrongNumArgs(interp, 4, objv, "value");
                 goto on_error;

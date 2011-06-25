@@ -4,7 +4,6 @@
 #include <assert.h>
 #include "topology.h"
 #include "object.h"
-#include "convert.h"
 
 static int parse_object_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[], hwloc_obj_t obj);
 
@@ -23,6 +22,17 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
         "object",
         NULL
     };
+    enum options {
+        TOPO_DESTROY,
+        TOPO_EXPORT,
+        TOPO_DEPTH,
+        TOPO_TYPE,
+        TOPO_WIDTH,
+        TOPO_LOCAL,
+        TOPO_ROOT,
+        TOPO_OBJECT_BY,
+        TOPO_OBJECT
+    };
     int index;
 
     if (objc < 2) {
@@ -34,7 +44,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
         return TCL_ERROR;
 
     switch (index) {
-        case 0: /* destory */
+        case TOPO_DESTROY: /* destory */
         {
             if (objc > 2) {
                 Tcl_WrongNumArgs(interp, 2, objv, NULL);
@@ -43,7 +53,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             Tcl_DeleteCommandFromToken(interp, data->cmdtoken);
             break;
         }
-        case 1: /* export filename */
+        case TOPO_EXPORT: /* export filename */
         {
             if (objc != 3) {
                 Tcl_WrongNumArgs(interp, 2, objv, "filename");
@@ -52,7 +62,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             hwloc_topology_export_xml (data->topology, Tcl_GetString(objv[2]));
             break;
         }
-        case 2: /* depth ?-type type? */
+        case TOPO_DEPTH: /* depth ?-type type? */
         {
             if (objc == 2) {
                 Tcl_Obj *objPtr = Tcl_NewIntObj((int) hwloc_topology_get_depth(data->topology));
@@ -72,7 +82,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             }
             break;
         }
-        case 3: /* type -depth depth */
+        case TOPO_TYPE: /* type -depth depth */
         {
             if (objc != 4 || strcmp(Tcl_GetString(objv[2]), "-depth")) {
                 Tcl_WrongNumArgs(interp, 2, objv, "-depth value");
@@ -93,7 +103,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             }
             break;
         }
-        case 4: /* width {-depth depth | -type type} */
+        case TOPO_WIDTH: /* width {-depth depth | -type type} */
         {
             if (objc == 4 && strcmp(Tcl_GetString(objv[2]), "-depth") == 0) {
                 int depth = 0;
@@ -122,7 +132,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             }
             break;
         }
-        case 5: /* local */
+        case TOPO_LOCAL: /* local */
         {
             if (objc > 2) {
                 Tcl_WrongNumArgs(interp, 2, objv, NULL);
@@ -132,7 +142,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             Tcl_SetObjResult(interp, objPtr);
             break;
         }
-        case 6: /* root */
+        case TOPO_ROOT: /* root */
         {
             if (objc > 2) {
                 Tcl_WrongNumArgs(interp, 2, objv, NULL);
@@ -147,7 +157,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             Tcl_SetObjResult(interp, listPtr);
             break;
         }
-        case 7: /* object_by {-depth value|-type value} index */
+        case TOPO_OBJECT_BY: /* object_by {-depth value|-type value} index */
         {
             if (objc != 5) {
                 Tcl_WrongNumArgs(interp, 2, objv, "{-depth value|-type value} index");
@@ -196,7 +206,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             Tcl_SetObjResult(interp, listPtr);
             break;
         }
-        case 8: /* object id args */
+        case TOPO_OBJECT: /* object id args */
         {
             if (objc < 4) {
                 Tcl_WrongNumArgs(interp, 2, objv, "object args..");
@@ -259,6 +269,22 @@ static int parse_object_args(struct topo_data *data, Tcl_Interp *interp, int obj
         "arity",
         NULL
     };
+    enum options {
+        OBJ_CHILDREN,
+        OBJ_PARENT,
+        OBJ_NEXT_COUSIN,
+        OBJ_PREV_COUSIN,
+        OBJ_NEXT_SIBLING,
+        OBJ_PREV_SIBLING,
+        OBJ_FIRST_CHILD,
+        OBJ_LAST_CHILD,
+        OBJ_TYPE,
+        OBJ_NAME,
+        OBJ_DEPTH,
+        OBJ_LOGICAL_INDEX,
+        OBJ_SIBLING_RANK,
+        OBJ_ARITY
+    };
     int index;
 
     if (Tcl_GetIndexFromObj(interp, objv[3], cmds, "option", 2, &index) != TCL_OK)
@@ -270,7 +296,7 @@ static int parse_object_args(struct topo_data *data, Tcl_Interp *interp, int obj
     }
 
     switch (index) {
-        case 0: /* children */
+        case OBJ_CHILDREN:
             {
                 int i;
                 for (i = 0; i < obj->arity; i++) {
@@ -283,72 +309,72 @@ static int parse_object_args(struct topo_data *data, Tcl_Interp *interp, int obj
                 }
                 break;
             }
-        case 1: /* parent */
+        case OBJ_PARENT:
             {
                 obj = obj->parent;
                 goto return_obj;
             }
-        case 2: /* next_cousin */
+        case OBJ_NEXT_COUSIN:
             {
                 obj = obj->next_cousin;
                 goto return_obj;
             }
-        case 3: /* prev_cousin */
+        case OBJ_PREV_COUSIN:
             {
                 obj = obj->prev_cousin;
                 goto return_obj;
             }
-        case 4: /* next_sibling */
+        case OBJ_NEXT_SIBLING:
             {
                 obj = obj->next_sibling;
                 goto return_obj;
             }
-        case 5: /* prev_sibling */
+        case OBJ_PREV_SIBLING:
             {
                 obj = obj->prev_sibling;
                 goto return_obj;
             }
-        case 6: /* first_child */
+        case OBJ_FIRST_CHILD:
             {
                 obj = obj->first_child;
                 goto return_obj;
             }
-        case 7: /* last_child */
+        case OBJ_LAST_CHILD:
             {
                 obj = obj->last_child;
                 goto return_obj;
             }
-        case 8: /* type */
+        case OBJ_TYPE:
             {
                 Tcl_Obj *objPtr = Tcl_NewStringObj(hwloc_obj_type_string(obj->type), -1);
                 Tcl_SetObjResult(interp, objPtr);
                 break;
             }
-        case 9: /* name */
+        case OBJ_NAME:
             {
                 Tcl_Obj *objPtr = Tcl_NewStringObj(obj->name, -1);
                 Tcl_SetObjResult(interp, objPtr);
                 break;
             }
-        case 10: /* depth */
+        case OBJ_DEPTH:
             {
                 Tcl_Obj *objPtr = Tcl_NewIntObj(obj->depth);
                 Tcl_SetObjResult(interp, objPtr);
                 break;
             }
-        case 11: /* logical_index */
+        case OBJ_LOGICAL_INDEX:
             {
                 Tcl_Obj *objPtr = Tcl_NewIntObj(obj->logical_index);
                 Tcl_SetObjResult(interp, objPtr);
                 break;
             }
-        case 12: /* sibling_rank */
+        case OBJ_SIBLING_RANK:
             {
                 Tcl_Obj *objPtr = Tcl_NewIntObj(obj->sibling_rank);
                 Tcl_SetObjResult(interp, objPtr);
                 break;
             }
-        case 13: /* arity */
+        case OBJ_ARITY:
             {
                 Tcl_Obj *objPtr = Tcl_NewIntObj(obj->arity);
                 Tcl_SetObjResult(interp, objPtr);
