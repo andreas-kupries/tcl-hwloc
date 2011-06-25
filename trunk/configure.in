@@ -73,8 +73,8 @@ TEA_SETUP_COMPILER
 # and PKG_TCL_SOURCES.
 #-----------------------------------------------------------------------
 
-TEA_ADD_SOURCES([convert.c topology.c object.c hwloc.c])
-TEA_ADD_HEADERS([generic/convert.h generic/topology.h generic/object.h])
+TEA_ADD_SOURCES([topology.c object.c hwloc.c])
+TEA_ADD_HEADERS([generic/topology.h generic/object.h])
 TEA_ADD_INCLUDES([\$(shell pkg-config --cflags hwloc)])
 TEA_ADD_LIBS([\$(shell pkg-config --libs hwloc)])
 TEA_ADD_CFLAGS([\$(shell pkg-config --libs hwloc)])
@@ -185,4 +185,8 @@ TEA_PROG_TCLSH
 # which require substituting th AC variables in.  Include these here.
 #--------------------------------------------------------------------
 
+AC_MSG_RESULT([hwloc cflags ... `pkg-config --cflags hwloc`]) 
+AC_MSG_RESULT([hwloc ldflags ... `pkg-config --libs hwloc`]) 
+
 AC_OUTPUT([Makefile pkgIndex.tcl])
+
