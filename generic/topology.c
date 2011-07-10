@@ -6,6 +6,7 @@
 #include "object.h"
 
 static int parse_object_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[], hwloc_obj_t obj);
+static int parse_cpubind_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
 
 int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     struct topo_data *data = (struct topo_data *) clientData;
@@ -20,6 +21,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
         "root",
         "object_by",
         "object",
+        "cpubind",
         NULL
     };
     enum options {
@@ -31,7 +33,8 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
         TOPO_LOCAL,
         TOPO_ROOT,
         TOPO_OBJECT_BY,
-        TOPO_OBJECT
+        TOPO_OBJECT,
+        TOPO_CPUBIND
     };
     int index;
 
@@ -59,7 +62,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
                 Tcl_WrongNumArgs(interp, 2, objv, "filename");
                 return TCL_ERROR;
             }
-            hwloc_topology_export_xml (data->topology, Tcl_GetString(objv[2]));
+            hwloc_topology_export_xml(data->topology, Tcl_GetString(objv[2]));
             break;
         }
         case TOPO_DEPTH: /* depth ?-type type? */
@@ -206,7 +209,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             Tcl_SetObjResult(interp, listPtr);
             break;
         }
-        case TOPO_OBJECT: /* object id args */
+        case TOPO_OBJECT: /* object id ... */
         {
             if (objc < 4) {
                 Tcl_WrongNumArgs(interp, 2, objv, "object args..");
@@ -234,6 +237,16 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             }
 
             return parse_object_args(data, interp, objc, objv, obj);
+            break;
+        }
+        case TOPO_CPUBIND: /* cpubind ...*/
+        {
+            if (objc < 3) {
+                Tcl_WrongNumArgs(interp, 2, objv, "args..");
+                return TCL_ERROR;
+            }
+
+            return parse_cpubind_args(data, interp, objc, objv);
             break;
         }
     }
@@ -267,6 +280,9 @@ static int parse_object_args(struct topo_data *data, Tcl_Interp *interp, int obj
         "logical_index",
         "sibling_rank",
         "arity",
+        "attributes",
+        "cpuset",
+        "info",
         NULL
     };
     enum options {
@@ -283,7 +299,10 @@ static int parse_object_args(struct topo_data *data, Tcl_Interp *interp, int obj
         OBJ_DEPTH,
         OBJ_LOGICAL_INDEX,
         OBJ_SIBLING_RANK,
-        OBJ_ARITY
+        OBJ_ARITY,
+        OBJ_ATTRIBUTES,
+        OBJ_CPUSET,
+        OBJ_INFO
     };
     int index;
 
@@ -380,6 +399,39 @@ static int parse_object_args(struct topo_data *data, Tcl_Interp *interp, int obj
                 Tcl_SetObjResult(interp, objPtr);
                 break;
             }
+        case OBJ_ATTRIBUTES:
+            {
+                int len = hwloc_obj_attr_snprintf(NULL, 0, obj, NULL, 1);
+                char buffer[len+2];
+                hwloc_obj_attr_snprintf(buffer, len+1, obj, " ", 1);
+                Tcl_Obj *objPtr = Tcl_NewStringObj(buffer, -1);
+                Tcl_SetObjResult(interp, objPtr);
+                break;
+            }
+        case OBJ_CPUSET:
+            {
+                int len = hwloc_obj_cpuset_snprintf(NULL, 0, 1, &obj); // XXX There can be an object array here.
+                char buffer[len+2];
+                hwloc_obj_cpuset_snprintf(buffer, len+1, 1, &obj);
+                Tcl_Obj *objPtr = Tcl_NewStringObj(buffer, -1);
+                Tcl_SetObjResult(interp, objPtr);
+                break;
+            }
+        case OBJ_INFO:
+            {
+                Tcl_Obj *resultPtr = Tcl_NewListObj(0, NULL);
+                int i;
+                for (i = 0; i < obj->infos_count; i++) {
+                    Tcl_Obj *tuplePtr = Tcl_NewListObj(0, NULL);
+                    Tcl_Obj *namePtr = Tcl_NewStringObj(obj->infos[i].name, -1);
+                    Tcl_Obj *valuePtr = Tcl_NewStringObj(obj->infos[i].value, -1);
+                    Tcl_ListObjAppendElement(interp, tuplePtr, namePtr);
+                    Tcl_ListObjAppendElement(interp, tuplePtr, valuePtr);
+                    Tcl_ListObjAppendElement(interp, resultPtr, tuplePtr);
+                }
+                Tcl_SetObjResult(interp, resultPtr);
+                break;
+            }
     }
 
     return TCL_OK;
@@ -395,5 +447,65 @@ return_obj:
     Tcl_ListObjAppendElement(interp, listPtr, depthPtr);
     Tcl_ListObjAppendElement(interp, listPtr, indexPtr);
     Tcl_SetObjResult(interp, listPtr);
+    return TCL_OK;
+}
+
+/* topology cpubind ... */
+static int parse_cpubind_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+    static const char* cmds[] = {
+        "set",
+        "get",
+        "last",
+        NULL
+    };
+    enum options {
+        CPUBIND_SET,
+        CPUBIND_GET,
+        CPUBIND_LAST
+    };
+    int index;
+
+    if (Tcl_GetIndexFromObj(interp, objv[2], cmds, "option", 2, &index) != TCL_OK)
+        return TCL_ERROR;
+
+    switch (index) {
+        case CPUBIND_SET:
+            {
+                if (objc == 3) {
+                    Tcl_Obj *objPtr = Tcl_NewIntObj((int) hwloc_topology_get_depth(data->topology));
+                    Tcl_SetObjResult(interp, objPtr);
+                } else if (objc == 4 && strcmp(Tcl_GetString(objv[2]), "-type") == 0) {
+                    hwloc_obj_type_t type = hwloc_obj_type_of_string(Tcl_GetString(objv[3]));
+                    if (type == -1) {
+                        Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
+                        return TCL_ERROR;
+                    }
+
+                    Tcl_Obj *objPtr = Tcl_NewIntObj((int) hwloc_get_type_depth(data->topology, type));
+                    Tcl_SetObjResult(interp, objPtr);
+                } else {
+                    Tcl_WrongNumArgs(interp, 2, objv, "?-type value?");
+                    return TCL_ERROR;
+                }
+                break;
+            }
+        case CPUBIND_GET:
+            {
+                hwloc_cpuset_t cpuset;
+                hwloc_get_cpubind(data->topology, cpuset, 0); // XXX returns int + flags
+
+                char *list;
+                hwloc_bitmap_list_asprintf(&list, cpuset); // XXX returns int
+
+                Tcl_Obj *objPtr = Tcl_NewStringObj(list, -1);
+                Tcl_SetObjResult(interp, objPtr);
+                break;
+            }
+        case CPUBIND_LAST:
+            {
+                break;
+            }
+    }
+
     return TCL_OK;
 }
