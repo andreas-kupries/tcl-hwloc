@@ -468,41 +468,46 @@ static int parse_cpubind_args(struct topo_data *data, Tcl_Interp *interp, int ob
     if (Tcl_GetIndexFromObj(interp, objv[2], cmds, "option", 2, &index) != TCL_OK)
         return TCL_ERROR;
 
+    //XXX parse hwloc_cpubind_flags_t { HWLOC_CPUBIND_PROCESS, HWLOC_CPUBIND_THREAD, HWLOC_CPUBIND_STRICT, HWLOC_CPUBIND_NOMEMBIND }
+
     switch (index) {
         case CPUBIND_SET:
             {
-                if (objc == 3) {
-                    Tcl_Obj *objPtr = Tcl_NewIntObj((int) hwloc_topology_get_depth(data->topology));
-                    Tcl_SetObjResult(interp, objPtr);
-                } else if (objc == 4 && strcmp(Tcl_GetString(objv[2]), "-type") == 0) {
-                    hwloc_obj_type_t type = hwloc_obj_type_of_string(Tcl_GetString(objv[3]));
-                    if (type == -1) {
-                        Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
-                        return TCL_ERROR;
-                    }
-
-                    Tcl_Obj *objPtr = Tcl_NewIntObj((int) hwloc_get_type_depth(data->topology, type));
-                    Tcl_SetObjResult(interp, objPtr);
+                // XXX handle pid: hwloc_set_proc_cpubind (hwloc_topology_t topology, hwloc_pid_t pid, hwloc_const_cpuset_t set, int flags)
+                if (objc == 4) {
+                    char *setstr = Tcl_GetString(objv[3]);
+                    hwloc_bitmap_t set = hwloc_bitmap_alloc();
+                    hwloc_bitmap_list_sscanf(set, setstr);
+                    hwloc_set_cpubind(data->topology, set, HWLOC_CPUBIND_PROCESS);
+                    hwloc_bitmap_free(set);
                 } else {
-                    Tcl_WrongNumArgs(interp, 2, objv, "?-type value?");
+                    Tcl_WrongNumArgs(interp, 3, objv, "cpuset");
                     return TCL_ERROR;
                 }
                 break;
             }
         case CPUBIND_GET:
             {
-                hwloc_cpuset_t cpuset;
-                hwloc_get_cpubind(data->topology, cpuset, 0); // XXX returns int + flags
+                // XXX handle pid: hwloc_get_proc_cpubind (hwloc_topology_t topology, hwloc_pid_t pid, hwloc_cpuset_t set, int flags)
+
+                hwloc_bitmap_t set = hwloc_bitmap_alloc();
+                hwloc_get_cpubind(data->topology, set, HWLOC_CPUBIND_PROCESS); // XXX check return value
 
                 char *list;
-                hwloc_bitmap_list_asprintf(&list, cpuset); // XXX returns int
+                hwloc_bitmap_list_asprintf(&list, set); // XXX check return value
 
                 Tcl_Obj *objPtr = Tcl_NewStringObj(list, -1);
                 Tcl_SetObjResult(interp, objPtr);
+
+                hwloc_bitmap_free(set);
+                free(list);
                 break;
             }
         case CPUBIND_LAST:
             {
+                //XXX
+                //hwloc_get_last_cpu_location (hwloc_topology_t topology, hwloc_cpuset_t set, int flags)
+                //hwloc_get_proc_last_cpu_location (hwloc_topology_t topology, hwloc_pid_t pid, hwloc_cpuset_t set, int flags)
                 break;
             }
     }

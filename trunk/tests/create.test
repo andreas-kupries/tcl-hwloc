@@ -12,9 +12,6 @@ puts [topo0 object $a type]
 puts "attributes:[topo0 object $a attributes]"
 puts "cpuset:[topo0 object $a cpuset]"
 puts "info:[topo0 object $a info]"
-
-puts "cpubind:[topo0 cpubind get]"
-
 puts [topo0 type -depth 0]
 topo0 export delme
 topo0 destroy
