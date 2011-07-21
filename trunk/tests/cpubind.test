@@ -10,7 +10,7 @@ topo0 cpubind set -pid [pid] "1"
 topo0 cpubind set -pid [pid] -type process "1"
 puts "cpubind:[topo0 cpubind get]"
 
-# To check the loaded CPU:
-#while {1} { incr a }
+# To che#ck the loaded CPU:
+while {1} { incr a }
 
 topo0 destroy
