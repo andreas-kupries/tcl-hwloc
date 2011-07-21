@@ -1,0 +1,6 @@
+load ./libhwloc1.0.so
+hwloc create topo0
+puts "cpubind:[topo0 cpubind get]"
+topo0 cpubind set 2
+puts "cpubind:[topo0 cpubind get]"
+topo0 destroy
