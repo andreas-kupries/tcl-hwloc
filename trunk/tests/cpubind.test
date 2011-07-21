@@ -1,6 +1,16 @@
 load ./libhwloc1.0.so
 hwloc create topo0
 puts "cpubind:[topo0 cpubind get]"
-topo0 cpubind set 2
+puts "cpubind -pid 1 :[topo0 cpubind get -pid 1]"
+puts "cpubind -pid 1 -type thread :[topo0 cpubind get -pid 1 -type thread]"
+puts "Setting cpubind to 0"
+topo0 cpubind set "0"
+puts "Setting cpubind to 1"
+topo0 cpubind set -pid [pid] "1"
+topo0 cpubind set -pid [pid] -type process "1"
 puts "cpubind:[topo0 cpubind get]"
+
+# To check the loaded CPU:
+#while {1} { incr a }
+
 topo0 destroy

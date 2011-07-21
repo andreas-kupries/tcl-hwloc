@@ -4687,7 +4687,7 @@ done
 #-----------------------------------------------------------------------
 
 
-    vars="topology.c object.c hwloc.c"
+    vars="topology.c object.c cpubind.c hwloc.c"
     for i in $vars; do
 	case $i in
 	    \$*)
@@ -4722,7 +4722,7 @@ done
 
 
 
-    vars="generic/topology.h generic/object.h"
+    vars="generic/topology.h generic/cpubind.h generic/object.h"
     for i in $vars; do
 	# check for existence, be strict because it is installed
 	if test ! -f "${srcdir}/$i" ; then
@@ -7759,9 +7759,9 @@ $as_echo "${TCLSH_PROG}" >&6; }
 #--------------------------------------------------------------------
 
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: hwloc cflags ... \`pkg-config --cflags hwloc\`" >&5
-$as_echo "hwloc cflags ... `pkg-config --cflags hwloc`" >&6; }
+$as_echo "hwloc cflags ... \`pkg-config --cflags hwloc\`" >&6; }
 { $as_echo "$as_me:${as_lineno-$LINENO}: result: hwloc ldflags ... \`pkg-config --libs hwloc\`" >&5
-$as_echo "hwloc ldflags ... `pkg-config --libs hwloc`" >&6; }
+$as_echo "hwloc ldflags ... \`pkg-config --libs hwloc\`" >&6; }
 
 ac_config_files="$ac_config_files Makefile pkgIndex.tcl"
 
