@@ -4,6 +4,7 @@
 #include <string.h>
 #include <hwloc.h>
 #include "topology.h"
+#include "bitmap.h"
 
 /*
  * Function Prototypes
@@ -17,18 +18,11 @@ static int parse_create_args(struct topo_data *data, Tcl_Interp *interp, int obj
  */
 
 int Hwloc_Init(Tcl_Interp *interp) {
-    char buffer[100];
     if (Tcl_InitStubs(interp, "8.5", 0) == NULL) {
         return TCL_ERROR;
     }
 
     Tcl_CreateObjCommand(interp, "hwloc", HwlocCmd, (ClientData) NULL, NULL);
-
-    sprintf(buffer, "%ld", (long) HWLOC_TOPOLOGY_FLAG_WHOLE_SYSTEM);
-    Tcl_SetVar(interp, "HWLOC_TOPOLOGY_FLAG_WHOLE_SYSTEM", buffer, TCL_GLOBAL_ONLY);
-
-    sprintf(buffer, "%ld", (long) HWLOC_TOPOLOGY_FLAG_IS_THISSYSTEM);
-    Tcl_SetVar(interp, "HWLOC_TOPOLOGY_FLAG_IS_THISSYSTEM", buffer, TCL_GLOBAL_ONLY);
 
     Tcl_PkgProvide(interp, "hwloc", "1.0");
 
@@ -39,11 +33,13 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
     static const char* cmds[] = {
         "version",
         "create",
+        "bitmap",
         NULL
     };
     enum options {
         HWLOC_VERSION,
-        HWLOC_CREATE
+        HWLOC_CREATE,
+        HWLOC_BITMAP
     };
     int index;
 
@@ -101,6 +97,16 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
             data->cmdtoken = Tcl_CreateObjCommand(interp, Tcl_GetString(data->name), TopologyCmd, (ClientData) data, TopologyCmd_CleanUp);
             break;
         }
+	case HWLOC_BITMAP:
+	{
+            if (objc < 3) {
+                Tcl_WrongNumArgs(interp, 2, objv, "option ?arg? ...");
+                return TCL_ERROR;
+            }
+            
+	    if (parse_bitmap_args(interp, objc, objv) == TCL_ERROR)
+		return TCL_ERROR;
+	}
     }
 
     return TCL_OK;
