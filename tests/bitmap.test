@@ -1,0 +1,5 @@
+load ./libhwloc1.0.so
+puts "err1: [catch {hwloc bitmap}]"
+puts "err2: [catch {hwloc bitmap xxx}]"
+puts "empty: [hwloc bitmap empty]"
+puts "full: [hwloc bitmap full]"
