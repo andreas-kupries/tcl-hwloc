@@ -7,6 +7,10 @@
 #include "cpubind.h"
 #include "membind.h"
 
+static int parse_cpuset_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
+static int parse_nodeset_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
+static int parse_convert_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
+
 int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     struct topo_data *data = (struct topo_data *) clientData;
 
@@ -22,6 +26,9 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
         "object",
         "cpubind",
         "membind",
+        "cpuset",
+        "nodeset",
+        "convert",
         NULL
     };
     enum options {
@@ -35,7 +42,10 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
         TOPO_OBJECT_BY,
         TOPO_OBJECT,
         TOPO_CPUBIND,
-        TOPO_MEMBIND
+        TOPO_MEMBIND,
+        TOPO_CPUSET,
+        TOPO_NODESET,
+        TOPO_CONVERT
     };
     int index;
 
@@ -260,6 +270,36 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             return parse_membind_args(data, interp, objc, objv);
             break;
         }
+        case TOPO_CPUSET: /* cpuset...*/
+        {
+            if (objc < 3) {
+                Tcl_WrongNumArgs(interp, 2, objv, "args..");
+                return TCL_ERROR;
+            }
+
+            return parse_cpuset_args(data, interp, objc, objv);
+            break;
+        }
+        case TOPO_NODESET: /* nodeset...*/
+        {
+            if (objc < 3) {
+                Tcl_WrongNumArgs(interp, 2, objv, "args..");
+                return TCL_ERROR;
+            }
+
+            return parse_nodeset_args(data, interp, objc, objv);
+            break;
+        }
+        case TOPO_CONVERT: /* convert...*/
+        {
+            if (objc < 3) {
+                Tcl_WrongNumArgs(interp, 2, objv, "args..");
+                return TCL_ERROR;
+            }
+
+            return parse_convert_args(data, interp, objc, objv);
+            break;
+        }
     }
 
     return TCL_OK;
@@ -271,4 +311,115 @@ void TopologyCmd_CleanUp(ClientData clientData) {
     hwloc_topology_destroy(data->topology);
     Tcl_DecrRefCount(data->name);
     ckfree((char *) data);
+}
+
+static int parse_cpuset_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+    static const char* cmds[] = {
+        "-complete",
+        "-allowed",
+        "-online",
+        "-topology",
+        NULL
+    };
+    enum options {
+        CPUSET_COMPLETE,
+        CPUSET_ALLOWED,
+        CPUSET_ONLINE,
+        CPUSET_TOPOLOGY
+    };
+    int index;
+
+    if (Tcl_GetIndexFromObj(interp, objv[2], cmds, "option", 2, &index) != TCL_OK)
+        return TCL_ERROR;
+
+    hwloc_const_cpuset_t set = 0;
+
+    switch (index) { 
+        case CPUSET_COMPLETE: 
+            { 
+                set = hwloc_topology_get_complete_cpuset(data->topology);
+                break;
+            }
+        case CPUSET_ALLOWED: 
+            { 
+                set = hwloc_topology_get_allowed_cpuset(data->topology);
+                break;
+            }
+        case CPUSET_ONLINE: 
+            { 
+                set = hwloc_topology_get_online_cpuset(data->topology);
+                break;
+            }
+        case CPUSET_TOPOLOGY: 
+            { 
+                set = hwloc_topology_get_topology_cpuset(data->topology);
+                break;
+            }
+    }
+
+    char *list;
+    if (hwloc_bitmap_list_asprintf(&list, set) == -1) {
+        Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
+        return TCL_ERROR;
+    }
+
+    Tcl_Obj *objPtr = Tcl_NewStringObj(list, -1);
+    Tcl_SetObjResult(interp, objPtr);
+
+    free(list);
+    return TCL_OK;
+}
+
+static int parse_nodeset_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+    static const char* cmds[] = {
+        "-complete",
+        "-allowed",
+        "-topology",
+        NULL
+    };
+    enum options {
+        NODESET_COMPLETE,
+        NODESET_ALLOWED,
+        NODESET_TOPOLOGY
+    };
+    int index;
+
+    if (Tcl_GetIndexFromObj(interp, objv[2], cmds, "option", 2, &index) != TCL_OK)
+        return TCL_ERROR;
+
+    hwloc_const_nodeset_t set = 0;
+
+    switch (index) { 
+        case NODESET_COMPLETE: 
+            { 
+                set = hwloc_topology_get_complete_nodeset(data->topology);
+                break;
+            }
+        case NODESET_ALLOWED: 
+            { 
+                set = hwloc_topology_get_allowed_nodeset(data->topology);
+                break;
+            }
+        case NODESET_TOPOLOGY: 
+            { 
+                set = hwloc_topology_get_topology_nodeset(data->topology);
+                break;
+            }
+    }
+
+    char *list;
+    if (hwloc_bitmap_list_asprintf(&list, set) == -1) {
+        Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
+        return TCL_ERROR;
+    }
+
+    Tcl_Obj *objPtr = Tcl_NewStringObj(list, -1);
+    Tcl_SetObjResult(interp, objPtr);
+
+    free(list);
+    return TCL_OK;
+}
+
+static int parse_convert_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+
 }

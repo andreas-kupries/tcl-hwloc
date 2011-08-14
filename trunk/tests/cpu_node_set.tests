@@ -1,0 +1,11 @@
+load ./libhwloc1.0.so
+hwloc create topo0
+puts "complete cpuset:[topo0 cpuset -complete]"
+puts "allowed cpuset:[topo0 cpuset -allowed]"
+puts "online cpuset:[topo0 cpuset -online]"
+puts "topology cpuset:[topo0 cpuset -topology]"
+puts "complete nodeset:[topo0 nodeset -complete]"
+puts "allowed nodeset:[topo0 nodeset -allowed]"
+puts "topology nodeset:[topo0 nodeset -topology]"
+
+topo0 destroy
