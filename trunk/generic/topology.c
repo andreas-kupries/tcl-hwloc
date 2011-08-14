@@ -421,5 +421,74 @@ static int parse_nodeset_args(struct topo_data *data, Tcl_Interp *interp, int ob
 }
 
 static int parse_convert_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+    static const char* cmds[] = {
+        "-to_cpuset",
+        "-to_nodeset",
+        NULL
+    };
+    enum options {
+        CONVERT_TO_CPUSET,
+        CONVERT_TO_NODESET
+    };
+    int index;
 
+    int strict = 0;
+    int offset = 0;
+    if (objc == 5 && strcmp((const char *) Tcl_GetString(objv[2]), "-strict") == 0) {
+        strict = 1;
+        offset++;
+    } else if (objc == 4) {
+    } else {
+        Tcl_WrongNumArgs(interp, 2, objv, "?-strict? -to_cpuset|-to_nodeset bitmap");
+        return TCL_ERROR;
+    }
+
+    if (Tcl_GetIndexFromObj(interp, objv[2+offset], cmds, "option", 2, &index) != TCL_OK)
+        return TCL_ERROR;
+
+    const char *setstr = Tcl_GetString(objv[3+offset]);
+    hwloc_bitmap_t from_set = hwloc_bitmap_alloc();
+    if (hwloc_bitmap_list_sscanf(from_set, setstr) == -1) {
+        Tcl_SetResult(interp, "failed to parse bitmap", TCL_STATIC);
+        hwloc_bitmap_free(from_set);
+        return TCL_ERROR;
+    }
+
+    hwloc_bitmap_t to_set = hwloc_bitmap_alloc();
+
+    switch (index) { 
+        case CONVERT_TO_CPUSET: 
+            { 
+                if (strict)
+                    hwloc_cpuset_from_nodeset_strict(data->topology, to_set, from_set);
+                else
+                    hwloc_cpuset_from_nodeset(data->topology, to_set, from_set);
+                break;
+            }
+        case CONVERT_TO_NODESET: 
+            { 
+                if (strict)
+                    hwloc_cpuset_to_nodeset_strict(data->topology, from_set, to_set);
+                else
+                    hwloc_cpuset_to_nodeset(data->topology, from_set, to_set);
+                break;
+            }
+    }
+
+    char *list;
+    if (hwloc_bitmap_list_asprintf(&list, to_set) == -1) {
+        Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
+        hwloc_bitmap_free(to_set);
+        hwloc_bitmap_free(from_set);
+        return TCL_ERROR;
+    }
+
+    Tcl_Obj *objPtr = Tcl_NewStringObj(list, -1);
+    Tcl_SetObjResult(interp, objPtr);
+
+    hwloc_bitmap_free(to_set);
+    hwloc_bitmap_free(from_set);
+    free(list);
+
+    return TCL_OK;
 }
