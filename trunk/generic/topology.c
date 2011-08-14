@@ -5,6 +5,7 @@
 #include "topology.h"
 #include "object.h"
 #include "cpubind.h"
+#include "membind.h"
 
 int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     struct topo_data *data = (struct topo_data *) clientData;
@@ -20,6 +21,7 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
         "object_by",
         "object",
         "cpubind",
+        "membind",
         NULL
     };
     enum options {
@@ -32,7 +34,8 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
         TOPO_ROOT,
         TOPO_OBJECT_BY,
         TOPO_OBJECT,
-        TOPO_CPUBIND
+        TOPO_CPUBIND,
+        TOPO_MEMBIND
     };
     int index;
 
@@ -245,6 +248,16 @@ int TopologyCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CO
             }
 
             return parse_cpubind_args(data, interp, objc, objv);
+            break;
+        }
+        case TOPO_MEMBIND: /* membind ...*/
+        {
+            if (objc < 3) {
+                Tcl_WrongNumArgs(interp, 2, objv, "args..");
+                return TCL_ERROR;
+            }
+
+            return parse_membind_args(data, interp, objc, objv);
             break;
         }
     }

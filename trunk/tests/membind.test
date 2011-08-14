@@ -1,0 +1,15 @@
+load ./libhwloc1.0.so
+if [catch {
+hwloc create topo0
+puts "membind:[topo0 membind get]"
+puts "membind -pid 1 :[topo0 membind get -pid 1]"
+puts "membind -pid 1 -type thread :[topo0 membind get -pid 1 -type thread]"
+puts "Setting membind to 0"
+topo0 membind set "0" default
+puts "Setting membind to 1"
+topo0 membind set -pid [pid] "1" default
+topo0 membind set -pid [pid] -type process "1" default
+puts "membind:[topo0 membind get]"
+
+topo0 destroy
+} out err] { puts $err }

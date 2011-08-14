@@ -4687,7 +4687,7 @@ done
 #-----------------------------------------------------------------------
 
 
-    vars="topology.c object.c cpubind.c bitmap.c hwloc.c"
+    vars="topology.c object.c cpubind.c membind.c bitmap.c hwloc.c"
     for i in $vars; do
 	case $i in
 	    \$*)
@@ -4722,7 +4722,7 @@ done
 
 
 
-    vars="generic/topology.h generic/cpubind.h generic/bitmap.h generic/object.h"
+    vars="generic/topology.h generic/cpubind.h generic/membind.c generic/bitmap.h generic/object.h"
     for i in $vars; do
 	# check for existence, be strict because it is installed
 	if test ! -f "${srcdir}/$i" ; then
