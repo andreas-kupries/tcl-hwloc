@@ -4686,6 +4686,9 @@ done
 # and PKG_TCL_SOURCES.
 #-----------------------------------------------------------------------
 
+HWLOC_CFLAGS=`pkg-config --cflags hwloc`
+HWLOC_LIBS=`pkg-config --libs hwloc`
+
 
     vars="topology.c object.c cpubind.c membind.c bitmap.c hwloc.c"
     for i in $vars; do
@@ -4733,14 +4736,7 @@ done
 
 
 
-    vars="\$(shell pkg-config --cflags hwloc)"
-    for i in $vars; do
-	PKG_INCLUDES="$PKG_INCLUDES $i"
-    done
-
-
-
-    vars="\$(shell pkg-config --libs hwloc)"
+    vars="$HWLOC_LIBS"
     for i in $vars; do
 	if test "${TEA_PLATFORM}" = "windows" -a "$GCC" = "yes" ; then
 	    # Convert foo.lib to -lfoo for GCC.  No-op if not *.lib
@@ -4751,7 +4747,7 @@ done
 
 
 
-    PKG_CFLAGS="$PKG_CFLAGS \$(shell pkg-config --libs hwloc)"
+    PKG_CFLAGS="$PKG_CFLAGS $HWLOC_CFLAGS"
 
 
 
@@ -7758,10 +7754,10 @@ $as_echo "${TCLSH_PROG}" >&6; }
 # which require substituting th AC variables in.  Include these here.
 #--------------------------------------------------------------------
 
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: hwloc cflags ... \`pkg-config --cflags hwloc\`" >&5
-$as_echo "hwloc cflags ... \`pkg-config --cflags hwloc\`" >&6; }
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: hwloc ldflags ... \`pkg-config --libs hwloc\`" >&5
-$as_echo "hwloc ldflags ... \`pkg-config --libs hwloc\`" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: hwloc cflags ... $HWLOC_CFLAGS" >&5
+$as_echo "hwloc cflags ... $HWLOC_CFLAGS" >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: hwloc ldflags ... $HWLOC_LIBS" >&5
+$as_echo "hwloc ldflags ... $HWLOC_LIBS" >&6; }
 
 ac_config_files="$ac_config_files Makefile pkgIndex.tcl"
 
