@@ -16,5 +16,5 @@ puts [topo0 type -depth 0]
 topo0 export delme
 topo0 destroy
 
-hwloc create topo1 -ignore_type system
+hwloc create topo1 -ignore_type system -set_flags {whole_system this_system}
 rename topo1 {}

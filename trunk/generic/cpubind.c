@@ -189,10 +189,10 @@ static int parse_flags (Tcl_Interp *interp, int *result, Tcl_Obj *obj) {
             case CPUBIND_STRICT: { *result |= HWLOC_CPUBIND_STRICT; break; }
             case CPUBIND_NOMEMBIND: { *result |= HWLOC_CPUBIND_NOMEMBIND; break; }
             default:
-                                    {
-                                        Tcl_SetResult(interp, "unrecognized flag", TCL_STATIC);
-                                        return TCL_ERROR;
-                                    }
+            {
+                Tcl_SetResult(interp, "unrecognized flag", TCL_STATIC);
+                return TCL_ERROR;
+            }
         }
     }
 
