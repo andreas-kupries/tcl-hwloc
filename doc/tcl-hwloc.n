@@ -9,8 +9,246 @@
 tcl-hwloc \- Portable Hardware Locality (hwloc) for Tcl
 
 .SH SYNOPSIS
-.B tcl-hwloc
-.RI [ options ]
+.B package require hwloc
+.PP
+.B hwloc version
+.br
+
+.PP
+.B hwloc create
+.I ?options?
+.br
+
+.PP
+.I topology
+.B destroy
+.br
+
+.PP
+.I topology
+.B export 
+.I filepath
+.br
+
+.PP
+.I topology
+.B depth
+.br
+
+.PP
+.I topology
+.B depth -type
+.I type
+.br
+
+.PP
+.I topology
+.B type -depth 
+.I depth
+.br
+
+.PP
+.I topology
+.B width -depth 
+.I depth
+.br
+
+.PP
+.I topology
+.B width -type
+.I type
+.br
+
+.PP
+.I topology
+.B local 
+.I filepath
+.br
+
+.PP
+.I topology
+.B root 
+.br
+
+.PP
+.I topology
+.B object_by ( -depth 
+.I depth
+.B | -type 
+.I type
+.B ) 
+.I index
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I children
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I parent
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I next_cousin
+.B | 
+.I prev_cousin
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I next_sibling
+.B | 
+.I prev_sibling
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I first_child
+.B | 
+.I last_child
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I type
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I name
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I depth
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I logical_index
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I sibling_rank
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I arity
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I attributes
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I cpuset
+.br
+
+.PP
+.I topology
+.B object
+.I object 
+.I info
+.br
+
+.PP
+.I topology
+.B cpubind set ? -type 
+.I flags 
+.B ? ? -pid 
+.I pid
+.B ? 
+.I cpuset
+.br
+
+.PP
+.I topology
+.B cpubind get ? -type 
+.I flags 
+.B ? ? -pid 
+.I pid 
+.B ?
+.br
+
+.PP
+.I topology
+.B cpubind last ? -type 
+.I flags
+.B ? ? -pid 
+.I pid 
+.B ?
+.br
+
+.PP
+.I XXX bitmap API
+.br
+
+.PP
+.I topology
+.B membind get ?-pid 
+.I pid
+.B ? ?-type 
+.I flags
+.B ? ?-cpuset? 
+.br
+
+.PP
+.I topology
+.B membind set ?-pid 
+.I pid
+.B ? ?-type 
+.I flags
+.B ? ?-cpuset? 
+.I nodeset policy
+.br
+
+.PP
+.I topology
+.B cpuset ?-complete|-allowed|-online|-topology?
+.br
+
+.PP
+.I topology
+.B nodeset ?-complete|-allowed|-topology?
+.br
+
+.PP
+.I topology
+.B convert ? -strict ? -to_cpuset | -to_nodeset 
+.I bitmap
 .br
 
 .BE
