@@ -154,7 +154,8 @@ int parse_object_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_
             }
         case OBJ_CPUSET:
             {
-                int len = hwloc_obj_cpuset_snprintf(NULL, 0, 1, &obj); // XXX There can be an object array here.
+	      /* XXX There can be an object array here. */
+                int len = hwloc_obj_cpuset_snprintf(NULL, 0, 1, &obj);
                 char buffer[len+2];
                 hwloc_obj_cpuset_snprintf(buffer, len+1, 1, &obj);
                 Tcl_Obj *objPtr = Tcl_NewStringObj(buffer, -1);
