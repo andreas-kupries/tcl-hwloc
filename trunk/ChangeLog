@@ -1,5 +1,14 @@
 2011-09-02  Andreas Kupries  <andreask@activestate.com>
 
+	* generic/bitmap.c: Renamed 'is_zero' method to 'is_empty' to be
+	  consistent with the generator method 'empty'. Fixed bug in
+	  'not', missing error message when a bad bitmap was found.
+
+	* tests/bitmap.test: Completed the tests for the unary bitmap
+	  methods.
+
+2011-09-02  Andreas Kupries  <andreask@activestate.com>
+
 	* tests/bitmap.test: Started conversion into a proper
 	  tcltest-based testsuite. Started with standard tests checking
 	  the basic argument validation of the commands (i.e. wrong#args).
