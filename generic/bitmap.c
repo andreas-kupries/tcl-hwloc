@@ -43,7 +43,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
         "clear_range",
         "singlify",
         "is_set",
-        "is_zero",
+        "is_empty",
         "is_full",
         "first",
         "next",
@@ -75,7 +75,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
         BITMAP_CLEAR_RANGE,
         BITMAP_SINGLIFY,
         BITMAP_IS_SET,
-        BITMAP_IS_ZERO,
+        BITMAP_IS_EMPTY,
         BITMAP_IS_FULL,
         BITMAP_FIRST,
         BITMAP_NEXT,
@@ -366,7 +366,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	    hwloc_bitmap_free(bitmap);
 	    break;
 	}
-    case BITMAP_IS_ZERO:
+    case BITMAP_IS_EMPTY:
 	{
 	    const char *bitmap_str;
 	    hwloc_bitmap_t bitmap = NULL;
@@ -590,7 +590,10 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	    bitmap_str = Tcl_GetString(objv[3]);
 	    bitmap = hwloc_bitmap_alloc();
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) ERROR_EXIT;
+	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
+		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
+		ERROR_EXIT;
+	    }
 
 	    bitmap_res = hwloc_bitmap_alloc();
 
