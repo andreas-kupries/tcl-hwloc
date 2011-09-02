@@ -1,1 +1,22 @@
+2011-09-02  Andreas Kupries  <andreask@activestate.com>
+
+	* tests/bitmap.test: Started conversion into a proper
+	  tcltest-based testsuite. Started with standard tests checking
+	  the basic argument validation of the commands (i.e. wrong#args).
+
+	* generic/bitmap.c (parse_bitmap_args): General cleanup. (1) Moved
+	  all checks regarding the number of arguments to the front of the
+	  methods. Avoid stuff like allocation of resources if we do not
+	  even know yet if the method was called correctly. Less memory
+	  churn, and less possibility for error in (not) releasing the
+	  resources. (2) Moved all variable declarations to the beginning
+	  of the relevant block, improving portability. We still have C89
+	  compilers around, which balk on declarations in the middle of a
+	  block. That is a C99 feature. Ditto for //-style comments. (3)
+	  Went to standard indentation.
+
+	* generic/bitmap.h: Fixed typo in guard ifdef.
+
+George Andreou
+	
 1.0 29-05-2011 Initial Version

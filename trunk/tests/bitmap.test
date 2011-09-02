@@ -1,8 +1,155 @@
-load ./libhwloc1.0.so
-puts "err1: [catch {hwloc bitmap}]"
-puts "err2: [catch {hwloc bitmap xxx}]"
-puts "empty: [set empty [hwloc bitmap empty]]"
-puts "full: [set full [hwloc bitmap full]]"
+# -*- tcl -*-
+# # ## ### ##### ######## ############# #####################
+##
+# Test suite for Tcl/Hwloc binding.
+# Bitmap manipulation commands.
+
+# # ## ### ##### ######## ############# #####################
+## Requirements
+
+if {[catch {package require tcltest 2}]} {
+    puts stderr "Skipping tests in [info script].  tcltest 2 required."
+    return
+}
+
+# # ## ### ##### ######## ############# #####################
+##
+# Get the functionality under test, directly from the build directory,
+# which is the CWD.
+
+load libhwloc1.0.so
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-bitmap-1.0 {wrong\#args, missing method} -body {
+    hwloc bitmap
+} -returnCodes error \
+    -result {wrong # args: should be "hwloc bitmap option ?arg? ..."}
+
+test hwloc-bitmap-1.1 {bad method name} -body {
+    hwloc bitmap xxx
+} -returnCodes error \
+    -result {bad option "xxx": must be empty, full, only, allbut, from_ulong, to_ulong, set, set_range, clear, clear_range, singlify, is_set, is_zero, is_full, first, next, last, weight, or, and, andnot, xor, not, intersects, is_included, is_equal, compare, or compare_first}
+
+# # ## ### ##### ######## ############# #####################
+## 0-ary operators, constant bitmaps
+
+foreach {n op} {
+    0 empty
+    1 full
+} {
+    test hwloc-bitmap-2.$n "constant bitmaps, $op, wrong args" -body {
+	hwloc bitmap $op x
+    } -returnCodes error \
+	-result "wrong # args: should be \"hwloc bitmap $op\""
+}
+
+test hwloc-bitmap-2.2 {constant bitmaps, empty} -body {
+    hwloc bitmap empty
+} -result {}
+
+test hwloc-bitmap-2.3 {constant bitmaps, full} -body {
+    hwloc bitmap full
+} -result {0-}
+
+# # ## ### ##### ######## ############# #####################
+## unary operators
+# is_zero BITMAP --- BETTER NAME: is_empty
+
+foreach {n op p} {
+    0 from_ulong mask
+    1 first      bitmap
+    2 is_full    bitmap
+    3 is_zero    bitmap
+    4 last       bitmap
+    5 not        bitmap
+    6 singlify   bitmap
+    7 to_ulong   bitmap
+    8 weight     bitmap
+} {
+    test hwloc-bitmap-3.$n.0 "unary bitmap operations, $op, wrong args" -body {
+	hwloc bitmap $op
+    } -returnCodes error \
+	-result "wrong # args: should be \"hwloc bitmap $op $p\""
+
+    test hwloc-bitmap-3.$n.1 "unary bitmap operations, $op, wrong args" -body {
+	hwloc bitmap $op X Y
+    } -returnCodes error \
+	-result "wrong # args: should be \"hwloc bitmap $op $p\""
+}
+
+# # ## ### ##### ######## ############# #####################
+## binary operators.
+
+foreach {n op p} {
+    0  allbut        {bitmap id}
+    1  clear         {bitmap id}
+    2  is_set        {bitmap id}
+    3  only          {bitmap id}
+    4  set           {bitmap id}
+    5  next          {bitmap prev}
+    6  is_included   {bitmapA bitmapB}
+    7  and           {bitmapA bitmapB}
+    8  andnot        {bitmapA bitmapB}
+    9  compare       {bitmapA bitmapB}
+    10 compare_first {bitmapA bitmapB}
+    11 intersects    {bitmapA bitmapB}
+    12 is_equal      {bitmapA bitmapB}
+    13 or            {bitmapA bitmapB}
+    14 xor           {bitmapA bitmapB}
+} {
+    test hwloc-bitmap-4.$n.0 "biary bitmap operations, $op, wrong args" -body {
+	hwloc bitmap $op
+    } -returnCodes error \
+	-result "wrong # args: should be \"hwloc bitmap $op $p\""
+
+    test hwloc-bitmap-4.$n.1 "biary bitmap operations, $op, wrong args" -body {
+	hwloc bitmap $op X
+    } -returnCodes error \
+	-result "wrong # args: should be \"hwloc bitmap $op $p\""
+
+    test hwloc-bitmap-4.$n.2 "biary bitmap operations, $op, wrong args" -body {
+	hwloc bitmap $op X Y Z
+    } -returnCodes error \
+	-result "wrong # args: should be \"hwloc bitmap $op $p\""
+}
+
+# # ## ### ##### ######## ############# #####################
+## trinary operators
+
+# set_range     BITMAP START_ID END_ID
+# clear_range   BITMAP START_ID END_ID
+
+foreach {n op} {
+    0 set_range
+    1 clear_range
+} {
+    test hwloc-bitmap-5.$n.0 "trinary bitmap operations, $op, wrong args" -body {
+	hwloc bitmap $op
+    } -returnCodes error \
+	-result "wrong # args: should be \"hwloc bitmap $op bitmap begin end\""
+
+    test hwloc-bitmap-5.$n.1 "trinary bitmap operations, $op, wrong args" -body {
+	hwloc bitmap $op X
+    } -returnCodes error \
+	-result "wrong # args: should be \"hwloc bitmap $op bitmap begin end\""
+
+    test hwloc-bitmap-5.$n.2 "trinary bitmap operations, $op, wrong args" -body {
+	hwloc bitmap $op X Y
+    } -returnCodes error \
+	-result "wrong # args: should be \"hwloc bitmap $op bitmap begin end\""
+
+    test hwloc-bitmap-5.$n.3 "trinary bitmap operations, $op, wrong args" -body {
+	hwloc bitmap $op X Y Z W
+    } -returnCodes error \
+	-result "wrong # args: should be \"hwloc bitmap $op bitmap begin end\""
+}
+
+puts =====================================
+set full  [hwloc bitmap full]
+set empty [hwloc bitmap empty]
+
+puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 puts "only: [hwloc bitmap only $full 1]"
 puts "allbut: [hwloc bitmap allbut $full 1]"
 puts "from_ulong: [hwloc bitmap from_ulong 2]"
@@ -29,4 +176,6 @@ puts "first: [hwloc bitmap first $full]"
 puts "next: [hwloc bitmap next $full 1]"
 puts "last: [hwloc bitmap last 0,1]"
 puts "weight: [hwloc bitmap weight 0,1]"
+puts "weight: [hwloc bitmap weight $empty]"
+puts "weight: [hwloc bitmap weight $full]" ;# error, infinite set, bad weight.
 
