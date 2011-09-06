@@ -15,7 +15,8 @@
     { hwloc_bitmap_free(bitmap);		\
 	return TCL_ERROR; }
 
-static int set_bitmap_result(Tcl_Interp *interp, hwloc_bitmap_t bitmap) {
+static int
+set_bitmap_result(Tcl_Interp *interp, hwloc_bitmap_t bitmap) {
     char *res;
 
     if (hwloc_bitmap_list_asprintf(&res, bitmap) == -1) {
@@ -31,66 +32,24 @@ static int set_bitmap_result(Tcl_Interp *interp, hwloc_bitmap_t bitmap) {
 /* hwloc bitmap option... */
 int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     static const char* cmds[] = {
-        "empty",
-        "full",
-        "only",
-        "allbut",
-        "from_ulong",
-        "to_ulong",
-        "set",
-        "set_range",
-        "clear",
-        "clear_range",
-        "singlify",
-        "is_set",
-        "is_empty",
-        "is_full",
-        "first",
-        "next",
-        "last",
-        "weight",
-        "or",
-        "and",
-        "andnot",
-        "xor",
-        "not",
-        "intersects",
-        "is_included",
-        "is_equal",
-        "compare",
-        "compare_first",
+        "allbut",       "and",       "andnot",        "clear",
+	"clear_range", "compare",    "compare_first", "empty",
+	"first",       "from_ulong", "full",          "intersects",
+	"is_empty",    "is_equal",   "is_full",       "is_included",
+	"is_set",      "last",       "next",           "not",
+	"only",        "or",         "set",            "set_range",
+	"singlify",    "to_ulong",   "weight",         "xor",
         NULL
     };
 
     enum options {
-        BITMAP_EMPTY,
-	BITMAP_FULL,
-	BITMAP_ONLY,
-	BITMAP_ALLBUT,
-        BITMAP_FROM_ULONG,
-	BITMAP_TO_ULONG,
-	BITMAP_SET,
-        BITMAP_SET_RANGE,
-        BITMAP_CLEAR,
-        BITMAP_CLEAR_RANGE,
-        BITMAP_SINGLIFY,
-        BITMAP_IS_SET,
-        BITMAP_IS_EMPTY,
-        BITMAP_IS_FULL,
-        BITMAP_FIRST,
-        BITMAP_NEXT,
-        BITMAP_LAST,
-        BITMAP_WEIGHT,
-        BITMAP_OR,
-        BITMAP_AND,
-        BITMAP_ANDNOT,
-        BITMAP_XOR,
-        BITMAP_NOT,
-        BITMAP_INTERSECTS,
-        BITMAP_IS_INCLUDED,
-        BITMAP_IS_EQUAL,
-        BITMAP_COMPARE,
-        BITMAP_COMPARE_FIRST
+	BITMAP_ALLBUT,      BITMAP_AND,        BITMAP_ANDNOT,        BITMAP_CLEAR,
+	BITMAP_CLEAR_RANGE, BITMAP_COMPARE,    BITMAP_COMPARE_FIRST, BITMAP_EMPTY,
+	BITMAP_FIRST,       BITMAP_FROM_ULONG, BITMAP_FULL,          BITMAP_INTERSECTS,
+	BITMAP_IS_EMPTY,    BITMAP_IS_EQUAL,   BITMAP_IS_FULL,       BITMAP_IS_INCLUDED,
+	BITMAP_IS_SET,      BITMAP_LAST,       BITMAP_NEXT,          BITMAP_NOT,
+	BITMAP_ONLY,        BITMAP_OR,         BITMAP_SET,           BITMAP_SET_RANGE,
+	BITMAP_SINGLIFY,    BITMAP_TO_ULONG,   BITMAP_WEIGHT,        BITMAP_XOR
     };
 
     int index;

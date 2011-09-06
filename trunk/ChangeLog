@@ -1,3 +1,16 @@
+2011-09-05  Andreas Kupries  <akupries@shaw.ca>
+
+	* generic/bitmap.h: Formatting for style. Plus comments
+	* generic/cpubind.h: added to type definitions.
+	* generic/membind.h:
+	* generic/object.h:
+	* generic/topology.h:
+
+	* generic/bitmap.c: Sorted and reformatted the bitmap command
+	  options and enum.
+	* tests/bitmnap.test: Updated the one test affected by the
+	  reordering above.
+
 2011-09-02  Andreas Kupries  <andreask@activestate.com>
 
 	* generic/bitmap.c: Renamed 'is_zero' method to 'is_empty' to be
