@@ -60,15 +60,17 @@ test hwloc-bitmap-2.3 {constant bitmaps, full} -body {
 ## unary operators
 
 foreach {n op p} {
-    0 from_ulong mask
-    1 first      bitmap
-    2 is_full    bitmap
-    3 is_empty   bitmap
-    4 last       bitmap
-    5 not        bitmap
-    6 singlify   bitmap
-    7 to_ulong   bitmap
-    8 weight     bitmap
+    0  from_ulong mask
+    1  allbut     id
+    2  only       id
+    3  first      bitmap
+    4  is_full    bitmap
+    5  is_empty   bitmap
+    6  last       bitmap
+    7  not        bitmap
+    8  singlify   bitmap
+    9  to_ulong   bitmap
+    10 weight     bitmap
 } {
     test hwloc-bitmap-3.$n.0 "unary bitmap operations, $op, wrong args" -body {
 	hwloc bitmap $op
@@ -80,7 +82,7 @@ foreach {n op p} {
     } -returnCodes error \
 	-result "wrong # args: should be \"hwloc bitmap $op $p\""
 
-    if {$n} {
+    if {$n >= 3} {
 	test hwloc-bitmap-3.$n.2 "unary bitmap operations, $op, bad bitmap" -body {
 	    hwloc bitmap $op X
 	} -returnCodes error \
@@ -92,6 +94,8 @@ foreach {n op p} {
 	    -result {expected integer but got "X"}
     }
 }
+
+# TODO: from_ulong, allbut, only => handling of negative integer input.
 
 # - -- --- ----- -------- ------------- ---------------------
 # from_ulong, to_ulong (complementary operations)
@@ -112,9 +116,39 @@ foreach {n v r} {
 	hwloc bitmap from_ulong $v
     } -result $r
 
-    test hwloc-bitmap-3.7.$n "unary bitmap operations, to_ulong $r" -body {
+    test hwloc-bitmap-3.9.$n "unary bitmap operations, to_ulong $r" -body {
 	hwloc bitmap to_ulong $r
     } -result $v
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# allbut = full & !bitmap-of(id)
+
+foreach {n id r} {
+    3 0 1-
+    4 1 0,2-
+    5 2 0-1,3-
+    6 4 0-3,5-
+    7 7 0-6,8-
+} {
+    test hwloc-bitmap-3.1.$n "unary bitmap operations, allbut, \"$id\"" -body {
+	hwloc bitmap allbut $id
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# only = empty | bitmap-of(id)
+
+foreach {n id} {
+    3 0
+    4 1
+    5 2
+    6 4
+    7 7
+} {
+    test hwloc-bitmap-3.2.$n "unary bitmap operations, only, \"$id\"" -body {
+	hwloc bitmap only $id
+    } -result $id
 }
 
 # - -- --- ----- -------- ------------- ---------------------
@@ -122,11 +156,11 @@ foreach {n v r} {
 # singlify - alias of first, in essence, except it doesn't error on
 # the empty set.
 
-test hwloc-bitmap-3.1.3 "unary bitmap operations, first (empty)" -body {
+test hwloc-bitmap-3.3.3 "unary bitmap operations, first (empty)" -body {
     hwloc bitmap first {}
 } -returnCodes error -result {hwloc_bitmap_first error}
 
-test hwloc-bitmap-3.6.3 "unary bitmap operations, singlify (empty)" -body {
+test hwloc-bitmap-3.8.3 "unary bitmap operations, singlify (empty)" -body {
     hwloc bitmap singlify {}
 } -result {}
 
@@ -143,11 +177,11 @@ foreach {n v r} {
     13 0-    0
     14 4-    4
 } {
-    test hwloc-bitmap-3.1.$n "unary bitmap operations, first \"$v\"" -body {
+    test hwloc-bitmap-3.3.$n "unary bitmap operations, first \"$v\"" -body {
 	hwloc bitmap first $v
     } -result $r
 
-    test hwloc-bitmap-3.6.$n "unary bitmap operations, singlify \"$v\"" -body {
+    test hwloc-bitmap-3.8.$n "unary bitmap operations, singlify \"$v\"" -body {
 	hwloc bitmap singlify $v
     } -result $r
 }
@@ -169,7 +203,7 @@ foreach {n v r} {
     13 0-    1
     14 4-    0
 } {
-    test hwloc-bitmap-3.2.$n "unary bitmap operations, is_full \"$v\"" -body {
+    test hwloc-bitmap-3.4.$n "unary bitmap operations, is_full \"$v\"" -body {
 	hwloc bitmap is_full $v
     } -result $r
 }
@@ -191,7 +225,7 @@ foreach {n v r} {
     13 0-    0
     14 4-    0
 } {
-    test hwloc-bitmap-3.2.$n "unary bitmap operations, is_empty \"$v\"" -body {
+    test hwloc-bitmap-3.5.$n "unary bitmap operations, is_empty \"$v\"" -body {
 	hwloc bitmap is_empty $v
     } -result $r
 }
@@ -199,15 +233,15 @@ foreach {n v r} {
 # - -- --- ----- -------- ------------- ---------------------
 # last (last bit set, errors on empty and infinite sets)
 
-test hwloc-bitmap-3.4.3 "unary bitmap operations, last (empty)" -body {
+test hwloc-bitmap-3.6.3 "unary bitmap operations, last (empty)" -body {
     hwloc bitmap last {}
 } -returnCodes error -result {hwloc_bitmap_last error}
 
-test hwloc-bitmap-3.1.13 "unary bitmap operations, last (infinite set)" -body {
+test hwloc-bitmap-3.6.13 "unary bitmap operations, last (infinite set)" -body {
     hwloc bitmap last 0-
 } -returnCodes error -result {hwloc_bitmap_last error}
 
-test hwloc-bitmap-3.1.14 "unary bitmap operations, last (infinite set)" -body {
+test hwloc-bitmap-3.6.14 "unary bitmap operations, last (infinite set)" -body {
     hwloc bitmap last 4-
 } -returnCodes error -result {hwloc_bitmap_last error}
 
@@ -222,7 +256,7 @@ foreach {n v r} {
     11 0,4   4
     12 0-1,4 4
 } {
-    test hwloc-bitmap-3.4.$n "unary bitmap operations, last \"$v\"" -body {
+    test hwloc-bitmap-3.6.$n "unary bitmap operations, last \"$v\"" -body {
 	hwloc bitmap last $v
     } -result $r
 }
@@ -244,12 +278,12 @@ foreach {n v r} {
     13 0-    {}
     14 4-    0-3
 } {
-    test hwloc-bitmap-3.5.$n.0 "unary bitmap operations, not \"$v\"" -body {
+    test hwloc-bitmap-3.7.$n.0 "unary bitmap operations, not \"$v\"" -body {
 	hwloc bitmap not $v
     } -result $r
 
     # complementary
-    test hwloc-bitmap-3.5.$n.1 "unary bitmap operations, not \"$r\"" -body {
+    test hwloc-bitmap-3.7.$n.1 "unary bitmap operations, not \"$r\"" -body {
 	hwloc bitmap not $r
     } -result $v
 }
@@ -257,11 +291,11 @@ foreach {n v r} {
 # - -- --- ----- -------- ------------- ---------------------
 # weight (number of bits in set, errors on infinite sets)
 
-test hwloc-bitmap-3.8.13 "unary bitmap operations, weight (infinite set)" -body {
+test hwloc-bitmap-3.10.13 "unary bitmap operations, weight (infinite set)" -body {
     hwloc bitmap weight 0-
 } -returnCodes error -result {hwloc_bitmap_weight error}
 
-test hwloc-bitmap-3.8.14 "unary bitmap operations, weight (infinite set)" -body {
+test hwloc-bitmap-3.10.14 "unary bitmap operations, weight (infinite set)" -body {
     hwloc bitmap weight 4-
 } -returnCodes error -result {hwloc_bitmap_weight error}
 
@@ -277,7 +311,7 @@ foreach {n v r} {
     11 0,4   2
     12 0-1,4 3
 } {
-    test hwloc-bitmap-3.8.$n "unary bitmap operations, weight \"$v\"" -body {
+    test hwloc-bitmap-3.10.$n "unary bitmap operations, weight \"$v\"" -body {
 	hwloc bitmap weight $v
     } -result $r
 }
@@ -286,33 +320,31 @@ foreach {n v r} {
 ## binary operators.
 
 foreach {n op p} {
-    0  allbut        {bitmap id}
-    1  clear         {bitmap id}
-    2  is_set        {bitmap id}
-    3  only          {bitmap id}
-    4  set           {bitmap id}
-    5  next          {bitmap prev}
-    6  is_included   {bitmapA bitmapB}
-    7  and           {bitmapA bitmapB}
-    8  andnot        {bitmapA bitmapB}
-    9  compare       {bitmapA bitmapB}
-    10 compare_first {bitmapA bitmapB}
-    11 intersects    {bitmapA bitmapB}
-    12 is_equal      {bitmapA bitmapB}
-    13 or            {bitmapA bitmapB}
-    14 xor           {bitmapA bitmapB}
+    0  clear         {bitmap id}
+    1  is_set        {bitmap id}
+    2  set           {bitmap id}
+    3  next          {bitmap prev}
+    4  is_included   {bitmapA bitmapB}
+    5  and           {bitmapA bitmapB}
+    6  andnot        {bitmapA bitmapB}
+    7  compare       {bitmapA bitmapB}
+    8  compare_first {bitmapA bitmapB}
+    9  intersects    {bitmapA bitmapB}
+    10 is_equal      {bitmapA bitmapB}
+    11 or            {bitmapA bitmapB}
+    12 xor           {bitmapA bitmapB}
 } {
-    test hwloc-bitmap-4.$n.0 "biary bitmap operations, $op, wrong args" -body {
+    test hwloc-bitmap-4.$n.0 "binary bitmap operations, $op, wrong args" -body {
 	hwloc bitmap $op
     } -returnCodes error \
 	-result "wrong # args: should be \"hwloc bitmap $op $p\""
 
-    test hwloc-bitmap-4.$n.1 "biary bitmap operations, $op, wrong args" -body {
+    test hwloc-bitmap-4.$n.1 "binary bitmap operations, $op, wrong args" -body {
 	hwloc bitmap $op X
     } -returnCodes error \
 	-result "wrong # args: should be \"hwloc bitmap $op $p\""
 
-    test hwloc-bitmap-4.$n.2 "biary bitmap operations, $op, wrong args" -body {
+    test hwloc-bitmap-4.$n.2 "binary bitmap operations, $op, wrong args" -body {
 	hwloc bitmap $op X Y Z
     } -returnCodes error \
 	-result "wrong # args: should be \"hwloc bitmap $op $p\""
@@ -322,8 +354,8 @@ foreach {n op p} {
     } -returnCodes error \
 	-result {failed to parse cpuset}
 
-    if {$n > 5} {
-	test hwloc-bitmap-4.$n.4 "biary bitmap operations, $op, bad bitmap" -body {
+    if {$n >= 4} {
+	test hwloc-bitmap-4.$n.4 "binary bitmap operations, $op, bad bitmap" -body {
 	    hwloc bitmap $op 0- Y
 	} -returnCodes error \
 	    -result {failed to parse cpuset}
@@ -386,9 +418,6 @@ puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
 set full  [hwloc bitmap full]
 set empty [hwloc bitmap empty]
-
-puts "only: [hwloc bitmap only $full 1]"
-puts "allbut: [hwloc bitmap allbut $full 1]"
 
 puts "set: [hwloc bitmap set $empty 1]"
 puts "set_range: [hwloc bitmap set_range $empty 0 1]"

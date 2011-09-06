@@ -87,22 +87,14 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	}
     case BITMAP_ONLY:
 	{
-	    const char*    bitmap_str;
 	    hwloc_bitmap_t bitmap = NULL;
 	    int id = 0;
 
-	    CHECK_FOR_ARG(5, "bitmap id");
+	    CHECK_FOR_ARG(4, "id");
 
-	    bitmap_str = Tcl_GetString(objv[3]);
+	    if (Tcl_GetIntFromObj(interp, objv[3], &id) == TCL_ERROR) ERROR_EXIT;
+
 	    bitmap = hwloc_bitmap_alloc();
-
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    if (Tcl_GetIntFromObj(interp, objv[4], &id) == TCL_ERROR) ERROR_EXIT;
-
 	    hwloc_bitmap_only(bitmap, (unsigned) id);
 
 	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
@@ -111,22 +103,15 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	}
     case BITMAP_ALLBUT:
 	{
-	    const char*    bitmap_str;
 	    hwloc_bitmap_t bitmap = NULL;
 	    int id = 0;
 
-	    CHECK_FOR_ARG(5, "bitmap id");
+	    CHECK_FOR_ARG(4, "id");
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
-
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
+	    if (Tcl_GetIntFromObj(interp, objv[3], &id) == TCL_ERROR) \
 		ERROR_EXIT;
-	    }
 
-	    if (Tcl_GetIntFromObj(interp, objv[4], &id) == TCL_ERROR) ERROR_EXIT;
-
+	    bitmap = hwloc_bitmap_alloc();
 	    hwloc_bitmap_allbut(bitmap, (unsigned) id);
 
 	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
