@@ -689,15 +689,41 @@ foreach {n op} {
 	-result {expected integer but got "Z"}
 }
 
-puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# - -- --- ----- -------- ------------- ---------------------
+# set-range = bitmap + range of bits.
 
-set full  [hwloc bitmap full]
-set empty [hwloc bitmap empty]
+foreach {n v s e r} {
+    7  {}    0 2 0-2
+    8  {}    4 8 4-8
+    9  1,4,7 0 2 0-2,4,7
+    10 1,4,7 4 8 1,4-8
+    11 0-    0 2 0-
+    12 0-    4 8 0-
+    13 9-    0 2 0-2,9-
+    14 9-    4 8 4-
+} {
+    test hwloc-bitmap-5.0.$n "trinary bitmap operations, setrange, \"$v + $s..$e\"" -body {
+	hwloc bitmap set_range $v $s $e
+    } -result $r
+}
 
-puts "set_range: [hwloc bitmap set_range $empty 0 1]"
-puts "clear_range: [hwloc bitmap clear_range $full 0 1]"
+# - -- --- ----- -------- ------------- ---------------------
+# clear_range = bitmap - range of bits.
 
-puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+foreach {n v s e r} {
+    7  {}    0 2 {}
+    8  {}    4 8 {}
+    9  1,4,7 0 2 4,7
+    10 1,4,7 4 8 1
+    11 0-    0 2 3-
+    12 0-    4 8 0-3,9-
+    13 9-    0 2 9-
+    14 9-    4 8 9-
+} {
+    test hwloc-bitmap-5.1.$n "trinary bitmap operations, clear_range, \"$v - $e..$e\"" -body {
+	hwloc bitmap clear_range $v $s $e
+    } -result $r
+}
 
 # # ## ### ##### ######## ############# #####################
 tcltest::cleanupTests
