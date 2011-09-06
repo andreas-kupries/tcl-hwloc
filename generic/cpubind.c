@@ -160,10 +160,16 @@ int parse_cpubind_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *
 
 static int parse_flags (Tcl_Interp *interp, int *result, Tcl_Obj *obj) {
     static const char* flags[] = {
-        "nomembind", "process", "strict", "thread", NULL
+        "nomembind", "process",
+	"strict",    "thread", NULL
     };
     enum options {
-        CPUBIND_NOMEMBIND, CPUBIND_PROCESS, CPUBIND_STRICT, CPUBIND_THREAD
+        CPUBIND_NOMEMBIND, CPUBIND_PROCESS,
+	CPUBIND_STRICT,    CPUBIND_THREAD
+    };
+    static int map [] = {
+	HWLOC_CPUBIND_NOMEMBIND, HWLOC_CPUBIND_PROCESS,
+	HWLOC_CPUBIND_STRICT,    HWLOC_CPUBIND_THREAD
     };
 
     int i, index;
@@ -177,18 +183,10 @@ static int parse_flags (Tcl_Interp *interp, int *result, Tcl_Obj *obj) {
     }
 
     for (i = 0; i < obj_objc; i++) {  
-        if (Tcl_GetIndexFromObj(interp, obj_objv[i], flags, "flag", 0, &index) != TCL_OK)
+        if (Tcl_GetIndexFromObj(interp, obj_objv[i], flags, "flag", 0, &index) != TCL_OK) {
             return TCL_ERROR;
-
-        switch(index) {
-	case CPUBIND_PROCESS:   *result |= HWLOC_CPUBIND_PROCESS;   break;
-	case CPUBIND_THREAD:    *result |= HWLOC_CPUBIND_THREAD;    break;
-	case CPUBIND_STRICT:    *result |= HWLOC_CPUBIND_STRICT;    break;
-	case CPUBIND_NOMEMBIND: *result |= HWLOC_CPUBIND_NOMEMBIND; break;
-	default:
-	    Tcl_SetResult(interp, "unrecognized flag", TCL_STATIC);
-	    return TCL_ERROR;
-        }
+	}
+	*result |= map [index];
     }
 
     return TCL_OK;
