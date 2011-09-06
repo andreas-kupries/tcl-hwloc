@@ -377,8 +377,9 @@ foreach {n v id r} {
     7  0-    3 0-2,4-
     8  1,4,7 0 1,4,7
     9  1,4,7 4 1,7
+    10 {}    3 {}
 } {
-    test hwloc-bitmap-4.0.$n "unary bitmap operations, clear, \"$v - $id\"" -body {
+    test hwloc-bitmap-4.0.$n "binary bitmap operations, clear, \"$v - $id\"" -body {
 	hwloc bitmap clear $v $id
     } -result $r
 }
@@ -392,8 +393,9 @@ foreach {n v id r} {
     7  0-    3 1
     8  1,4,7 0 0
     9  1,4,7 4 1
+    10 {}    3 0
 } {
-    test hwloc-bitmap-4.1.$n "unary bitmap operations, is_set, \"$v + $id\"" -body {
+    test hwloc-bitmap-4.1.$n "binary bitmap operations, is_set, \"$v + $id\"" -body {
 	hwloc bitmap is_set $v $id
     } -result $r
 }
@@ -407,8 +409,9 @@ foreach {n v id r} {
     7  0-    3 0-
     8  1,4,7 0 0-1,4,7
     9  1,4,7 4 1,4,7
+    10 {}    3 3
 } {
-    test hwloc-bitmap-4.2.$n "unary bitmap operations, set, \"$v + $id\"" -body {
+    test hwloc-bitmap-4.2.$n "binary bitmap operations, set, \"$v + $id\"" -body {
 	hwloc bitmap set $v $id
     } -result $r
 }
@@ -424,8 +427,219 @@ foreach {n v id r} {
     8  1,4,7 0 1
     9  1,4,7 4 7
 } {
-    test hwloc-bitmap-4.3.$n "unary bitmap operations, next, \"$v $id\"" -body {
+    test hwloc-bitmap-4.3.$n "binary bitmap operations, next, \"$v $id\"" -body {
 	hwloc bitmap next $v $id
+    } -result $r
+}
+
+test hwloc-bitmap-4.3.10 "binary bitmap operations, next, \"empty $id\", fails" -body {
+    hwloc bitmap next {} 3
+} -returnCodes error -result {hwloc_bitmap_next error}
+
+# - -- --- ----- -------- ------------- ---------------------
+# is_included = is A subset of B?
+
+foreach {n va vb r} {
+    5  0-    0-     1
+    6  0-    1-     0
+    7  1,4,7 0-     1
+    8  1,4,7 9-     0
+    9  0-    1,4,7  0
+    10 9-    1,4,7  0
+    11 1,4,7 1,4    0
+    12 1,4   1,4,7  1
+    13 1,4,7 1,4,7  1
+    14 {}    1,4,7  1
+    15 1,4,7 {}     0
+    16 {}    6-     1
+    17 6-    {}     0
+} {
+    test hwloc-bitmap-4.4.$n "binary bitmap operations, is_included, \"$va subset $vb\"" -body {
+	hwloc bitmap is_included $va $vb
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# and = A bit-and B (A intersection B)
+
+foreach {n va vb r} {
+    5  0-    0-     0-
+    6  0-    1-     1-
+    7  1,4,7 0-     1,4,7
+    8  1,4,7 9-     {}
+    9  0-    1,4,7  1,4,7
+    10 9-    1,4,7  {}
+    11 1,4,7 1,4    1,4
+    12 1,4   1,4,7  1,4
+    13 1,4,7 1,4,7  1,4,7
+    14 {}    1,4,7  {}
+    15 1,4,7 {}     {}
+    16 {}    6-     {}
+    17 6-    {}     {}
+} {
+    test hwloc-bitmap-4.5.$n "binary bitmap operations, and, \"$va bitand $vb\"" -body {
+	hwloc bitmap and $va $vb
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# andnot = A bit-and (bit-not B) (subtraction)
+
+foreach {n va vb r} {
+    5  0-    0-     {}
+    6  0-    1-     0
+    7  1,4,7 0-     {}
+    8  1,4,7 9-     1,4,7
+    9  0-    1,4,7  0,2-3,5-6,8-
+    10 9-    1,4,7  9-
+    11 1,4,7 1,4    7
+    12 1,4   1,4,7  {}
+    13 1,4,7 1,4,7  {}
+    14 {}    1,4,7  {}
+    15 1,4,7 {}     1,4,7
+    16 {}    6-     {}
+    17 6-    {}     6-
+} {
+    test hwloc-bitmap-4.6.$n "binary bitmap operations, andnot, \"$va subtract $vb\"" -body {
+	hwloc bitmap andnot $va $vb
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# compare = last A == last B ?
+
+foreach {n va vb r} {
+    5  0-    0-     0
+    6  0-    1-     1
+    7  1,4,7 0-     -1
+    8  1,4,7 9-     -1
+    9  0-    1,4,7  1
+    10 9-    1,4,7  1
+    11 1,4,7 1,4    1
+    12 1,4   1,4,7  -1
+    13 1,4,7 1,4,7  0
+    14 {}    1,4,7  -1
+    15 1,4,7 {}     1
+    16 {}    6-     -1
+    17 6-    {}     1
+} {
+    test hwloc-bitmap-4.7.$n "binary bitmap operations, compare, \"$va same-highest? $vb\"" -body {
+	hwloc bitmap compare $va $vb
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# compare_first = first A == first B ?
+
+foreach {n va vb r} {
+    5  0-    0-     0
+    6  0-    1-     -1
+    7  1,4,7 0-     1
+    8  1,4,7 9-     -8
+    9  0-    1,4,7  -1
+    10 9-    1,4,7  8
+    11 1,4,7 1,4    0
+    12 1,4   1,4,7  0
+    13 1,4,7 1,4,7  0
+    14 {}    1,4,7  2
+    15 1,4,7 {}     -2
+    16 {}    6-     7
+    17 6-    {}     -7
+} {
+    test hwloc-bitmap-4.8.$n "binary bitmap operations, compare_first, \"$va same-first? $vb\"" -body {
+	hwloc bitmap compare_first $va $vb
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# intersect = non-empty? (A bit-and B) == (non-empty? (A intersection B))
+
+foreach {n va vb r} {
+    5  0-    0-     1
+    6  0-    1-     1
+    7  1,4,7 0-     1
+    8  1,4,7 9-     0
+    9  0-    1,4,7  1
+    10 9-    1,4,7  0
+    11 1,4,7 1,4    1
+    12 1,4   1,4,7  1
+    13 1,4,7 1,4,7  1
+    14 {}    1,4,7  0
+    15 1,4,7 {}     0
+    16 {}    6-     0
+    17 6-    {}     0
+} {
+    test hwloc-bitmap-4.9.$n "binary bitmap operations, intersects, \"$va non-empty-intersection $vb\"" -body {
+	hwloc bitmap intersects $va $vb
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# is_equal = A set-equal B ?
+
+foreach {n va vb r} {
+    5  0-    0-     1
+    6  0-    1-     0
+    7  1,4,7 0-     0
+    8  1,4,7 9-     0
+    9  0-    1,4,7  0
+    10 9-    1,4,7  0
+    11 1,4,7 1,4    0
+    12 1,4   1,4,7  0
+    13 1,4,7 1,4,7  1
+    14 {}    1,4,7  0
+    15 1,4,7 {}     0
+    16 {}    6-     0
+    17 6-    {}     0
+} {
+    test hwloc-bitmap-4.10.$n "binary bitmap operations, is_equal, \"$va set-equal $vb\"" -body {
+	hwloc bitmap is_equal $va $vb
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# or = A bit-or B (A union B)
+
+foreach {n va vb r} {
+    5  0-    0-     0-
+    6  0-    1-     0-
+    7  1,4,7 0-     0-
+    8  1,4,7 9-     1,4,7,9-
+    9  0-    1,4,7  0-
+    10 9-    1,4,7  1,4,7,9-
+    11 1,4,7 1,4    1,4,7
+    12 1,4   1,4,7  1,4,7
+    13 1,4,7 1,4,7  1,4,7
+    14 {}    1,4,7  1,4,7
+    15 1,4,7 {}     1,4,7
+    16 {}    6-     6-
+    17 6-    {}     6-
+} {
+    test hwloc-bitmap-4.11.$n "binary bitmap operations, or, \"$va union $vb\"" -body {
+	hwloc bitmap or $va $vb
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# xor = A bit-exclusive or B
+
+foreach {n va vb r} {
+    5  0-    0-     {}
+    6  0-    1-     0
+    7  1,4,7 0-     0,2-3,5-6,8-
+    8  1,4,7 9-     1,4,7,9-
+    9  0-    1,4,7  0,2-3,5-6,8-
+    10 9-    1,4,7  1,4,7,9-
+    11 1,4,7 1,4    7
+    12 1,4   1,4,7  7
+    13 1,4,7 1,4,7  {}
+    14 {}    1,4,7  1,4,7
+    15 1,4,7 {}     1,4,7
+    16 {}    6-     6-
+    17 6-    {}     6-
+} {
+    test hwloc-bitmap-4.12.$n "binary bitmap operations, xor, \"$va xor $vb\"" -body {
+	hwloc bitmap xor $va $vb
     } -result $r
 }
 
@@ -482,18 +696,6 @@ set empty [hwloc bitmap empty]
 
 puts "set_range: [hwloc bitmap set_range $empty 0 1]"
 puts "clear_range: [hwloc bitmap clear_range $full 0 1]"
-
-puts "or: [hwloc bitmap or $empty $full]"
-puts "and: [hwloc bitmap and $empty $full]"
-puts "andnot: [hwloc bitmap andnot $empty $full]"
-puts "xor: [hwloc bitmap xor $empty $full]"
-
-puts "intersects: [hwloc bitmap intersects $full 1]"
-puts "is_included: [hwloc bitmap is_included $full 1]"
-puts "is_included: [hwloc bitmap is_included 1 $full]"
-puts "is_equal: [hwloc bitmap is_equal $full 1]"
-puts "compare: [hwloc bitmap compare $full 1]"
-puts "compare_first: [hwloc bitmap compare_first $full 1]"
 
 puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 

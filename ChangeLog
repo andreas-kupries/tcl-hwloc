@@ -1,7 +1,6 @@
 2011-09-06  Andreas Kupries  <andreask@activestate.com>
 
-	* tests/bitmap.test: Completed tests for the binary operators
-	  taking a single bitmap and a bit id.
+	* tests/bitmap.test: Completed tests for all binary operators.
 
 	* tests/bitmap.test: Writing the tests for 'allbut' and 'only'
 	* tests/bitmap.c: I realized that these operations are
