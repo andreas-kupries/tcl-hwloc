@@ -1,3 +1,10 @@
+2011-09-06  Andreas Kupries  <andreask@activestate.com>
+
+	* tests/bitmap.test: Writing the tests for 'allbut' and 'only'
+	* tests/bitmap.c: I realized that these operations are
+	  unary. Because their output dependes solely on the id, and not
+	  on the bitmap. Fixed that bug.
+
 2011-09-05  Andreas Kupries  <akupries@shaw.ca>
 
 	* generic/cpubind.c: Fixed use of C99 features, replaced with C89
