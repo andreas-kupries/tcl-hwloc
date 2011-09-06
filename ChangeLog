@@ -1,5 +1,13 @@
 2011-09-06  Andreas Kupries  <andreask@activestate.com>
 
+	* tests/bitmap.test: Second sweep over the implementation. Moved
+	* tests/bitmap.c: bitmap-from-obj into separate function, and
+	  simplifed the bitmap cleanup (mostly centralized to end of main
+	  function, and in set_result_bitmap). Moved cleanup of temps to
+	  earliest location possible, usually immediatel after the hwloc
+	  function using it. Updated a few error messages for clarity, and
+	  update the testsuite.
+
 	* generic/cpubind.c: Simplified the parsing of flags.
 
 	* tests/bitmap.test: Completed tests for all bitmap operators.

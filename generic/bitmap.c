@@ -15,14 +15,35 @@
     { hwloc_bitmap_free(bitmap);		\
 	return TCL_ERROR; }
 
+
+static hwloc_bitmap_t
+get_bitmap (Tcl_Interp* interp, Tcl_Obj* obj)
+{
+    const char*    str    = Tcl_GetString (obj);
+    hwloc_bitmap_t bitmap = hwloc_bitmap_alloc();
+
+    if (hwloc_bitmap_list_sscanf(bitmap, str) == -1) {
+	Tcl_ResetResult (interp);
+	Tcl_AppendResult(interp, "Expected bitmap but got \"", str, "\"", NULL);
+	hwloc_bitmap_free(bitmap);
+	return NULL;
+    }
+
+    return bitmap;
+}
+
 static int
-set_bitmap_result(Tcl_Interp *interp, hwloc_bitmap_t bitmap) {
-    char *res;
+set_result_bitmap (Tcl_Interp* interp, hwloc_bitmap_t bitmap) {
+    char* res;
 
     if (hwloc_bitmap_list_asprintf(&res, bitmap) == -1) {
         Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
+
+	hwloc_bitmap_free(bitmap);
         return TCL_ERROR;
     }
+
+    hwloc_bitmap_free(bitmap);
 
     Tcl_SetObjResult(interp, Tcl_NewStringObj(res, -1));
     free(res);
@@ -52,7 +73,12 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	BITMAP_SINGLIFY,    BITMAP_TO_ULONG,   BITMAP_WEIGHT,        BITMAP_XOR
     };
 
-    int index;
+    hwloc_bitmap_t bitmap  = NULL;
+    hwloc_bitmap_t bitmap1 = NULL;
+    hwloc_bitmap_t bitmap2 = NULL;
+
+    unsigned long res;
+    int mask, id, index, flag, prev, begin, end;
 
     if (Tcl_GetIndexFromObj(interp, objv[2], cmds, "option", 2, &index) != TCL_OK) {
         return TCL_ERROR;
@@ -60,553 +86,339 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 
     switch (index) {
     case BITMAP_EMPTY:
-	{
-	    hwloc_bitmap_t bitmap = NULL;
+	CHECK_FOR_ARG(3,NULL);
 
-	    CHECK_FOR_ARG(3,NULL);
+	bitmap = hwloc_bitmap_alloc();
+	hwloc_bitmap_zero(bitmap);
 
-	    bitmap = hwloc_bitmap_alloc();
-	    hwloc_bitmap_zero(bitmap);
+	return set_result_bitmap(interp, bitmap);
 
-	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
-	    hwloc_bitmap_free(bitmap);
-	    break;
-	}
     case BITMAP_FULL:
-	{
-	    hwloc_bitmap_t bitmap = NULL;
+	CHECK_FOR_ARG(3,NULL);
 
-	    CHECK_FOR_ARG(3,NULL);
+	bitmap = hwloc_bitmap_alloc();
+	hwloc_bitmap_fill(bitmap);
 
-	    bitmap = hwloc_bitmap_alloc();
-	    hwloc_bitmap_fill(bitmap);
+	return set_result_bitmap(interp, bitmap);
 
-	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
-	    hwloc_bitmap_free(bitmap);
-	    break;
-	}
     case BITMAP_ONLY:
-	{
-	    hwloc_bitmap_t bitmap = NULL;
-	    int id = 0;
+	CHECK_FOR_ARG(4, "id");
 
-	    CHECK_FOR_ARG(4, "id");
+	if (Tcl_GetIntFromObj(interp, objv[3], &id) == TCL_ERROR) goto error;
 
-	    if (Tcl_GetIntFromObj(interp, objv[3], &id) == TCL_ERROR) ERROR_EXIT;
+	bitmap = hwloc_bitmap_alloc();
+	hwloc_bitmap_only(bitmap, (unsigned) id);
 
-	    bitmap = hwloc_bitmap_alloc();
-	    hwloc_bitmap_only(bitmap, (unsigned) id);
+	return set_result_bitmap(interp, bitmap);
 
-	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
-	    hwloc_bitmap_free(bitmap);
-	    break;
-	}
     case BITMAP_ALLBUT:
-	{
-	    hwloc_bitmap_t bitmap = NULL;
-	    int id = 0;
+	CHECK_FOR_ARG(4, "id");
 
-	    CHECK_FOR_ARG(4, "id");
+	if (Tcl_GetIntFromObj(interp, objv[3], &id) == TCL_ERROR) goto error;
 
-	    if (Tcl_GetIntFromObj(interp, objv[3], &id) == TCL_ERROR) \
-		ERROR_EXIT;
+	bitmap = hwloc_bitmap_alloc();
+	hwloc_bitmap_allbut(bitmap, (unsigned) id);
 
-	    bitmap = hwloc_bitmap_alloc();
-	    hwloc_bitmap_allbut(bitmap, (unsigned) id);
+	return set_result_bitmap(interp, bitmap);
 
-	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
-	    hwloc_bitmap_free(bitmap);
-	    break;
-	}
     case BITMAP_FROM_ULONG:
-	{
-	    int mask = 0;
-	    hwloc_bitmap_t bitmap = NULL;
+	CHECK_FOR_ARG(4, "mask");
 
-	    CHECK_FOR_ARG(4, "mask");
+	if (Tcl_GetIntFromObj(interp, objv[3], &mask) == TCL_ERROR) goto error;
 
-	    if (Tcl_GetIntFromObj(interp, objv[3], &mask) == TCL_ERROR) ERROR_EXIT;
+	bitmap = hwloc_bitmap_alloc();
+	hwloc_bitmap_from_ulong(bitmap, (unsigned long) mask);
 
-	    bitmap = hwloc_bitmap_alloc();
-	    hwloc_bitmap_from_ulong(bitmap, (unsigned long) mask);
+	return set_result_bitmap(interp, bitmap);
 
-	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
-	    hwloc_bitmap_free(bitmap);
-	    break;
-	}
     case BITMAP_TO_ULONG:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    unsigned long res;
+	CHECK_FOR_ARG(4, "bitmap");
 
-	    CHECK_FOR_ARG(4, "bitmap");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	res = hwloc_bitmap_to_ulong(bitmap);
+	hwloc_bitmap_free(bitmap);
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    res = hwloc_bitmap_to_ulong(bitmap);
-	    if (res == -1) {
-		Tcl_SetResult(interp, "hwloc_bitmap_to_ulong error", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    Tcl_SetObjResult(interp, Tcl_NewIntObj(res));
-	    hwloc_bitmap_free(bitmap);
-	    break;
+	if (res == -1) {
+	    Tcl_SetResult(interp, "Internal hwloc_bitmap_to_ulong error", TCL_STATIC);
+	    goto error;
 	}
+
+	Tcl_SetObjResult(interp, Tcl_NewIntObj (res));
+	break;
+
     case BITMAP_SET:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    int id = 0;
+	CHECK_FOR_ARG(5, "bitmap id");
 
-	    CHECK_FOR_ARG(5, "bitmap id");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	if (Tcl_GetIntFromObj(interp, objv[4], &id) == TCL_ERROR) goto cleanup;
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
+	hwloc_bitmap_set(bitmap, (unsigned) id);
 
-	    if (Tcl_GetIntFromObj(interp, objv[4], &id) == TCL_ERROR) ERROR_EXIT;
+	return set_result_bitmap(interp, bitmap);
 
-	    hwloc_bitmap_set(bitmap, (unsigned) id);
-
-	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
-	    hwloc_bitmap_free(bitmap);
-	    break;
-	}
     case BITMAP_SET_RANGE:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    int begin = 0;
-	    int end = 0;
+	CHECK_FOR_ARG(6, "bitmap begin end");
 
-	    CHECK_FOR_ARG(6, "bitmap begin end");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	if (Tcl_GetIntFromObj(interp, objv[4], &begin) == TCL_ERROR) goto cleanup;
+	if (Tcl_GetIntFromObj(interp, objv[5], &end)   == TCL_ERROR) goto cleanup;
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
+	hwloc_bitmap_set_range(bitmap, (unsigned) begin, (int) end);
 
-	    if (Tcl_GetIntFromObj(interp, objv[4], &begin) == TCL_ERROR) ERROR_EXIT;
-	    if (Tcl_GetIntFromObj(interp, objv[5], &end) == TCL_ERROR) ERROR_EXIT;
+	return set_result_bitmap(interp, bitmap);
 
-	    hwloc_bitmap_set_range(bitmap, (unsigned) begin, (int) end);
-
-	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
-	    hwloc_bitmap_free(bitmap);
-	    break;
-	}
     case BITMAP_CLEAR:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    int id = 0;
+	CHECK_FOR_ARG(5, "bitmap id");
 
-	    CHECK_FOR_ARG(5, "bitmap id");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	if (Tcl_GetIntFromObj(interp, objv[4], &id) == TCL_ERROR) goto cleanup;
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
+	hwloc_bitmap_clr(bitmap, (unsigned) id);
 
-	    if (Tcl_GetIntFromObj(interp, objv[4], &id) == TCL_ERROR) ERROR_EXIT;
+	return set_result_bitmap(interp, bitmap);
 
-	    hwloc_bitmap_clr(bitmap, (unsigned) id);
-
-	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
-	    hwloc_bitmap_free(bitmap);
-	    break;
-	}
     case BITMAP_CLEAR_RANGE:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    int begin = 0;
-	    int end = 0;
+	CHECK_FOR_ARG(6, "bitmap begin end");
 
-	    CHECK_FOR_ARG(6, "bitmap begin end");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	if (Tcl_GetIntFromObj(interp, objv[4], &begin) == TCL_ERROR) goto cleanup;
+	if (Tcl_GetIntFromObj(interp, objv[5], &end)   == TCL_ERROR) goto cleanup;
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
+	hwloc_bitmap_clr_range(bitmap, (unsigned) begin, (int) end);
 
-	    if (Tcl_GetIntFromObj(interp, objv[4], &begin) == TCL_ERROR) ERROR_EXIT;
-	    if (Tcl_GetIntFromObj(interp, objv[5], &end) == TCL_ERROR) ERROR_EXIT;
+	return set_result_bitmap(interp, bitmap);
 
-	    hwloc_bitmap_clr_range(bitmap, (unsigned) begin, (int) end);
-
-	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
-	    hwloc_bitmap_free(bitmap);
-	    break;
-	}
     case BITMAP_SINGLIFY:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
+	CHECK_FOR_ARG(4, "bitmap");
 
-	    CHECK_FOR_ARG(4, "bitmap");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	hwloc_bitmap_singlify(bitmap);
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
+	return set_result_bitmap(interp, bitmap);
 
-	    hwloc_bitmap_singlify(bitmap);
-
-	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) ERROR_EXIT;
-	    hwloc_bitmap_free(bitmap);
-	    break;
-	}
     case BITMAP_IS_SET:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    int id = 0;
-	    int res;
+	CHECK_FOR_ARG(5, "bitmap id");
 
-	    CHECK_FOR_ARG(5, "bitmap id");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	if (Tcl_GetIntFromObj(interp, objv[4], &id) == TCL_ERROR) goto cleanup;
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
+	flag = hwloc_bitmap_isset(bitmap, (unsigned) id);
+	hwloc_bitmap_free(bitmap);
 
-	    if (Tcl_GetIntFromObj(interp, objv[4], &id) == TCL_ERROR) ERROR_EXIT;
-
-	    res = hwloc_bitmap_isset(bitmap, (unsigned) id);
-	    if (res == -1) {
-		Tcl_SetResult(interp, "hwloc_bitmap_isset error", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    Tcl_SetObjResult(interp, Tcl_NewIntObj(res));
-	    hwloc_bitmap_free(bitmap);
-	    break;
+	if (flag == -1) {
+	    Tcl_SetResult(interp, "Internal hwloc_bitmap_isset error", TCL_STATIC);
+	    goto error;
 	}
+
+	Tcl_SetObjResult(interp, Tcl_NewIntObj (flag));
+	break;
+
     case BITMAP_IS_EMPTY:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    int res;
+	CHECK_FOR_ARG(4, "bitmap");
 
-	    CHECK_FOR_ARG(4, "bitmap");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	flag = hwloc_bitmap_iszero(bitmap);
+	hwloc_bitmap_free(bitmap);
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    res = hwloc_bitmap_iszero(bitmap);
-	    if (res == -1) {
-		Tcl_SetResult(interp, "hwloc_bitmap_zero error", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    Tcl_SetObjResult(interp, Tcl_NewIntObj(res));
-	    hwloc_bitmap_free(bitmap);
-	    break;
+	if (flag == -1) {
+	    Tcl_SetResult(interp, "Internal hwloc_bitmap_zero error", TCL_STATIC);
+	    goto error;
 	}
+
+	Tcl_SetObjResult(interp, Tcl_NewIntObj (flag));
+	break;
+
     case BITMAP_IS_FULL:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    int res;
+	CHECK_FOR_ARG(4, "bitmap");
 
-	    CHECK_FOR_ARG(4, "bitmap");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	flag = hwloc_bitmap_isfull(bitmap);
+	hwloc_bitmap_free(bitmap);
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    res = hwloc_bitmap_isfull(bitmap);
-	    if (res == -1) {
-		Tcl_SetResult(interp, "hwloc_bitmap_full error", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    Tcl_SetObjResult(interp, Tcl_NewIntObj(res));
-	    hwloc_bitmap_free(bitmap);
-	    break;
+	if (flag == -1) {
+	    Tcl_SetResult(interp, "Internal hwloc_bitmap_full error", TCL_STATIC);
+	    goto error;
 	}
+
+	Tcl_SetObjResult(interp, Tcl_NewIntObj (flag));
+	break;
+
     case BITMAP_FIRST:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    int res;
+	CHECK_FOR_ARG(4, "bitmap");
 
-	    CHECK_FOR_ARG(4, "bitmap");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	flag = hwloc_bitmap_first(bitmap);
+	hwloc_bitmap_free(bitmap);
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    res = hwloc_bitmap_first(bitmap);
-	    if (res == -1) {
-		Tcl_SetResult(interp, "hwloc_bitmap_first error", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    Tcl_SetObjResult(interp, Tcl_NewIntObj((int) res));
-	    hwloc_bitmap_free(bitmap);
-	    break;
+	if (flag == -1) {
+	    Tcl_SetResult(interp, "first is undefined for empty bitmap", TCL_STATIC);
+	    goto error;
 	}
+
+	Tcl_SetObjResult(interp, Tcl_NewIntObj (flag));
+	break;
+
     case BITMAP_NEXT:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    int prev;
-	    int res;
+	CHECK_FOR_ARG(5, "bitmap prev");
 
-	    CHECK_FOR_ARG(5, "bitmap prev");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	if (Tcl_GetIntFromObj(interp, objv[4], &prev) == TCL_ERROR) goto cleanup;
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
+	flag = hwloc_bitmap_next(bitmap, (int) prev);
+	hwloc_bitmap_free(bitmap);
 
-	    prev = 0;
-	    if (Tcl_GetIntFromObj(interp, objv[4], &prev) == TCL_ERROR) ERROR_EXIT;
-
-	    res = hwloc_bitmap_next(bitmap, (int) prev);
-	    if (res == -1) {
-		Tcl_SetResult(interp, "hwloc_bitmap_next error", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    Tcl_SetObjResult(interp, Tcl_NewIntObj(res));
-	    hwloc_bitmap_free(bitmap);
-	    break;
+	if (flag == -1) {
+	    Tcl_SetResult(interp, "hwloc_bitmap_next error", TCL_STATIC);
+	    goto error;
 	}
+
+	Tcl_SetObjResult(interp, Tcl_NewIntObj (flag));
+	break;
+
     case BITMAP_LAST:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    int res;
+	CHECK_FOR_ARG(4, "bitmap");
 
-	    CHECK_FOR_ARG(4, "bitmap");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
-
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
+	flag = hwloc_bitmap_last(bitmap);
+	if (flag == -1) {
+	    if (hwloc_bitmap_iszero(bitmap)) {
+		Tcl_SetResult(interp, "last is undefined for empty bitmap", TCL_STATIC);
+	    } else {
+		Tcl_SetResult(interp, "last is undefined for infinite bitmap", TCL_STATIC);
 	    }
-
-	    res = hwloc_bitmap_last(bitmap);
-	    if (res == -1) {
-		Tcl_SetResult(interp, "hwloc_bitmap_last error", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    Tcl_SetObjResult(interp, Tcl_NewIntObj(res));
 	    hwloc_bitmap_free(bitmap);
-	    break;
+	    goto error;
 	}
+
+	hwloc_bitmap_free(bitmap);
+
+	Tcl_SetObjResult(interp, Tcl_NewIntObj (flag));
+	break;
+
     case BITMAP_WEIGHT:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    int res;
+	CHECK_FOR_ARG(4, "bitmap");
 
-	    CHECK_FOR_ARG(4, "bitmap");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	flag = hwloc_bitmap_weight(bitmap);
+	hwloc_bitmap_free(bitmap);
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    res = hwloc_bitmap_weight(bitmap);
-	    if (res == -1) {
-		Tcl_SetResult(interp, "hwloc_bitmap_weight error", TCL_STATIC);
-		ERROR_EXIT;
-	    }
-
-	    Tcl_SetObjResult(interp, Tcl_NewIntObj(res));
-	    hwloc_bitmap_free(bitmap);
-	    break;
+	if (flag == -1) {
+	    Tcl_SetResult(interp, "hwloc_bitmap_weight error", TCL_STATIC);
+	    goto error;
 	}
+
+	Tcl_SetObjResult(interp, Tcl_NewIntObj (flag));
+	break;
+
     case BITMAP_AND:
     case BITMAP_ANDNOT:
     case BITMAP_OR:
     case BITMAP_XOR:
-	{
-	    const char *bitmap_str1;
-	    const char *bitmap_str2;
-	    hwloc_bitmap_t bitmap1 = NULL;
-	    hwloc_bitmap_t bitmap2 = NULL;
-	    hwloc_bitmap_t bitmap;
+	CHECK_FOR_ARG(5, "bitmapA bitmapB");
 
-	    CHECK_FOR_ARG(5, "bitmapA bitmapB");
+	bitmap1 = get_bitmap (interp, objv[3]);
+	if (bitmap1 == NULL) goto error;
 
-	    bitmap_str1 = Tcl_GetString(objv[3]);
-	    bitmap1 = hwloc_bitmap_alloc();
+	bitmap2 = get_bitmap (interp, objv[4]);
+	if (bitmap2 == NULL) goto cleanup;
 
-	    if (hwloc_bitmap_list_sscanf(bitmap1, bitmap_str1) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		hwloc_bitmap_free(bitmap1);
-		return TCL_ERROR;
-	    }
+	bitmap = hwloc_bitmap_alloc();
 
-	    bitmap_str2 = Tcl_GetString(objv[4]);
-	    bitmap2 = hwloc_bitmap_alloc();
+	if (index == BITMAP_AND) 
+	    hwloc_bitmap_and(bitmap, bitmap1, bitmap2);
+	else if (index == BITMAP_ANDNOT) 
+	    hwloc_bitmap_andnot(bitmap, bitmap1, bitmap2);
+	else if (index == BITMAP_OR) 
+	    hwloc_bitmap_or(bitmap, bitmap1, bitmap2);
+	else if (index == BITMAP_XOR) 
+	    hwloc_bitmap_xor(bitmap, bitmap1, bitmap2);
 
-	    if (hwloc_bitmap_list_sscanf(bitmap2, bitmap_str2) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		hwloc_bitmap_free(bitmap1);
-		hwloc_bitmap_free(bitmap2);
-		return TCL_ERROR;
-	    }
+	hwloc_bitmap_free(bitmap1);
+	hwloc_bitmap_free(bitmap2);
 
-	    bitmap = hwloc_bitmap_alloc();
+	return set_result_bitmap(interp, bitmap);
 
-	    if (index == BITMAP_AND) 
-		hwloc_bitmap_and(bitmap, bitmap1, bitmap2);
-	    else if (index == BITMAP_ANDNOT) 
-		hwloc_bitmap_andnot(bitmap, bitmap1, bitmap2);
-	    else if (index == BITMAP_OR) 
-		hwloc_bitmap_or(bitmap, bitmap1, bitmap2);
-	    else if (index == BITMAP_XOR) 
-		hwloc_bitmap_xor(bitmap, bitmap1, bitmap2);
-
-	    hwloc_bitmap_free(bitmap1);
-	    hwloc_bitmap_free(bitmap2);
-
-	    if (set_bitmap_result(interp, bitmap) == TCL_ERROR) { 
-		hwloc_bitmap_free(bitmap);
-		return TCL_ERROR;
-	    }
-	    hwloc_bitmap_free(bitmap);
-	    break;
-	}
     case BITMAP_NOT:
-	{
-	    const char *bitmap_str;
-	    hwloc_bitmap_t bitmap = NULL;
-	    hwloc_bitmap_t bitmap_res;
+	CHECK_FOR_ARG(4, "bitmap");
 
-	    CHECK_FOR_ARG(4, "bitmap");
+	bitmap = get_bitmap (interp, objv[3]);
+	if (bitmap == NULL) goto error;
 
-	    bitmap_str = Tcl_GetString(objv[3]);
-	    bitmap = hwloc_bitmap_alloc();
+	bitmap1 = hwloc_bitmap_alloc();
 
-	    if (hwloc_bitmap_list_sscanf(bitmap, bitmap_str) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		ERROR_EXIT;
-	    }
+	hwloc_bitmap_not(bitmap1, bitmap);
+	hwloc_bitmap_free(bitmap);
 
-	    bitmap_res = hwloc_bitmap_alloc();
+	return set_result_bitmap(interp, bitmap1);
 
-	    hwloc_bitmap_not(bitmap_res, bitmap);
-
-	    hwloc_bitmap_free(bitmap);
-
-	    if (set_bitmap_result(interp, bitmap_res) == TCL_ERROR) { 
-		hwloc_bitmap_free(bitmap_res);
-		return TCL_ERROR;
-	    }
-	    hwloc_bitmap_free(bitmap_res);
-	    break;
-	}
     case BITMAP_INTERSECTS:
     case BITMAP_IS_INCLUDED:
     case BITMAP_IS_EQUAL:
     case BITMAP_COMPARE:
     case BITMAP_COMPARE_FIRST:
-	{
-	    const char *bitmap_str1;
-	    const char *bitmap_str2;
-	    hwloc_bitmap_t bitmap1 = NULL;
-	    hwloc_bitmap_t bitmap2 = NULL;
-	    int res;
+	CHECK_FOR_ARG(5, "bitmapA bitmapB");
 
-	    CHECK_FOR_ARG(5, "bitmapA bitmapB");
+	bitmap1 = get_bitmap (interp, objv[3]);
+	if (bitmap1 == NULL) goto error;
 
-	    bitmap_str1 = Tcl_GetString(objv[3]);
-	    bitmap1 = hwloc_bitmap_alloc();
+	bitmap2 = get_bitmap (interp, objv[4]);
+	if (bitmap2 == NULL) goto cleanup;
 
-	    if (hwloc_bitmap_list_sscanf(bitmap1, bitmap_str1) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		hwloc_bitmap_free(bitmap1);
-		return TCL_ERROR;
-	    }
 
-	    bitmap_str2 = Tcl_GetString(objv[4]);
-	    bitmap2 = hwloc_bitmap_alloc();
+	if (index == BITMAP_INTERSECTS) 
+	    flag = hwloc_bitmap_intersects(bitmap1, bitmap2);
+	else if (index == BITMAP_IS_INCLUDED) 
+	    flag = hwloc_bitmap_isincluded(bitmap1, bitmap2);
+	else if (index == BITMAP_IS_EQUAL) 
+	    flag = hwloc_bitmap_isequal(bitmap1, bitmap2);
+	else if (index == BITMAP_COMPARE) 
+	    flag = hwloc_bitmap_compare(bitmap1, bitmap2);
+	else if (index == BITMAP_COMPARE_FIRST) 
+	    flag = hwloc_bitmap_compare_first(bitmap1, bitmap2);
 
-	    if (hwloc_bitmap_list_sscanf(bitmap2, bitmap_str2) == -1) {
-		Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-		hwloc_bitmap_free(bitmap1);
-		hwloc_bitmap_free(bitmap2);
-		return TCL_ERROR;
-	    }
+	hwloc_bitmap_free(bitmap1);
+	hwloc_bitmap_free(bitmap2);
 
-	    res = 0;
-	    if (index == BITMAP_INTERSECTS) 
-		res = hwloc_bitmap_intersects(bitmap1, bitmap2);
-	    else if (index == BITMAP_IS_INCLUDED) 
-		res = hwloc_bitmap_isincluded(bitmap1, bitmap2);
-	    else if (index == BITMAP_IS_EQUAL) 
-		res = hwloc_bitmap_isequal(bitmap1, bitmap2);
-	    else if (index == BITMAP_COMPARE) 
-		res = hwloc_bitmap_compare(bitmap1, bitmap2);
-	    else if (index == BITMAP_COMPARE_FIRST) 
-		res = hwloc_bitmap_compare_first(bitmap1, bitmap2);
+	Tcl_SetObjResult(interp, Tcl_NewIntObj (flag));
+	break;
 
-	    Tcl_SetObjResult(interp, Tcl_NewIntObj((int) res));
-	    hwloc_bitmap_free(bitmap1);
-	    hwloc_bitmap_free(bitmap2);
-	    break;
-	}
     default:
 	return TCL_ERROR;
     }
 
     return TCL_OK;
+ cleanup:
+    if (bitmap  != NULL) hwloc_bitmap_free (bitmap);
+    if (bitmap1 != NULL) hwloc_bitmap_free (bitmap1);
+    if (bitmap2 != NULL) hwloc_bitmap_free (bitmap2);
+ error:
+    return TCL_ERROR;
 }
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */

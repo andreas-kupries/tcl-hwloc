@@ -86,7 +86,7 @@ foreach {n op p} {
 	test hwloc-bitmap-3.$n.2 "unary bitmap operations, $op, bad bitmap" -body {
 	    hwloc bitmap $op X
 	} -returnCodes error \
-	    -result {failed to parse cpuset}
+	    -result {Expected bitmap but got "X"}
     } else {
 	test hwloc-bitmap-3.$n.2 "unary bitmap operations, $op, bad integer" -body {
 	    hwloc bitmap $op X
@@ -158,7 +158,7 @@ foreach {n id} {
 
 test hwloc-bitmap-3.3.3 "unary bitmap operations, first (empty)" -body {
     hwloc bitmap first {}
-} -returnCodes error -result {hwloc_bitmap_first error}
+} -returnCodes error -result {first is undefined for empty bitmap}
 
 test hwloc-bitmap-3.8.3 "unary bitmap operations, singlify (empty)" -body {
     hwloc bitmap singlify {}
@@ -235,15 +235,15 @@ foreach {n v r} {
 
 test hwloc-bitmap-3.6.3 "unary bitmap operations, last (empty)" -body {
     hwloc bitmap last {}
-} -returnCodes error -result {hwloc_bitmap_last error}
+} -returnCodes error -result {last is undefined for empty bitmap}
 
 test hwloc-bitmap-3.6.13 "unary bitmap operations, last (infinite set)" -body {
     hwloc bitmap last 0-
-} -returnCodes error -result {hwloc_bitmap_last error}
+} -returnCodes error -result {last is undefined for infinite bitmap}
 
 test hwloc-bitmap-3.6.14 "unary bitmap operations, last (infinite set)" -body {
     hwloc bitmap last 4-
-} -returnCodes error -result {hwloc_bitmap_last error}
+} -returnCodes error -result {last is undefined for infinite bitmap}
 
 foreach {n v r} {
     4  0     0
@@ -352,13 +352,13 @@ foreach {n op p} {
     test hwloc-bitmap-4.$n.3 "binary bitmap operations, $op, bad bitmap" -body {
 	hwloc bitmap $op X Y
     } -returnCodes error \
-	-result {failed to parse cpuset}
+	-result {Expected bitmap but got "X"}
 
     if {$n >= 4} {
 	test hwloc-bitmap-4.$n.4 "binary bitmap operations, $op, bad bitmap" -body {
 	    hwloc bitmap $op 0- Y
 	} -returnCodes error \
-	    -result {failed to parse cpuset}
+	    -result {Expected bitmap but got "Y"}
 
     } else {
 	test hwloc-bitmap-4.$n.4 "binary bitmap operations, $op, bad integer" -body {
@@ -676,7 +676,7 @@ foreach {n op} {
     test hwloc-bitmap-5.$n.4 "trinary bitmap operations, $op, bad bitmap" -body {
 	hwloc bitmap $op X Y Z
     } -returnCodes error \
-	-result {failed to parse cpuset}
+	-result {Expected bitmap but got "X"}
 
     test hwloc-bitmap-5.$n.5 "trinary bitmap operations, $op, bad start index" -body {
 	hwloc bitmap $op 0- Y Z
