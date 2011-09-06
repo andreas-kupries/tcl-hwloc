@@ -11,9 +11,9 @@
  * Function Prototypes
  */
 
-static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
-static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
-static int parse_set_flags(Tcl_Interp *interp, Tcl_Obj *obj, int *result);
+static int HwlocCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
+static int parse_create_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
+static int parse_set_flags (Tcl_Interp *interp, Tcl_Obj *obj, int *result);
 
 /*
  * Function Bodies
@@ -27,21 +27,15 @@ int Hwloc_Init(Tcl_Interp *interp) {
     Tcl_CreateObjCommand(interp, "hwloc", HwlocCmd, (ClientData) NULL, NULL);
 
     Tcl_PkgProvide(interp, "hwloc", "1.0");
-
     return TCL_OK;
 }
 
 static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     static const char* cmds[] = {
-        "version",
-        "create",
-        "bitmap",
-        NULL
+        "bitmap", "create", "version", NULL
     };
     enum options {
-        HWLOC_VERSION,
-        HWLOC_CREATE,
-        HWLOC_BITMAP
+        HWLOC_BITMAP, HWLOC_CREATE, HWLOC_VERSION
     };
     int index;
 
@@ -50,8 +44,9 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
         return TCL_ERROR;
     }
 
-    if (Tcl_GetIndexFromObj(interp, objv[1], cmds, "option", 0, &index) != TCL_OK)
+    if (Tcl_GetIndexFromObj(interp, objv[1], cmds, "option", 0, &index) != TCL_OK) {
         return TCL_ERROR;
+    }
 
     switch (index) {
     case HWLOC_VERSION:
@@ -61,18 +56,20 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
                 return TCL_ERROR;
             }
             
-            Tcl_Obj *objPtr = Tcl_NewIntObj((int) hwloc_get_api_version());
-            Tcl_SetObjResult(interp, objPtr);
+            Tcl_SetObjResult(interp, Tcl_NewIntObj ((int) hwloc_get_api_version()));
             break;
         }
     case HWLOC_CREATE:
         {
+            topo_data* data;
+
             if (objc < 3) {
                 Tcl_WrongNumArgs(interp, 2, objv, "name ?arg? ...");
                 return TCL_ERROR;
             }
             
-            topo_data* data = (struct topo_data *) ckalloc(sizeof(struct topo_data));
+	    data = (topo_data *) ckalloc(sizeof(topo_data));
+
             if (hwloc_topology_init(&data->topology) == -1) {
 		Tcl_SetResult(interp, "failed to initialize topology", TCL_STATIC);
 		ckfree((char *) data);
@@ -80,8 +77,9 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
             }
 
             if (objc > 3) {
-		if (parse_create_args(data, interp, objc, objv) == TCL_ERROR)
+		if (parse_create_args(data, interp, objc, objv) == TCL_ERROR) {
 		    return TCL_ERROR;
+		}
             }
 
             if (hwloc_topology_load(data->topology) == -1) {
@@ -106,8 +104,9 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
                 return TCL_ERROR;
             }
             
-	    if (parse_bitmap_args(interp, objc, objv) == TCL_ERROR)
+	    if (parse_bitmap_args(interp, objc, objv) == TCL_ERROR) {
 		return TCL_ERROR;
+	    }
 	}
     }
 
@@ -117,42 +116,38 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 /* Already have processed the 3 first arguments */
 static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     static const char* cmds[] = {
-        "-ignore_type",
-        "-ignore_type_keep_structure",
-        "-ignore_all_keep_structure",
-        "-set_flags",
-        "-set_fsroot",
-        "-set_pid",
-        "-set_synthetic",
-        "-set_xml",
+        "-ignore_all_keep_structure",  "-ignore_type",
+        "-ignore_type_keep_structure", "-set_flags",
+        "-set_fsroot",                 "-set_pid",
+        "-set_synthetic",              "-set_xml",
         NULL
     };
     enum options {
-        CREATE_IGNORE_TYPE,
-        CREATE_IGNORE_TYPE_KEEP_STRUCTURE,
-        CREATE_IGNORE_ALL_KEEP_STRUCTURE,
-        CREATE_SET_FLAGS,
-        CREATE_SET_FSROOT,
-        CREATE_SET_PID,
-        CREATE_SET_SYNTHETIC,
-        CREATE_SET_XML
+        CREATE_IGNORE_ALL_KEEP_STRUCTURE,   CREATE_IGNORE_TYPE,
+        CREATE_IGNORE_TYPE_KEEP_STRUCTURE,  CREATE_SET_FLAGS,
+        CREATE_SET_FSROOT,                  CREATE_SET_PID,
+        CREATE_SET_SYNTHETIC,               CREATE_SET_XML
     };
     int index;
-
     int objc_curr = 4;
+
     while (objc_curr < objc) {
-        if (Tcl_GetIndexFromObj(interp, objv[objc_curr - 1], cmds, "option", objc_curr, &index) != TCL_OK)
+        if (Tcl_GetIndexFromObj(interp, objv[objc_curr - 1], cmds, "option", objc_curr, &index) != TCL_OK) {
             return TCL_ERROR;
+	}
 
         switch (index) {
 	case CREATE_IGNORE_TYPE: /* -ignore_type type */
 	    {
+		hwloc_obj_type_t type;
+
 		if (objc < objc_curr + 1) {
 		    Tcl_WrongNumArgs(interp, objc_curr, objv, "type");
 		    goto on_error;
 		}
 
-		hwloc_obj_type_t type = hwloc_obj_type_of_string(Tcl_GetString(objv[objc_curr]));
+		type = hwloc_obj_type_of_string(Tcl_GetString(objv[objc_curr]));
+
 		if (type == -1) {
 		    Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
 		    goto on_error;
@@ -168,12 +163,14 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 	    }
 	case CREATE_IGNORE_TYPE_KEEP_STRUCTURE: /* -ignore_type_keep_structure type */
 	    {
+		hwloc_obj_type_t type;
+
 		if (objc < objc_curr + 1) {
 		    Tcl_WrongNumArgs(interp, objc_curr, objv, "type");
 		    goto on_error;
 		}
 
-		hwloc_obj_type_t type = hwloc_obj_type_of_string(Tcl_GetString(objv[objc_curr]));
+		type = hwloc_obj_type_of_string(Tcl_GetString(objv[objc_curr]));
 		if (type == -1) {
 		    Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
 		    goto on_error;
@@ -199,12 +196,16 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 	    }
 	case CREATE_SET_FLAGS: /* -set_flags flags */
 	    {
+		int flags = 0;
+
 		if (objc < objc_curr + 1) {
 		    Tcl_WrongNumArgs(interp, objc_curr, objv, "flags");
 		    goto on_error;
 		}
-		int flags = 0;
-		if (parse_set_flags(interp, objv[objc_curr], &flags) == TCL_ERROR) goto on_error;
+
+		if (parse_set_flags(interp, objv[objc_curr], &flags) == TCL_ERROR) {
+		    goto on_error;
+		}
 
 		if (hwloc_topology_set_flags(data->topology, flags) == -1) {
 		    Tcl_SetResult(interp, "hwloc_topology_set_flags() failed", TCL_STATIC);
@@ -231,13 +232,16 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 	    }
 	case CREATE_SET_PID: /* -set_pid pid */
 	    {
+		int pid = 0;
+
 		if (objc < objc_curr + 1) {
 		    Tcl_WrongNumArgs(interp, objc_curr, objv, "pid");
 		    goto on_error;
 		}
 
-		int pid = 0;
-		if (Tcl_GetIntFromObj(interp, objv[objc_curr], &pid) == TCL_ERROR) goto on_error;
+		if (Tcl_GetIntFromObj(interp, objv[objc_curr], &pid) == TCL_ERROR) {
+		    goto on_error;
+		}
 
 		if (hwloc_topology_set_pid(data->topology, (hwloc_pid_t) pid) == -1) {
 		    Tcl_SetResult(interp, "hwloc_topology_set_pid() failed", TCL_STATIC);
@@ -287,7 +291,7 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 		return TCL_ERROR;
 	    }
         }
-    } // while
+    } /* while */
 
     return TCL_OK;
 
@@ -296,46 +300,34 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
     return TCL_ERROR;
 }
 
-static int parse_set_flags(Tcl_Interp *interp, Tcl_Obj *obj, int *result) {
+static int
+parse_set_flags(Tcl_Interp *interp, Tcl_Obj *obj, int *result) {
     static const char* flags[] = {
-        "whole_system",
-        "this_system",
-        NULL
+	"this_system", "whole_system", NULL
     };
     enum options {
-        SET_WHOLE_SYSTEM,
-        SET_THIS_SYSTEM
+        SET_THIS_SYSTEM, SET_WHOLE_SYSTEM
     };
-    int index;
+    static int map [] = {
+	HWLOC_TOPOLOGY_FLAG_IS_THISSYSTEM,
+	HWLOC_TOPOLOGY_FLAG_WHOLE_SYSTEM
+    };
 
+    int i, index;
+
+    int       obj_objc;
     Tcl_Obj **obj_objv;
-    int obj_objc;
+
     if (Tcl_ListObjGetElements(interp, obj, &obj_objc, &obj_objv) == TCL_ERROR) {
         Tcl_SetResult(interp, "parsing flags failed", TCL_STATIC);
         return TCL_ERROR;
     }
 
-    int i;
     for (i = 0; i < obj_objc; i++) {
-        if (Tcl_GetIndexFromObj(interp, obj_objv[i], flags, "flag", 0, &index) != TCL_OK)
+        if (Tcl_GetIndexFromObj(interp, obj_objv[i], flags, "flag", 0, &index) != TCL_OK) {
             return TCL_ERROR;
-
-        switch (index) {
-	case SET_WHOLE_SYSTEM:
-	    {
-		*result |= HWLOC_TOPOLOGY_FLAG_WHOLE_SYSTEM;
-		break;
-	    }
-	case SET_THIS_SYSTEM:
-	    {
-		*result |= HWLOC_TOPOLOGY_FLAG_IS_THISSYSTEM;
-		break;
-	    }
-	default:
-	    {
-		return TCL_ERROR;
-	    }
-        }
+	}
+	*result |= map [index];
     }
 
     return TCL_OK;
