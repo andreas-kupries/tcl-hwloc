@@ -31,7 +31,7 @@ test hwloc-bitmap-1.0 {wrong\#args, missing method} -body {
 test hwloc-bitmap-1.1 {bad method name} -body {
     hwloc bitmap xxx
 } -returnCodes error \
-    -result {bad option "xxx": must be empty, full, only, allbut, from_ulong, to_ulong, set, set_range, clear, clear_range, singlify, is_set, is_empty, is_full, first, next, last, weight, or, and, andnot, xor, not, intersects, is_included, is_equal, compare, or compare_first}
+    -result {bad option "xxx": must be allbut, and, andnot, clear, clear_range, compare, compare_first, empty, first, from_ulong, full, intersects, is_empty, is_equal, is_full, is_included, is_set, last, next, not, only, or, set, set_range, singlify, to_ulong, weight, or xor}
 
 # # ## ### ##### ######## ############# #####################
 ## 0-ary operators, constant bitmaps
