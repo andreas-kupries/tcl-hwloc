@@ -1,0 +1,91 @@
+[comment {-*- tcl -*- doctools manpage}]
+[manpage_begin tcl-hwloc n 0.1]
+[copyright {2011 George Andreou, Andreas Kupries}]
+[copyright {2011 Documentation, Andreas Kupries}]
+[moddesc   {Tcl Hwloc}]
+[titledesc {Tcl Hwloc Binding}]
+[require Tcl 8.5]
+[require hwloc [opt 0.1]]
+[description]
+[keywords hwloc {portable hardware locality} {hardware Locality}]
+[keywords {memory binding} {binding memory}]
+[keywords {cpu binding} {binding cpu}]
+[keywords numa multi-core thread process parallel beowulf cache]
+[keywords {processing unit}]
+
+This package is a binding to the
+[url http://www.open-mpi.org/projects/hwloc/ "Portable Hardware Locality"]
+library (short: hwloc), making its functionality available to Tcl scripts.
+
+[comment =====================================================================]
+[section {Class API}]
+[list_begin definitions]
+
+[call [cmd hwloc] [method bitmap] [arg ...]]
+
+[call [cmd hwloc create] [arg ...]]
+
+[call [cmd hwloc] [method version]]
+
+This method returns HWloc's API version as its result.
+
+[list_end]
+
+
+[comment =====================================================================]
+[section {Bitmap API}]
+
+The methods in this section all deals with hwloc's bitmaps, which are
+used to represent sets of nodes, cpus, etc. An important thing to note
+is that such bitmaps can be infinite, in the sense that a finite
+header may be followed by an infinite trailer of 1-bits (with no
+0-bits anymore).
+
+[list_begin definitions]
+
+[call [cmd {hwloc bitmap}] [method empty]]
+[call [cmd {hwloc bitmap}] [method full]]
+
+[call [cmd {hwloc bitmap}] [method allbut] [arg id]]
+[call [cmd {hwloc bitmap}] [method first] [arg bitmap]]
+[call [cmd {hwloc bitmap}] [method from_ulong] [arg mask]]
+[call [cmd {hwloc bitmap}] [method is_empty] [arg bitmap]]
+[call [cmd {hwloc bitmap}] [method is_full] [arg bitmap]]
+[call [cmd {hwloc bitmap}] [method last] [arg bitmap]]
+[call [cmd {hwloc bitmap}] [method not] [arg bitmap]]
+[call [cmd {hwloc bitmap}] [method only] [arg id]]
+[call [cmd {hwloc bitmap}] [method singlify] [arg bitmap]]
+[call [cmd {hwloc bitmap}] [method to_ulong] [arg bitmap]]
+[call [cmd {hwloc bitmap}] [method weight] [arg bitmap]]
+
+[call [cmd {hwloc bitmap}] [method clear] [arg bitmap] [arg id]]
+[call [cmd {hwloc bitmap}] [method is_set] [arg bitmap] [arg id]]
+[call [cmd {hwloc bitmap}] [method set] [arg bitmap] [arg id]]
+[call [cmd {hwloc bitmap}] [method next] [arg bitmap] [arg prev]]
+
+[call [cmd {hwloc bitmap}] [method is_included] [arg bitmap1] [arg bitmap2]]
+[call [cmd {hwloc bitmap}] [method and] [arg bitmap1] [arg bitmap2]]
+[call [cmd {hwloc bitmap}] [method andnot] [arg bitmap1] [arg bitmap2]]
+[call [cmd {hwloc bitmap}] [method compare] [arg bitmap1] [arg bitmap2]]
+[call [cmd {hwloc bitmap}] [method compare_first] [arg bitmap1] [arg bitmap2]]
+[call [cmd {hwloc bitmap}] [method intersects] [arg bitmap1] [arg bitmap2]]
+[call [cmd {hwloc bitmap}] [method is_equal] [arg bitmap1] [arg bitmap2]]
+[call [cmd {hwloc bitmap}] [method or] [arg bitmap1] [arg bitmap2]]
+[call [cmd {hwloc bitmap}] [method xor] [arg bitmap1] [arg bitmap2]]
+
+[call [cmd {hwloc bitmap}] [method clear_range] [arg bitmap] [arg begin] [arg end]]
+[call [cmd {hwloc bitmap}] [method set_range] [arg bitmap] [arg begin] [arg end]]
+
+[list_end]
+
+[comment =====================================================================]
+[section {Instance API}]
+[list_begin definitions]
+
+
+[call [cmd ...] [arg ...]]
+
+
+[list_end]
+[manpage_end]
+

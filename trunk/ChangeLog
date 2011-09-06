@@ -1,5 +1,8 @@
 2011-09-06  Andreas Kupries  <andreask@activestate.com>
 
+	* doc/tcl-hwloc.man: Started writing a doctools based
+	  manpage. Currently mainly a skeleton.
+
 	* tests/sample.test: Removed leftovers from the sample-extension.
 	* tests/tclsample.test:
 
