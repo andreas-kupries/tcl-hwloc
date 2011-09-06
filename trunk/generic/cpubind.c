@@ -9,7 +9,7 @@
 static int parse_flags (Tcl_Interp *interp, int *result, Tcl_Obj *obj);
 
 /* topology cpubind ?-pid pid? ?-type flags_list? ... */
-int parse_cpubind_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+int parse_cpubind_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     static const char* cmds[] = {
         "set",
         "get",
@@ -44,112 +44,112 @@ int parse_cpubind_args(struct topo_data *data, Tcl_Interp *interp, int objc, Tcl
     }
 
     switch (index) {
-        case CPUBIND_SET:
-            {
-                if (objc == objv_idx+1) {
-                    const char *setstr = Tcl_GetString(objv[objv_idx]);
-                    hwloc_bitmap_t set = hwloc_bitmap_alloc();
-                    if (hwloc_bitmap_list_sscanf(set, setstr) == -1) {
-                        Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
-                        hwloc_bitmap_free(set);
-                        return TCL_ERROR;
-                    }
+    case CPUBIND_SET:
+	{
+	    if (objc == objv_idx+1) {
+		const char *setstr = Tcl_GetString(objv[objv_idx]);
+		hwloc_bitmap_t set = hwloc_bitmap_alloc();
+		if (hwloc_bitmap_list_sscanf(set, setstr) == -1) {
+		    Tcl_SetResult(interp, "failed to parse cpuset", TCL_STATIC);
+		    hwloc_bitmap_free(set);
+		    return TCL_ERROR;
+		}
 
-                    if (pid) {
-                        if (hwloc_set_proc_cpubind(data->topology, pid, set, flags) == -1) {
-                            Tcl_SetResult(interp, "hwloc_set_proc_cpubind() failed", TCL_STATIC);
-                            hwloc_bitmap_free(set);
-                            return TCL_ERROR;
-                        }
-                    } else {
-                        if (hwloc_set_cpubind(data->topology, set, flags) == -1) {
-                            Tcl_SetResult(interp, "hwloc_set_cpubind() failed", TCL_STATIC);
-                            hwloc_bitmap_free(set);
-                            return TCL_ERROR;
-                        }
-                    }
+		if (pid) {
+		    if (hwloc_set_proc_cpubind(data->topology, pid, set, flags) == -1) {
+			Tcl_SetResult(interp, "hwloc_set_proc_cpubind() failed", TCL_STATIC);
+			hwloc_bitmap_free(set);
+			return TCL_ERROR;
+		    }
+		} else {
+		    if (hwloc_set_cpubind(data->topology, set, flags) == -1) {
+			Tcl_SetResult(interp, "hwloc_set_cpubind() failed", TCL_STATIC);
+			hwloc_bitmap_free(set);
+			return TCL_ERROR;
+		    }
+		}
 
-                    hwloc_bitmap_free(set);
-                } else {
-                    Tcl_WrongNumArgs(interp, objv_idx, objv, "cpuset");
-                    return TCL_ERROR;
-                }
-                break;
-            }
-        case CPUBIND_GET:
-            {
-                if (objc > objv_idx) {
-                    Tcl_WrongNumArgs(interp, objv_idx, objv, NULL);
-                    return TCL_ERROR;
-                }
+		hwloc_bitmap_free(set);
+	    } else {
+		Tcl_WrongNumArgs(interp, objv_idx, objv, "cpuset");
+		return TCL_ERROR;
+	    }
+	    break;
+	}
+    case CPUBIND_GET:
+	{
+	    if (objc > objv_idx) {
+		Tcl_WrongNumArgs(interp, objv_idx, objv, NULL);
+		return TCL_ERROR;
+	    }
 
-                hwloc_bitmap_t set = hwloc_bitmap_alloc();
+	    hwloc_bitmap_t set = hwloc_bitmap_alloc();
 
-                if (pid) {
-                    if (hwloc_get_proc_cpubind(data->topology, pid, set, flags) == -1) {
-                        Tcl_SetResult(interp, "hwloc_get_proc_cpubind() failed", TCL_STATIC);
-                        hwloc_bitmap_free(set);
-                        return TCL_ERROR;
-                    }
-                } else {
-                    if (hwloc_get_cpubind(data->topology, set, flags) == -1) {
-                        Tcl_SetResult(interp, "hwloc_get_cpubind() failed", TCL_STATIC);
-                        hwloc_bitmap_free(set);
-                        return TCL_ERROR;
-                    }
-                }
+	    if (pid) {
+		if (hwloc_get_proc_cpubind(data->topology, pid, set, flags) == -1) {
+		    Tcl_SetResult(interp, "hwloc_get_proc_cpubind() failed", TCL_STATIC);
+		    hwloc_bitmap_free(set);
+		    return TCL_ERROR;
+		}
+	    } else {
+		if (hwloc_get_cpubind(data->topology, set, flags) == -1) {
+		    Tcl_SetResult(interp, "hwloc_get_cpubind() failed", TCL_STATIC);
+		    hwloc_bitmap_free(set);
+		    return TCL_ERROR;
+		}
+	    }
 
-                char *list;
-                if (hwloc_bitmap_list_asprintf(&list, set) == -1) {
-                    Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
-                    hwloc_bitmap_free(set);
-                    return TCL_ERROR;
-                }
+	    char *list;
+	    if (hwloc_bitmap_list_asprintf(&list, set) == -1) {
+		Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
+		hwloc_bitmap_free(set);
+		return TCL_ERROR;
+	    }
 
-                Tcl_Obj *objPtr = Tcl_NewStringObj(list, -1);
-                Tcl_SetObjResult(interp, objPtr);
+	    Tcl_Obj *objPtr = Tcl_NewStringObj(list, -1);
+	    Tcl_SetObjResult(interp, objPtr);
 
-                hwloc_bitmap_free(set);
-                free(list);
-                break;
-            }
-        case CPUBIND_LAST:
-            {
-                if (objc > objv_idx) {
-                    Tcl_WrongNumArgs(interp, objv_idx, objv, NULL);
-                    return TCL_ERROR;
-                }
+	    hwloc_bitmap_free(set);
+	    free(list);
+	    break;
+	}
+    case CPUBIND_LAST:
+	{
+	    if (objc > objv_idx) {
+		Tcl_WrongNumArgs(interp, objv_idx, objv, NULL);
+		return TCL_ERROR;
+	    }
 
-                hwloc_bitmap_t set = hwloc_bitmap_alloc();
+	    hwloc_bitmap_t set = hwloc_bitmap_alloc();
 
-                if (pid) {
-                    if (hwloc_get_proc_last_cpu_location(data->topology, pid, set, flags) == -1) {
-                        Tcl_SetResult(interp, "hwloc_get_proc_last_cpu_location() failed", TCL_STATIC);
-                        hwloc_bitmap_free(set);
-                        return TCL_ERROR;
-                    }
-                } else {
-                    if (hwloc_get_last_cpu_location(data->topology, set, flags) == -1) {
-                        Tcl_SetResult(interp, "hwloc_get_last_cpu_location() failed", TCL_STATIC);
-                        hwloc_bitmap_free(set);
-                        return TCL_ERROR;
-                    }
-                }
+	    if (pid) {
+		if (hwloc_get_proc_last_cpu_location(data->topology, pid, set, flags) == -1) {
+		    Tcl_SetResult(interp, "hwloc_get_proc_last_cpu_location() failed", TCL_STATIC);
+		    hwloc_bitmap_free(set);
+		    return TCL_ERROR;
+		}
+	    } else {
+		if (hwloc_get_last_cpu_location(data->topology, set, flags) == -1) {
+		    Tcl_SetResult(interp, "hwloc_get_last_cpu_location() failed", TCL_STATIC);
+		    hwloc_bitmap_free(set);
+		    return TCL_ERROR;
+		}
+	    }
 
-                char *list;
-                if (hwloc_bitmap_list_asprintf(&list, set) == -1) {
-                    Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
-                    hwloc_bitmap_free(set);
-                    return TCL_ERROR;
-                }
+	    char *list;
+	    if (hwloc_bitmap_list_asprintf(&list, set) == -1) {
+		Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
+		hwloc_bitmap_free(set);
+		return TCL_ERROR;
+	    }
 
-                Tcl_Obj *objPtr = Tcl_NewStringObj(list, -1);
-                Tcl_SetObjResult(interp, objPtr);
+	    Tcl_Obj *objPtr = Tcl_NewStringObj(list, -1);
+	    Tcl_SetObjResult(interp, objPtr);
 
-                hwloc_bitmap_free(set);
-                free(list);
-                break;
-            }
+	    hwloc_bitmap_free(set);
+	    free(list);
+	    break;
+	}
     }
 
     return TCL_OK;
@@ -184,11 +184,11 @@ static int parse_flags (Tcl_Interp *interp, int *result, Tcl_Obj *obj) {
             return TCL_ERROR;
 
         switch(index) {
-            case CPUBIND_PROCESS: { *result |= HWLOC_CPUBIND_PROCESS; break; }
-            case CPUBIND_THREAD: { *result |= HWLOC_CPUBIND_THREAD; break; }
-            case CPUBIND_STRICT: { *result |= HWLOC_CPUBIND_STRICT; break; }
-            case CPUBIND_NOMEMBIND: { *result |= HWLOC_CPUBIND_NOMEMBIND; break; }
-            default:
+	case CPUBIND_PROCESS: { *result |= HWLOC_CPUBIND_PROCESS; break; }
+	case CPUBIND_THREAD: { *result |= HWLOC_CPUBIND_THREAD; break; }
+	case CPUBIND_STRICT: { *result |= HWLOC_CPUBIND_STRICT; break; }
+	case CPUBIND_NOMEMBIND: { *result |= HWLOC_CPUBIND_NOMEMBIND; break; }
+	default:
             {
                 Tcl_SetResult(interp, "unrecognized flag", TCL_STATIC);
                 return TCL_ERROR;
@@ -198,4 +198,12 @@ static int parse_flags (Tcl_Interp *interp, int *result, Tcl_Obj *obj) {
 
     return TCL_OK;
 }
-
+
+/* vim: set sts=4 sw=4 tw=80 et ft=c: */
+/*
+ * Local Variables:
+ * mode: c
+ * c-basic-offset: 4
+ * fill-column: 78
+ * End:
+ */
