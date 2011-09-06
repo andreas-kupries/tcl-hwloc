@@ -368,6 +368,67 @@ foreach {n op p} {
     }
 }
 
+# - -- --- ----- -------- ------------- ---------------------
+# clear = 'andnot' for single bit.
+
+foreach {n v id r} {
+    5  0-    0 1-
+    6  3-    0 3-
+    7  0-    3 0-2,4-
+    8  1,4,7 0 1,4,7
+    9  1,4,7 4 1,7
+} {
+    test hwloc-bitmap-4.0.$n "unary bitmap operations, clear, \"$v - $id\"" -body {
+	hwloc bitmap clear $v $id
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# is_set = test of single bit.
+
+foreach {n v id r} {
+    5  0-    0 1
+    6  3-    0 0
+    7  0-    3 1
+    8  1,4,7 0 0
+    9  1,4,7 4 1
+} {
+    test hwloc-bitmap-4.1.$n "unary bitmap operations, is_set, \"$v + $id\"" -body {
+	hwloc bitmap is_set $v $id
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# set = 'or' for single bit.
+
+foreach {n v id r} {
+    5  0-    0 0-
+    6  3-    0 0,3-
+    7  0-    3 0-
+    8  1,4,7 0 0-1,4,7
+    9  1,4,7 4 1,4,7
+} {
+    test hwloc-bitmap-4.2.$n "unary bitmap operations, set, \"$v + $id\"" -body {
+	hwloc bitmap set $v $id
+    } -result $r
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+# next = find next set bit greater than 'prev'. for iteration
+# over a set, adjunct to the unary method 'first'.
+
+foreach {n v id r} {
+    5  0-    0 1
+    6  3-    0 3
+    7  0-    3 4
+    8  1,4,7 0 1
+    9  1,4,7 4 7
+} {
+    test hwloc-bitmap-4.3.$n "unary bitmap operations, next, \"$v $id\"" -body {
+	hwloc bitmap next $v $id
+    } -result $r
+}
+
 # # ## ### ##### ######## ############# #####################
 ## trinary operators
 
@@ -419,12 +480,8 @@ puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 set full  [hwloc bitmap full]
 set empty [hwloc bitmap empty]
 
-puts "set: [hwloc bitmap set $empty 1]"
 puts "set_range: [hwloc bitmap set_range $empty 0 1]"
-puts "clear: [hwloc bitmap clear $full 1]"
 puts "clear_range: [hwloc bitmap clear_range $full 0 1]"
-
-puts "is_set: [hwloc bitmap is_set $full 0]"
 
 puts "or: [hwloc bitmap or $empty $full]"
 puts "and: [hwloc bitmap and $empty $full]"
@@ -437,8 +494,6 @@ puts "is_included: [hwloc bitmap is_included 1 $full]"
 puts "is_equal: [hwloc bitmap is_equal $full 1]"
 puts "compare: [hwloc bitmap compare $full 1]"
 puts "compare_first: [hwloc bitmap compare_first $full 1]"
-
-puts "next: [hwloc bitmap next $full 1]"
 
 puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 
