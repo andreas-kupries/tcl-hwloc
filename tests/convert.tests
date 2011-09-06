@@ -1,7 +1,0 @@
-load ./libhwloc1.0.so
-hwloc create topo0
-puts "cpuset to nodeset:[topo0 convert -to_nodeset 0]"
-puts "nodeset to cpuset:[topo0 convert -to_cpuset 0]"
-puts "cpuset to nodeset (strict):[topo0 convert -strict -to_nodeset 0]"
-puts "nodeset to cpuset (strict):[topo0 convert -strict -to_cpuset 0]"
-topo0 destroy

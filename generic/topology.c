@@ -22,9 +22,9 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
         NULL
     };
     enum options {
-        TOPO_CONVERT, TOPO_CPUBIND, TOPO_CPUSET,   TOPO_DEPTH,
-	TOPO_DESTROY, TOPO_EXPORT, TOPO_LOCAL,     TOPO_MEMBIND,
-	TOPO_NODESET, TOPO_OBJECT, TOPO_OBJECT_BY, TOPO_ROOT,
+        TOPO_CONVERT, TOPO_CPUBIND, TOPO_CPUSET,    TOPO_DEPTH,
+	TOPO_DESTROY, TOPO_EXPORT,  TOPO_LOCAL,     TOPO_MEMBIND,
+	TOPO_NODESET, TOPO_OBJECT,  TOPO_OBJECT_BY, TOPO_ROOT,
 	TOPO_TYPE,    TOPO_WIDTH
     };
     int index;
@@ -39,7 +39,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
     }
 
     switch (index) {
-    case TOPO_DESTROY: /* destory */
+    case TOPO_DESTROY: /* destroy */
         {
             if (objc > 2) {
                 Tcl_WrongNumArgs(interp, 2, objv, NULL);
@@ -292,11 +292,6 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
         }
     case TOPO_CONVERT: /* convert...*/
         {
-            if (objc < 3) {
-                Tcl_WrongNumArgs(interp, 2, objv, "args..");
-                return TCL_ERROR;
-            }
-
             return parse_convert_args(data, interp, objc, objv);
             break;
         }
@@ -435,6 +430,7 @@ parse_convert_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
         return TCL_ERROR;
     }
 
+    /* TODO: publicize 'get_bitmap' in bitmap.c, reuse everywhere. */
     setstr = Tcl_GetString(objv[3+offset]);
     from_set = hwloc_bitmap_alloc();
 

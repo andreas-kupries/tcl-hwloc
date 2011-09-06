@@ -1,3 +1,4 @@
+puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 load ./libhwloc1.0.so
 hwloc create topo0
 puts [topo0 type -depth 1]

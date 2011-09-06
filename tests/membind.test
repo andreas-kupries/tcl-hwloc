@@ -1,3 +1,4 @@
+puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 load ./libhwloc1.0.so
 if [catch {
 hwloc create topo0
