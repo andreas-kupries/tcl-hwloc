@@ -95,8 +95,6 @@ foreach {n op p} {
     }
 }
 
-# TODO: from_ulong, allbut, only => handling of negative integer input.
-
 # - -- --- ----- -------- ------------- ---------------------
 # from_ulong, to_ulong (complementary operations)
 
@@ -121,6 +119,11 @@ foreach {n v r} {
     } -result $v
 }
 
+# The binding treats negative numbers as unsigned, i.e. large positive.
+test hwloc-bitmap-3.0.13 "unary bitmap operations, from_ulong -1" -body {
+    hwloc bitmap from_ulong -1
+} -result 0-31
+
 # - -- --- ----- -------- ------------- ---------------------
 # allbut = full & !bitmap-of(id)
 
@@ -136,6 +139,10 @@ foreach {n id r} {
     } -result $r
 }
 
+test hwloc-bitmap-3.1.8 "unary bitmap operations, allbut, \"-1\"" -body {
+    hwloc bitmap allbut -1
+} -returnCodes error -result {Expected integer >= 0 but got "-1"}
+
 # - -- --- ----- -------- ------------- ---------------------
 # only = empty | bitmap-of(id)
 
@@ -150,6 +157,10 @@ foreach {n id} {
 	hwloc bitmap only $id
     } -result $id
 }
+
+test hwloc-bitmap-3.2.8 "unary bitmap operations, allbut, \"-1\"" -body {
+    hwloc bitmap only -1
+} -returnCodes error -result {Expected integer >= 0 but got "-1"}
 
 # - -- --- ----- -------- ------------- ---------------------
 # first (bit of the set, errors on empty set).
@@ -421,20 +432,25 @@ foreach {n v id r} {
 # over a set, adjunct to the unary method 'first'.
 
 foreach {n v id r} {
-    5  0-    0 1
-    6  3-    0 3
-    7  0-    3 4
-    8  1,4,7 0 1
-    9  1,4,7 4 7
+    5  0-     0 1
+    6  3-     0 3
+    7  0-     3 4
+    8  1,4,7  0 1
+    9  1,4,7  4 7
+    10 3,2   -1 2
 } {
     test hwloc-bitmap-4.3.$n "binary bitmap operations, next, \"$v $id\"" -body {
 	hwloc bitmap next $v $id
     } -result $r
 }
 
-test hwloc-bitmap-4.3.10 "binary bitmap operations, next, \"empty $id\", fails" -body {
+test hwloc-bitmap-4.3.11 "binary bitmap operations, next, \"empty\", fails" -body {
     hwloc bitmap next {} 3
-} -returnCodes error -result {hwloc_bitmap_next error}
+} -returnCodes error -result {next is undefined for empty bitmap}
+
+test hwloc-bitmap-4.3.12 "binary bitmap operations, next, \"empty after prev\", fails" -body {
+    hwloc bitmap next 1 3
+} -returnCodes error -result {next is undefined for a bitmap empty after bit "3"}
 
 # - -- --- ----- -------- ------------- ---------------------
 # is_included = is A subset of B?
