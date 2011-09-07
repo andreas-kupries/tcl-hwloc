@@ -55,6 +55,7 @@ infinite) bitmaps, respectively.
 
 These two methods return bitmaps with a single bit unset ([method allbut])
 or set ([method only]). The result of [method allbut] is an infinite bitmap.
+The methods throw an error if a negative [arg id] is specified.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd {hwloc bitmap}] [method first] [arg bitmap]]
@@ -128,25 +129,77 @@ returns this as its result. The method will throw an error if the [arg bitmap]
 is infinite, i.e. has not a bounded weight.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd {hwloc bitmap}] [method clear] [arg bitmap] [arg id]]
-[call [cmd {hwloc bitmap}] [method set] [arg bitmap] [arg id]]
-[call [cmd {hwloc bitmap}] [method is_set] [arg bitmap] [arg id]]
-
-[comment ---------------------------------------------------------------------]
 [call [cmd {hwloc bitmap}] [method and] [arg bitmap1] [arg bitmap2]]
 [call [cmd {hwloc bitmap}] [method andnot] [arg bitmap1] [arg bitmap2]]
 [call [cmd {hwloc bitmap}] [method or] [arg bitmap1] [arg bitmap2]]
 [call [cmd {hwloc bitmap}] [method xor] [arg bitmap1] [arg bitmap2]]
 
-[call [cmd {hwloc bitmap}] [method is_equal] [arg bitmap1] [arg bitmap2]]
-[call [cmd {hwloc bitmap}] [method is_included] [arg bitmap1] [arg bitmap2]]
-[call [cmd {hwloc bitmap}] [method compare] [arg bitmap1] [arg bitmap2]]
-[call [cmd {hwloc bitmap}] [method compare_first] [arg bitmap1] [arg bitmap2]]
-[call [cmd {hwloc bitmap}] [method intersects] [arg bitmap1] [arg bitmap2]]
+These four methods perform standard bitwise operations on the two bitmaps,
+returning the operations' result. See the following mapping to C expressions:
+
+[example {
+    and    A B == A & B
+    andnot A B == A & ~B
+    or     A B == A | B
+    xor    A B == A ^ B
+}]
 
 [comment ---------------------------------------------------------------------]
-[call [cmd {hwloc bitmap}] [method clear_range] [arg bitmap] [arg begin] [arg end]]
+[call [cmd {hwloc bitmap}] [method is_equal] [arg bitmap1] [arg bitmap2]]
+
+This method tests if the two specified bitmaps are equal in all respects.
+The result of the method is a boolean value, [const true] if the bitmaps
+are equal, and [const false] otherwise.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd {hwloc bitmap}] [method is_included] [arg bitmapsub] [arg bitmapsuper]]
+
+This method tests if [arg bitmapsub] is a subset of [arg bitmapsuper].
+The result of the method is a boolean value, [const true] if the bitmap
+is a subset, and [const false] otherwise.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd {hwloc bitmap}] [method compare] [arg bitmap1] [arg bitmap2]]
+[call [cmd {hwloc bitmap}] [method compare_first] [arg bitmap1] [arg bitmap2]]
+
+These two method compare the two bitmaps by comparing the last and first set
+bits respectively. The result of the methods are the difference between the
+ids of these bits. The empty bitmap is treated as if it had bit [const -1] set.
+
+[comment {
+    It is unclear how 'compare' works for infinite bitmaps, with their
+    undefined last bit
+}]
+
+[comment ---------------------------------------------------------------------]
+[call [cmd {hwloc bitmap}] [method intersects] [arg bitmap1] [arg bitmap2]]
+
+This method tests if the two specified bitmaps intersect with each other, i.e if
+the result of [method]'ing them together is not empty. The result of the method
+is a boolean value, [const true] if the bitmaps have a non-empty intersection,
+and [const false] otherwise.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd {hwloc bitmap}] [method set] [arg bitmap] [arg id]]
+[call [cmd {hwloc bitmap}] [method clear] [arg bitmap] [arg id]]
+[call [cmd {hwloc bitmap}] [method is_set] [arg bitmap] [arg id]]
+
+These three methods set, unset, and test the bits in a [arg bitmap]. The
+first two methods return the modified bitmap as result, whereas the last
+returns a boolean value, [const true] if the bit is set, and [arg false]
+otherwise. The methods throw an error if a negative [arg id] is specified.
+
+[comment ---------------------------------------------------------------------]
 [call [cmd {hwloc bitmap}] [method set_range] [arg bitmap] [arg begin] [arg end]]
+[call [cmd {hwloc bitmap}] [method clear_range] [arg bitmap] [arg begin] [arg end]]
+
+These two methods are extensions of the modifiers in the previous group from
+single bits to bit ranges. The range of bits to set or clear is specified by two
+bit ids. The methods return the modified bitmap as their result.
+
+The methods throw an error if a negative id is specified, for either [arg begin]
+or [arg end]. Specifying an [arg end] < [arg begin] is acceptable however, this
+specifies an empty range and the method will return the unmodified [arg bitmap].
 
 [list_end]
 
