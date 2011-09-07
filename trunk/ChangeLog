@@ -1,5 +1,10 @@
 2011-09-07  Andreas Kupries  <andreask@activestate.com>
 
+	* tests/bitmap.c: Added guards against negative bit ids to
+	* tests/bitmap.test: 'allbut' and 'only'. Extended the
+	  testsuite. Added checks to 'next' enabling generation of better
+	  error messages. Updated and extended the testsuite.
+
 	* doc/tcl-hwloc.man: Continued work, starting to flesh out the
 	  bitmap methods.
 

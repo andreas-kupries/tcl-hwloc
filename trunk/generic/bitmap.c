@@ -11,11 +11,6 @@
         return TCL_ERROR;				\
     }
 
-#define ERROR_EXIT				\
-    { hwloc_bitmap_free(bitmap);		\
-	return TCL_ERROR; }
-
-
 static hwloc_bitmap_t
 get_bitmap (Tcl_Interp* interp, Tcl_Obj* obj)
 {
@@ -105,6 +100,11 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	CHECK_FOR_ARG(4, "id");
 
 	if (Tcl_GetIntFromObj(interp, objv[3], &id) == TCL_ERROR) goto error;
+	if (id < 0) {
+	    Tcl_AppendResult(interp, "Expected integer >= 0 but got \"",
+			     Tcl_GetString (objv[3]), "\"", NULL);
+	    goto error;
+	}
 
 	bitmap = hwloc_bitmap_alloc();
 	hwloc_bitmap_only(bitmap, (unsigned) id);
@@ -115,6 +115,11 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	CHECK_FOR_ARG(4, "id");
 
 	if (Tcl_GetIntFromObj(interp, objv[3], &id) == TCL_ERROR) goto error;
+	if (id < 0) {
+	    Tcl_AppendResult(interp, "Expected integer >= 0 but got \"",
+			     Tcl_GetString (objv[3]), "\"", NULL);
+	    goto error;
+	}
 
 	bitmap = hwloc_bitmap_alloc();
 	hwloc_bitmap_allbut(bitmap, (unsigned) id);
@@ -284,13 +289,20 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	bitmap = get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
+	if (hwloc_bitmap_iszero(bitmap)) {
+	    Tcl_SetResult(interp, "next is undefined for empty bitmap", TCL_STATIC);
+	    goto cleanup;
+	}
+
 	if (Tcl_GetIntFromObj(interp, objv[4], &prev) == TCL_ERROR) goto cleanup;
 
 	flag = hwloc_bitmap_next(bitmap, (int) prev);
 	hwloc_bitmap_free(bitmap);
 
 	if (flag == -1) {
-	    Tcl_SetResult(interp, "hwloc_bitmap_next error", TCL_STATIC);
+	    Tcl_ResetResult (interp);
+	    Tcl_AppendResult(interp, "next is undefined for a bitmap empty after bit \"",
+			     Tcl_GetString (objv[4]), "\"", NULL);
 	    goto error;
 	}
 
