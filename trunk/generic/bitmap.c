@@ -28,6 +28,21 @@ get_bitmap (Tcl_Interp* interp, Tcl_Obj* obj)
 }
 
 static int
+get_bitnum (Tcl_Interp* interp, Tcl_Obj* obj, int* value)
+{
+    int res = Tcl_GetIntFromObj (interp, obj, value);
+
+    if (res != TCL_OK) {
+	return res;
+    } else if (*value < 0) {
+	Tcl_AppendResult(interp, "Expected integer >= 0 but got \"",
+			 Tcl_GetString (obj), "\"", NULL);
+	return TCL_ERROR;
+    }
+    return res;
+}
+
+static int
 set_result_bitmap (Tcl_Interp* interp, hwloc_bitmap_t bitmap) {
     char* res;
 
@@ -99,12 +114,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     case BITMAP_ONLY:
 	CHECK_FOR_ARG(4, "id");
 
-	if (Tcl_GetIntFromObj(interp, objv[3], &id) == TCL_ERROR) goto error;
-	if (id < 0) {
-	    Tcl_AppendResult(interp, "Expected integer >= 0 but got \"",
-			     Tcl_GetString (objv[3]), "\"", NULL);
-	    goto error;
-	}
+	if (get_bitnum (interp, objv[3], &id) == TCL_ERROR) goto error;
 
 	bitmap = hwloc_bitmap_alloc();
 	hwloc_bitmap_only(bitmap, (unsigned) id);
@@ -114,12 +124,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     case BITMAP_ALLBUT:
 	CHECK_FOR_ARG(4, "id");
 
-	if (Tcl_GetIntFromObj(interp, objv[3], &id) == TCL_ERROR) goto error;
-	if (id < 0) {
-	    Tcl_AppendResult(interp, "Expected integer >= 0 but got \"",
-			     Tcl_GetString (objv[3]), "\"", NULL);
-	    goto error;
-	}
+	if (get_bitnum (interp, objv[3], &id) == TCL_ERROR) goto error;
 
 	bitmap = hwloc_bitmap_alloc();
 	hwloc_bitmap_allbut(bitmap, (unsigned) id);
@@ -159,7 +164,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	bitmap = get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
-	if (Tcl_GetIntFromObj(interp, objv[4], &id) == TCL_ERROR) goto cleanup;
+	if (get_bitnum (interp, objv[4], &id) == TCL_ERROR) goto cleanup;
 
 	hwloc_bitmap_set(bitmap, (unsigned) id);
 
@@ -171,8 +176,8 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	bitmap = get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
-	if (Tcl_GetIntFromObj(interp, objv[4], &begin) == TCL_ERROR) goto cleanup;
-	if (Tcl_GetIntFromObj(interp, objv[5], &end)   == TCL_ERROR) goto cleanup;
+	if (get_bitnum (interp, objv[4], &begin) == TCL_ERROR) goto cleanup;
+	if (get_bitnum (interp, objv[5], &end)   == TCL_ERROR) goto cleanup;
 
 	hwloc_bitmap_set_range(bitmap, (unsigned) begin, (int) end);
 
@@ -184,7 +189,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	bitmap = get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
-	if (Tcl_GetIntFromObj(interp, objv[4], &id) == TCL_ERROR) goto cleanup;
+	if (get_bitnum (interp, objv[4], &id) == TCL_ERROR) goto cleanup;
 
 	hwloc_bitmap_clr(bitmap, (unsigned) id);
 
@@ -196,8 +201,8 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	bitmap = get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
-	if (Tcl_GetIntFromObj(interp, objv[4], &begin) == TCL_ERROR) goto cleanup;
-	if (Tcl_GetIntFromObj(interp, objv[5], &end)   == TCL_ERROR) goto cleanup;
+	if (get_bitnum (interp, objv[4], &begin) == TCL_ERROR) goto cleanup;
+	if (get_bitnum (interp, objv[5], &end)   == TCL_ERROR) goto cleanup;
 
 	hwloc_bitmap_clr_range(bitmap, (unsigned) begin, (int) end);
 
@@ -219,7 +224,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	bitmap = get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
-	if (Tcl_GetIntFromObj(interp, objv[4], &id) == TCL_ERROR) goto cleanup;
+	if (get_bitnum (interp, objv[4], &id) == TCL_ERROR) goto cleanup;
 
 	flag = hwloc_bitmap_isset(bitmap, (unsigned) id);
 	hwloc_bitmap_free(bitmap);
@@ -294,6 +299,10 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	    goto cleanup;
 	}
 
+	/*
+	 * Note: This one place allows a negative number as well, making the
+	 * operation equivalent to 'first'. Hence no use of 'get_bitnum' here.
+	 */
 	if (Tcl_GetIntFromObj(interp, objv[4], &prev) == TCL_ERROR) goto cleanup;
 
 	flag = hwloc_bitmap_next(bitmap, (int) prev);

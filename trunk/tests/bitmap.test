@@ -395,6 +395,10 @@ foreach {n v id r} {
     } -result $r
 }
 
+test hwloc-bitmap-4.0.11 "binary bitmap operations, clear, \"{} - -1\"" -body {
+    hwloc bitmap clear {} -1
+} -returnCodes error -result {Expected integer >= 0 but got "-1"}
+
 # - -- --- ----- -------- ------------- ---------------------
 # is_set = test of single bit.
 
@@ -406,10 +410,14 @@ foreach {n v id r} {
     9  1,4,7 4 1
     10 {}    3 0
 } {
-    test hwloc-bitmap-4.1.$n "binary bitmap operations, is_set, \"$v + $id\"" -body {
+    test hwloc-bitmap-4.1.$n "binary bitmap operations, is_set, \"$v ? $id\"" -body {
 	hwloc bitmap is_set $v $id
     } -result $r
 }
+
+test hwloc-bitmap-4.1.11 "binary bitmap operations, is_set, \"{} ? -1\"" -body {
+    hwloc bitmap is_set {} -1
+} -returnCodes error -result {Expected integer >= 0 but got "-1"}
 
 # - -- --- ----- -------- ------------- ---------------------
 # set = 'or' for single bit.
@@ -426,6 +434,10 @@ foreach {n v id r} {
 	hwloc bitmap set $v $id
     } -result $r
 }
+
+test hwloc-bitmap-4.2.11 "binary bitmap operations, set, \"{} + -1\"" -body {
+    hwloc bitmap set {} -1
+} -returnCodes error -result {Expected integer >= 0 but got "-1"}
 
 # - -- --- ----- -------- ------------- ---------------------
 # next = find next set bit greater than 'prev'. for iteration
@@ -717,11 +729,21 @@ foreach {n v s e r} {
     12 0-    4 8 0-
     13 9-    0 2 0-2,9-
     14 9-    4 8 4-
+    15 {}    8 4 {}
+    16 9-    8 4 9-
 } {
     test hwloc-bitmap-5.0.$n "trinary bitmap operations, setrange, \"$v + $s..$e\"" -body {
 	hwloc bitmap set_range $v $s $e
     } -result $r
 }
+
+test hwloc-bitmap-5.0.17 "trinary bitmap operations, set_range, negative bits" -body {
+    hwloc bitmap set_range {} -1 5
+} -returnCodes error -result {Expected integer >= 0 but got "-1"}
+
+test hwloc-bitmap-5.0.18 "trinary bitmap operations, set_range, negative bits" -body {
+    hwloc bitmap set_range {} 5 -1
+} -returnCodes error -result {Expected integer >= 0 but got "-1"}
 
 # - -- --- ----- -------- ------------- ---------------------
 # clear_range = bitmap - range of bits.
@@ -735,11 +757,22 @@ foreach {n v s e r} {
     12 0-    4 8 0-3,9-
     13 9-    0 2 9-
     14 9-    4 8 9-
+    15 {}    8 4 {}
+    16 0-    8 4 0-
+
 } {
     test hwloc-bitmap-5.1.$n "trinary bitmap operations, clear_range, \"$v - $e..$e\"" -body {
 	hwloc bitmap clear_range $v $s $e
     } -result $r
 }
+
+test hwloc-bitmap-5.1.17 "trinary bitmap operations, clear_range, negative bits" -body {
+    hwloc bitmap clear_range {} -1 5
+} -returnCodes error -result {Expected integer >= 0 but got "-1"}
+
+test hwloc-bitmap-5.1.18 "trinary bitmap operations, clear_range, negative bits" -body {
+    hwloc bitmap clear_range {} 5 -1
+} -returnCodes error -result {Expected integer >= 0 but got "-1"}
 
 # # ## ### ##### ######## ############# #####################
 tcltest::cleanupTests

@@ -1,5 +1,12 @@
 2011-09-07  Andreas Kupries  <andreask@activestate.com>
 
+	* doc/tcl-hwloc.man: Completed the documentation of the bitmap
+	* tests/bitmap.c: methods. Added more guards against negative
+	* tests/bitmap.test: bit ids, see 'set(_range)', 'clear(_range)',
+	  and 'is_set'. Factored the relevant bit of code into a helper
+	  function 'get_bitnum'. Extended the testsuite to check the
+	  behaviour.
+
 	* tests/bitmap.c: Added guards against negative bit ids to
 	* tests/bitmap.test: 'allbut' and 'only'. Extended the
 	  testsuite. Added checks to 'next' enabling generation of better
