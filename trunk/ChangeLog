@@ -1,5 +1,10 @@
 2011-09-12  Andreas Kupries  <andreask@activestate.com>
 
+	* doc/bitmap.inc: Moved the larger sections of the mnapage into
+	* doc/class.inc: separate files, included into the main docs.
+	* doc/instance.inc: Reordered sections. Started documenting the
+	* doc/tcl-hwloc.man: instance methods.
+
 	* configure: Changed package name to tclhwloc, to distinguish it
 	* configure.in: from the underlying hwloc library. Bumped version
 	  number down to 0.1 to reflect non-release state.
