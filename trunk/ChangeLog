@@ -1,5 +1,9 @@
 2011-09-12  Andreas Kupries  <andreask@activestate.com>
 
+	* configure: Changed package name to tclhwloc, to distinguish it
+	* configure.in: from the underlying hwloc library. Bumped version
+	  number down to 0.1 to reflect non-release state.
+
 	* doc/tcl-hwloc.man: Added documentation for the toplevel class API.
 
 2011-09-07  Andreas Kupries  <andreask@activestate.com>
