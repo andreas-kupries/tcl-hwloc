@@ -1,3 +1,26 @@
+2011-09-13  Andreas Kupries  <andreask@activestate.com>
+
+	* generic/hwloc.c: Updated name of the package init function,
+	  forgotten yesterday.
+
+	* generic/topology.c: Removed the name information from the
+	* generic/topology.h: instance structure, not needed. Reworked the
+	  topology creation command to (a) properly create a fully-
+	  qualified name (FQN) for the instance, (b) check for collision
+	  with existing commands, and (c) return the FQN of the instance
+	  as the result of 'hwloc create'.
+
+	* tests/create.test: Converted to proper testsuite (Draft).
+	* tests/topology.test: New file, old create.test contents.
+	* tests/version.test: Converted to proper testsuite.
+
+	* tests/bitmap.test: Updated for the new name and version
+	* tests/convert.test: of the package and shared library.
+	* tests/cpu_node_set.test"
+	* tests/cpubind.test:
+	* tests/destroy.test:
+	* tests/membind.test:
+
 2011-09-12  Andreas Kupries  <andreask@activestate.com>
 
 	* doc/bitmap.inc: Moved the larger sections of the mnapage into

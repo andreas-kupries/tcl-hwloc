@@ -19,7 +19,7 @@ static int parse_set_flags (Tcl_Interp *interp, Tcl_Obj *obj, int *result);
  * Function Bodies
  */
 
-int Hwloc_Init(Tcl_Interp *interp) {
+int Tclhwloc_Init(Tcl_Interp *interp) {
     if (Tcl_InitStubs(interp, "8.5", 0) == NULL) {
         return TCL_ERROR;
     }
@@ -62,6 +62,9 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
     case HWLOC_CREATE:
         {
             topo_data* data;
+	    char* name;
+	    Tcl_Obj* fqn;
+	    Tcl_CmdInfo ci;
 
             if (objc < 3) {
                 Tcl_WrongNumArgs(interp, 2, objv, "name ?arg? ...");
@@ -91,10 +94,60 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
             /* Run some internal consistency checks */
             hwloc_topology_check(data->topology);
 
-            data->name = Tcl_DuplicateObj(objv[2]);
-            Tcl_IncrRefCount(data->name);
+	    /*
+	     * Create and initialize the instance (topology) command.  This
+	     * includes conversion from unqualified names to fully-qualified,
+	     * checking for existence of the command, i.e. collision with
+	     * something else (we do not overwrite existing commands, that is
+	     * usually an error and source of difficult to debug problems).
+	     */
+
+	    name = Tcl_GetString (objv [2]);
+
+	    if (!Tcl_StringMatch (name, "::*")) {
+		/* Relative name. Prefix with current namespace */
+
+		Tcl_Eval (interp, "namespace current");
+		fqn = Tcl_GetObjResult (interp);
+		fqn = Tcl_DuplicateObj (fqn);
+		Tcl_IncrRefCount (fqn);
+
+		if (!Tcl_StringMatch (Tcl_GetString (fqn), "::")) {
+		    Tcl_AppendToObj (fqn, "::", -1);
+		}
+		Tcl_AppendToObj (fqn, name, -1);
+	    } else {
+		fqn = Tcl_NewStringObj (name, -1);
+		Tcl_IncrRefCount (fqn);
+	    }
+	    Tcl_ResetResult (interp);
+
+	    if (Tcl_GetCommandInfo (interp,
+				    Tcl_GetString (fqn),
+				    &ci)) {
+		Tcl_Obj* err;
+
+		err = Tcl_NewObj ();
+		Tcl_AppendToObj    (err, "command \"", -1);
+		Tcl_AppendObjToObj (err, fqn);
+		Tcl_AppendToObj    (err, "\" already exists, unable to create topology", -1);
+
+		Tcl_DecrRefCount (fqn);
+		Tcl_SetObjResult (interp, err);
+
+		TopologyCmd_CleanUp ((ClientData) data);
+		return TCL_ERROR;
+	    }
+
             data->interp = interp;
-            data->cmdtoken = Tcl_CreateObjCommand(interp, Tcl_GetString(data->name), TopologyCmd, (ClientData) data, TopologyCmd_CleanUp);
+            data->cmdtoken = Tcl_CreateObjCommand(interp,
+						  Tcl_GetString(fqn),
+						  TopologyCmd,
+						  (ClientData) data,
+						  TopologyCmd_CleanUp);
+
+	    Tcl_SetObjResult (interp, fqn);
+	    Tcl_DecrRefCount (fqn);
             break;
         }
     case HWLOC_BITMAP:

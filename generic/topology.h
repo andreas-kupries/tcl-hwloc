@@ -10,7 +10,6 @@
 
 typedef struct topo_data {
     hwloc_topology_t topology;  /* The topology token handled by Hwloc */
-    Tcl_Obj*         name;      /* The command name */
     Tcl_Interp*      interp;    /* The interpreter the command is in  */
     Tcl_Command      cmdtoken;  /* The command handle itself */
 } topo_data;

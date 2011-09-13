@@ -1,3 +1,38 @@
-puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-load ./libhwloc1.0.so
-puts [hwloc version]
+# -*- tcl -*-
+# # ## ### ##### ######## ############# #####################
+##
+# Test suite for Tcl/Hwloc binding.
+# Main API, version introspection.
+
+# # ## ### ##### ######## ############# #####################
+## Requirements
+
+package require Tcl 8.5
+
+if {[catch {package require tcltest 2}]} {
+    puts stderr "Skipping tests in [info script].  tcltest 2 required."
+    return
+}
+
+# # ## ### ##### ######## ############# #####################
+##
+# Get the functionality under test, directly from the build directory,
+# which is the CWD.
+
+load libtclhwloc0.1.so
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-version-1.0 {wrong\#args, too many} -body {
+    hwloc version X
+} -returnCodes error \
+    -result {wrong # args: should be "hwloc version"}
+
+test hwloc-version-2.0 {version result} -body {
+    # NOTE: The result of this method depends on the version of hwloc
+    # the binding links against.
+    hwloc version
+} -result 66048
+
+# # ## ### ##### ######## ############# #####################
+tcltest::cleanupTests

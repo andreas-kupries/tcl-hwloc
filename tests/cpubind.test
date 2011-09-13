@@ -1,5 +1,5 @@
 puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-load ./libhwloc1.0.so
+load ./libtclhwloc0.1.so
 hwloc create topo0
 puts "cpubind:[topo0 cpubind get]"
 puts "cpubind -pid 1 :[topo0 cpubind get -pid 1]"

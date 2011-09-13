@@ -1,21 +1,251 @@
-puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-load ./libhwloc1.0.so
-hwloc create topo0
-puts [topo0 type -depth 1]
-puts [topo0 root]
-puts [set a [topo0 object_by -type socket 0]]
-puts "[topo0 object $a depth] [topo0 object $a logical_index]"
-puts [set a [topo0 object_by -depth 2 0]]
-puts "[topo0 object $a depth] [topo0 object $a logical_index]"
-puts [topo0 object $a parent]
-puts [topo0 object $a children]
-puts [topo0 object $a type]
-puts "attributes:[topo0 object $a attributes]"
-puts "cpuset:[topo0 object $a cpuset]"
-puts "info:[topo0 object $a info]"
-puts [topo0 type -depth 0]
-topo0 export delme
-topo0 destroy
+# -*- tcl -*-
+# # ## ### ##### ######## ############# #####################
+##
+# Test suite for Tcl/Hwloc binding.
+# Main API, topology creation/destruction, and configuration of the
+# creation process.
 
-hwloc create topo1 -ignore_type system -set_flags {whole_system this_system}
-rename topo1 {}
+# # ## ### ##### ######## ############# #####################
+## Requirements
+
+package require Tcl 8.5
+
+if {[catch {package require tcltest 2}]} {
+    puts stderr "Skipping tests in [info script].  tcltest 2 required."
+    return
+}
+
+# # ## ### ##### ######## ############# #####################
+##
+# Get the functionality under test, directly from the build directory,
+# which is the CWD.
+
+load libtclhwloc0.1.so
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-create-1.0 {wrong\#args} -body {
+    hwloc create
+} -returnCodes error \
+    -result {wrong # args: should be "hwloc create name ?arg? ..."}
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-create-2.0 {basic creation} -body {
+    hwloc create X
+} -cleanup {
+    X destroy
+} -result ::X
+
+test hwloc-create-2.1 {basic creation, collision check} -body {
+    proc X {} {}
+    hwloc create X
+} -cleanup {
+    rename X {}
+} -returnCodes error \
+    -result {command "::X" already exists, unable to create topology}
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-create-3.0 {creation, bogus option} -body {
+    hwloc create X -foo
+} -returnCodes error \
+    -result {}
+
+foreach {n option} {
+    1 -ignore_type
+    2 -ignore_type_keep_structure
+    3 -set_flags
+    4 -set_fsroot
+    5 -set_pid
+    6 -set_synthetic
+    7 -set_xml
+} {
+    test hwloc-create-3.$n {creation, option wrong\#args} -body {
+	hwloc create X $option
+    } -returnCodes error \
+	-result {}
+}
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-create-4.0 {creation, ignore all, keep structure } -body {
+    hwloc create X -ignore_all_keep_structure
+} -cleanup {
+    X destroy
+} -result X
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-create-4.1.0 {creation, ignore type, can't ignore PU, error} -body {
+    hwloc create X -ignore_type pu
+} -returnCodes error \
+    -result {}
+
+test hwloc-create-4.1.1 {creation, ignore type, can't ignore root type, no error} -setup {
+    hwloc create Z
+    set rtype [Z type -depth 0]
+    Z destroy
+} -body {
+    hwloc create X -ignore_type $rtype
+} -cleanup {
+    X destroy
+    unset rtype
+} -result ::X
+
+test hwloc-create-4.1.2 {creation, ignore type} -body {
+    hwloc create X -ignore_type cache
+} -cleanup {
+    X destroy
+} -result ::X
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-create-4.2.0 {creation, ignore type, keep structure, can't ignore PU, error} -body {
+    hwloc create X -ignore_type_keep_structure pu
+} -returnCodes error \
+    -result {}
+
+test hwloc-create-4.2.1 {creation, ignore type, keep structure, can't ignore root type, no error} -setup {
+    hwloc create Z
+    set rtype [Z type -depth 0]
+    Z destroy
+} -body {
+    hwloc create X -ignore_type_keep_structure $rtype
+} -cleanup {
+    X destroy
+    unset rtype
+} -result ::X
+
+test hwloc-create-4.2.2 {creation, ignore type, keep structure} -body {
+    hwloc create X -ignore_type_keep_structure cache
+} -cleanup {
+    X destroy
+} -result ::X
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-create-4.3.0 {creation, flags, bad flag} -body {
+    hwloc create X -set_flags foo
+} -returnCodes error \
+    -result {bad flag "foo": must be this_system or whole_system}
+
+test hwloc-create-4.3.1 {creation, flags, no flags} -body {
+    hwloc create X -set_flags {}
+} -cleanup {
+    X destroy
+} -result ::X
+
+test hwloc-create-4.3.2.0 {creation, flags, this_system effect} -body {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+    X local
+} -cleanup {
+    X destroy
+} -result 1
+
+test hwloc-create-4.3.2.1 {creation, flags, this_system effect} -body {
+    hwloc create X -set_flags {} -set_synthetic pu:4
+    X local
+} -cleanup {
+    X destroy
+} -result 0
+
+test hwloc-create-4.3.3 {creation, flags, whole_system} -body {
+    hwloc create X -set_flags whole_system
+} -cleanup {
+    X destroy
+} -result ::X
+
+test hwloc-create-4.3.4 {creation, flags, multiple flags} -body {
+    hwloc create X -set_flags {this_system whole_system}
+} -cleanup {
+    X destroy
+} -result ::X
+
+test hwloc-create-4.3.5 {creation, flags, multiple flags, replicated} -body {
+    hwloc create X -set_flags {this_system whole_system this_system}
+} -cleanup {
+    X destroy
+} -result ::X
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-create-4.4.0 {creation, fs root, empty path} -body {
+    hwloc create X -set_fsroot {}
+} -cleanup {
+    X destroy
+} -result ::X
+
+test hwloc-create-4.4.1 {creation, fs root, bad path} -body {
+    hwloc create X -set_fsroot /BOGUS
+} -cleanup {
+    X destroy
+} -result ::X
+
+test hwloc-create-4.4.2 {creation, fs root, empty dir} -setup {
+    set path [file mkdir $tcltest::testsDirectory foo bar]
+} -body {
+    hwloc create X -set_fsroot $path
+    X local
+} -cleanup {
+    file delete -force $path
+    unset path
+    X destroy
+} -result 0
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-create-4.5 {creation, pid, self} -body {
+    hwloc create X -set_pid [pid]
+} -cleanup {
+    X destroy
+} -result ::X
+
+# # ## ### ##### ######## ############# #####################
+
+# TODO - Aborts, empty topology, investigate, handle better
+test hwloc-create-4.6.0 {creation, synthetic, nothing} -constraints {investigate knownCore} -body {
+    hwloc create X -set_synthetic {}
+} -cleanup {
+    X destroy
+} -result ::X
+
+test hwloc-create-4.6.1 {creation, synthetic, bad syntax} -body {
+    hwloc create X -set_synthetic {dsd 24590 dk}
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {Unknown object type `dsd 24590 dk'
+synthetic string doesn't have a `:' after object type at 'dsd 24590 dk'}
+
+test hwloc-create-4.6.2 {creation, synthetic} -body {
+    hwloc create X -set_synthetic pu:4
+} -cleanup {
+    X destroy
+} -result ::X
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-create-4.7.0 {creation, xml, nothing} -body {
+    hwloc create X -set_xml {}
+} -cleanup {
+    X destroy
+} -returnCodes error -result {file doesn't exist or lacks read permission}
+
+test hwloc-create-4.7.1 {creation, xml, bad syntax} -setup {
+    # TODO, make a temp file for this.
+} -body {
+    hwloc create X -set_xml {fjkl;df0954 90245-}
+} -cleanup {
+    # TODO delete tempfile
+    X destroy
+} -returnCodes error -result {}
+
+test hwloc-create-4.7.2 {creation, xml} -body {
+    hwloc create X -set_xml {}
+} -cleanup {
+    X destroy
+} -result ::X
+
+# # ## ### ##### ######## ############# #####################
+tcltest::cleanupTests
