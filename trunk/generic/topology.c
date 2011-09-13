@@ -310,7 +310,6 @@ TopologyCmd_CleanUp(ClientData clientData) {
     topo_data* data = (struct topo_data *) clientData;
 
     hwloc_topology_destroy (data->topology);
-    Tcl_DecrRefCount (data->name);
     ckfree((char *) data);
 }
 

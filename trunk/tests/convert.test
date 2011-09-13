@@ -19,7 +19,7 @@ if {[catch {package require tcltest 2}]} {
 # Get the functionality under test, directly from the build directory,
 # which is the CWD.
 
-load libhwloc1.0.so
+load libtclhwloc0.1.so
 
 # # ## ### ##### ######## ############# #####################
 

@@ -1,5 +1,5 @@
 puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-load ./libhwloc1.0.so
+load ./libtclhwloc0.1.so
 hwloc create topo0
 puts "complete cpuset:[topo0 cpuset -complete]"
 puts "allowed cpuset:[topo0 cpuset -allowed]"
