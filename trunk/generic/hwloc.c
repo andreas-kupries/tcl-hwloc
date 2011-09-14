@@ -182,10 +182,16 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
         CREATE_SET_SYNTHETIC,               CREATE_SET_XML
     };
     int index;
-    int objc_curr = 4;
+
+    /*
+     * Syntax: hwloc create NAME option...
+     *         [0]   [1]    [2]  [3...]
+     */
+
+    int objc_curr = 3;
 
     while (objc_curr < objc) {
-        if (Tcl_GetIndexFromObj(interp, objv[objc_curr - 1], cmds, "option", objc_curr, &index) != TCL_OK) {
+        if (Tcl_GetIndexFromObj(interp, objv[objc_curr], cmds, "option", objc_curr, &index) != TCL_OK) {
             return TCL_ERROR;
 	}
 
@@ -194,19 +200,24 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 	    {
 		hwloc_obj_type_t type;
 
-		if (objc < objc_curr + 1) {
-		    Tcl_WrongNumArgs(interp, objc_curr, objv, "type");
+		if (objc <= (objc_curr+1)) {
+		    Tcl_WrongNumArgs(interp, 3, objv, "-ignore_type type");
 		    goto on_error;
 		}
 
-		type = hwloc_obj_type_of_string(Tcl_GetString(objv[objc_curr]));
+		type = hwloc_obj_type_of_string(Tcl_GetString(objv[objc_curr+1]));
 
 		if (type == -1) {
+		    /* TODO: mention the bogus type, mention the expected types
+		     * TODO: Expected types can be computed once, saved static
+		     * TODO: (client data)
+		     */
 		    Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
 		    goto on_error;
 		}
 
 		if (hwloc_topology_ignore_type(data->topology, type) == -1) {
+		    /* TODO Better message */
 		    Tcl_SetResult(interp, "hwloc_topology_ignore_type() failed", TCL_STATIC);
 		    goto on_error;
 		}
@@ -218,18 +229,19 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 	    {
 		hwloc_obj_type_t type;
 
-		if (objc < objc_curr + 1) {
-		    Tcl_WrongNumArgs(interp, objc_curr, objv, "type");
+		if (objc <= (objc_curr+1)) {
+		    Tcl_WrongNumArgs(interp, 3, objv, "-ignore_type_keep_structure type");
 		    goto on_error;
 		}
 
-		type = hwloc_obj_type_of_string(Tcl_GetString(objv[objc_curr]));
+		type = hwloc_obj_type_of_string(Tcl_GetString(objv[objc_curr+1]));
 		if (type == -1) {
 		    Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
 		    goto on_error;
 		}
 
 		if (hwloc_topology_ignore_type_keep_structure(data->topology, type) == -1) {
+		    /* TODO Better message */
 		    Tcl_SetResult(interp, "hwloc_topology_ignore_type_keep_structure() failed", TCL_STATIC);
 		    goto on_error;
 		}
@@ -251,12 +263,12 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 	    {
 		int flags = 0;
 
-		if (objc < objc_curr + 1) {
-		    Tcl_WrongNumArgs(interp, objc_curr, objv, "flags");
+		if (objc <= (objc_curr+1)) {
+		    Tcl_WrongNumArgs(interp, 3, objv, "-set_flags flags");
 		    goto on_error;
 		}
 
-		if (parse_set_flags(interp, objv[objc_curr], &flags) == TCL_ERROR) {
+		if (parse_set_flags(interp, objv[objc_curr+1], &flags) == TCL_ERROR) {
 		    goto on_error;
 		}
 
@@ -270,12 +282,12 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 	    }
 	case CREATE_SET_FSROOT: /* -set_fsroot path */
 	    {
-		if (objc < objc_curr + 1) {
-		    Tcl_WrongNumArgs(interp, objc_curr, objv, "path");
+		if (objc <= (objc_curr+1)) {
+		    Tcl_WrongNumArgs(interp, 3, objv, "-set_fsroot path");
 		    goto on_error;
 		}
 
-		if (hwloc_topology_set_fsroot(data->topology, Tcl_GetString(objv[objc_curr])) == -1) {
+		if (hwloc_topology_set_fsroot(data->topology, Tcl_GetString(objv[objc_curr+1])) == -1) {
 		    Tcl_SetResult(interp, "hwloc_topology_set_fsroot() failed", TCL_STATIC);
 		    goto on_error;
 		}
@@ -287,12 +299,12 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 	    {
 		int pid = 0;
 
-		if (objc < objc_curr + 1) {
-		    Tcl_WrongNumArgs(interp, objc_curr, objv, "pid");
+		if (objc <= (objc_curr+1)) {
+		    Tcl_WrongNumArgs(interp, 3, objv, "-set_pid pid");
 		    goto on_error;
 		}
 
-		if (Tcl_GetIntFromObj(interp, objv[objc_curr], &pid) == TCL_ERROR) {
+		if (Tcl_GetIntFromObj(interp, objv[objc_curr+1], &pid) == TCL_ERROR) {
 		    goto on_error;
 		}
 
@@ -306,12 +318,13 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 	    }
 	case CREATE_SET_SYNTHETIC: /* -set_synthetic value */
 	    {
-		if (objc < objc_curr + 1) {
-		    Tcl_WrongNumArgs(interp, objc_curr, objv, "value");
+		if (objc <= (objc_curr+1)) {
+		    Tcl_WrongNumArgs(interp, 3, objv, "-set_synthetic description");
 		    goto on_error;
 		}
 
-		if (hwloc_topology_set_synthetic(data->topology, Tcl_GetString(objv[objc_curr])) == -1) {
+		if (hwloc_topology_set_synthetic(data->topology, Tcl_GetString(objv[objc_curr+1])) == -1) {
+		    /* TODO: How to disable hwloc printing error data to stderr/out ? */
 		    Tcl_SetResult(interp, "hwloc_topology_set_synthetic() failed", TCL_STATIC);
 		    goto on_error;
 		}
@@ -321,12 +334,17 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 	    }
 	case CREATE_SET_XML: /* -set_xml value */
 	    {
-		if (objc < objc_curr + 1) {
-		    Tcl_WrongNumArgs(interp, objc_curr, objv, "value");
+		if (objc <= (objc_curr+1)) {
+		    Tcl_WrongNumArgs(interp, 3, objv, "-set_xml path");
 		    goto on_error;
 		}
 
-		if(access(Tcl_GetString(objv[objc_curr]), R_OK) != 0 ) {
+		/* TODO: Map to Tcl FS functions */
+		/* TODO: Look over hwloc API to see
+		 * if we can integrate Tcl VFS better
+		 * whereever PATHs are expected/used.
+		 */
+		if(access(Tcl_GetString(objv[objc_curr+1]), R_OK) != 0 ) {
 		    Tcl_SetResult(interp, "file doesn't exist or lacks read permission", TCL_STATIC);
 		    goto on_error;
 		}

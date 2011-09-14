@@ -50,21 +50,21 @@ test hwloc-create-2.1 {basic creation, collision check} -body {
 test hwloc-create-3.0 {creation, bogus option} -body {
     hwloc create X -foo
 } -returnCodes error \
-    -result {}
+    -result {bad option "-foo": must be -ignore_all_keep_structure, -ignore_type, -ignore_type_keep_structure, -set_flags, -set_fsroot, -set_pid, -set_synthetic, or -set_xml}
 
-foreach {n option} {
-    1 -ignore_type
-    2 -ignore_type_keep_structure
-    3 -set_flags
-    4 -set_fsroot
-    5 -set_pid
-    6 -set_synthetic
-    7 -set_xml
+foreach {n option arg} {
+    1 -ignore_type                type
+    2 -ignore_type_keep_structure type
+    3 -set_flags                  flags
+    4 -set_fsroot                 path
+    5 -set_pid                    pid
+    6 -set_synthetic              description
+    7 -set_xml                    path
 } {
     test hwloc-create-3.$n {creation, option wrong\#args} -body {
 	hwloc create X $option
     } -returnCodes error \
-	-result {}
+	-result "wrong # args: should be \"hwloc create X $option $arg\""
 }
 
 # # ## ### ##### ######## ############# #####################
@@ -73,16 +73,21 @@ test hwloc-create-4.0 {creation, ignore all, keep structure } -body {
     hwloc create X -ignore_all_keep_structure
 } -cleanup {
     X destroy
-} -result X
+} -result ::X
 
 # # ## ### ##### ######## ############# #####################
 
-test hwloc-create-4.1.0 {creation, ignore type, can't ignore PU, error} -body {
+test hwloc-create-4.1.0 {creation, ignore type, bogus type} -body {
+    hwloc create X -ignore_type bogus
+} -returnCodes error \
+    -result {unrecognized object type}
+
+test hwloc-create-4.1.1 {creation, ignore type, can't ignore PU, error} -body {
     hwloc create X -ignore_type pu
 } -returnCodes error \
-    -result {}
+    -result {hwloc_topology_ignore_type() failed}
 
-test hwloc-create-4.1.1 {creation, ignore type, can't ignore root type, no error} -setup {
+test hwloc-create-4.1.2 {creation, ignore type, can't ignore root type, no error} -setup {
     hwloc create Z
     set rtype [Z type -depth 0]
     Z destroy
@@ -93,7 +98,7 @@ test hwloc-create-4.1.1 {creation, ignore type, can't ignore root type, no error
     unset rtype
 } -result ::X
 
-test hwloc-create-4.1.2 {creation, ignore type} -body {
+test hwloc-create-4.1.3 {creation, ignore type} -body {
     hwloc create X -ignore_type cache
 } -cleanup {
     X destroy
@@ -104,7 +109,7 @@ test hwloc-create-4.1.2 {creation, ignore type} -body {
 test hwloc-create-4.2.0 {creation, ignore type, keep structure, can't ignore PU, error} -body {
     hwloc create X -ignore_type_keep_structure pu
 } -returnCodes error \
-    -result {}
+    -result {hwloc_topology_ignore_type_keep_structure() failed}
 
 test hwloc-create-4.2.1 {creation, ignore type, keep structure, can't ignore root type, no error} -setup {
     hwloc create Z
@@ -212,11 +217,8 @@ test hwloc-create-4.6.0 {creation, synthetic, nothing} -constraints {investigate
 
 test hwloc-create-4.6.1 {creation, synthetic, bad syntax} -body {
     hwloc create X -set_synthetic {dsd 24590 dk}
-} -cleanup {
-    X destroy
 } -returnCodes error \
-    -result {Unknown object type `dsd 24590 dk'
-synthetic string doesn't have a `:' after object type at 'dsd 24590 dk'}
+    -result {hwloc_topology_set_synthetic() failed}
 
 test hwloc-create-4.6.2 {creation, synthetic} -body {
     hwloc create X -set_synthetic pu:4
@@ -228,8 +230,6 @@ test hwloc-create-4.6.2 {creation, synthetic} -body {
 
 test hwloc-create-4.7.0 {creation, xml, nothing} -body {
     hwloc create X -set_xml {}
-} -cleanup {
-    X destroy
 } -returnCodes error -result {file doesn't exist or lacks read permission}
 
 test hwloc-create-4.7.1 {creation, xml, bad syntax} -setup {
@@ -238,7 +238,6 @@ test hwloc-create-4.7.1 {creation, xml, bad syntax} -setup {
     hwloc create X -set_xml {fjkl;df0954 90245-}
 } -cleanup {
     # TODO delete tempfile
-    X destroy
 } -returnCodes error -result {}
 
 test hwloc-create-4.7.2 {creation, xml} -body {
