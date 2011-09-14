@@ -88,7 +88,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     hwloc_bitmap_t bitmap2 = NULL;
 
     unsigned long res;
-    int mask, id, index, flag, prev, begin, end;
+    int mask, id, index, flag = 0, prev, begin, end;
 
     if (Tcl_GetIndexFromObj(interp, objv[2], cmds, "option", 2, &index) != TCL_OK) {
         return TCL_ERROR;

@@ -318,12 +318,20 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 	    }
 	case CREATE_SET_SYNTHETIC: /* -set_synthetic value */
 	    {
+		const char* synth;
+
 		if (objc <= (objc_curr+1)) {
 		    Tcl_WrongNumArgs(interp, 3, objv, "-set_synthetic description");
 		    goto on_error;
 		}
 
-		if (hwloc_topology_set_synthetic(data->topology, Tcl_GetString(objv[objc_curr+1])) == -1) {
+		synth = Tcl_GetString(objv[objc_curr+1]);
+		if (!strlen(synth)) {
+		    Tcl_SetResult(interp, "Expected synthetic topology description, got \"\"", TCL_STATIC);
+		    goto on_error;
+		}
+
+		if (hwloc_topology_set_synthetic(data->topology, synth) == -1) {
 		    /* TODO: How to disable hwloc printing error data to stderr/out ? */
 		    Tcl_SetResult(interp, "hwloc_topology_set_synthetic() failed", TCL_STATIC);
 		    goto on_error;

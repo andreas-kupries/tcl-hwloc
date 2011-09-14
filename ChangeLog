@@ -1,3 +1,12 @@
+2011-09-14  Andreas Kupries  <andreask@activestate.com>
+
+	* generic/bitmap.c: Fixed warning about possible uninitialized variable.
+	* generic/hwloc.c: Added check to -set_synthetic processing to avoid
+	* tests/create.test: hwloc assertion and abort on empty description.
+	  Updated tests, and fixups too, files where needed (xml). Folded tests
+	  of instance destruction into this file.
+	* tests/destroy.test: Removed.
+
 2011-09-13  Andreas Kupries  <andreask@activestate.com>
 
 	* generic/hwloc.c: Fixed option processing of 'hwloc create',

@@ -1,4 +1,0 @@
-puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-load ./libtclhwloc0.1.so
-hwloc create topo
-rename topo {}
