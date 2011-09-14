@@ -45,6 +45,28 @@ test hwloc-create-2.1 {basic creation, collision check} -body {
 } -returnCodes error \
     -result {command "::X" already exists, unable to create topology}
 
+test hwloc-create-2.2 {proper destruction, instance method} -setup {
+    hwloc create X
+} -body {
+    lappend res [info commands ::X]
+    X destroy
+    lappend res [info commands ::X]
+    set res
+} -cleanup {
+    unset res
+} -result {::X {}}
+
+test hwloc-create-2.3 {proper destruction, instance renaming} -setup {
+    hwloc create X
+} -body {
+    lappend res [info commands ::X]
+    rename X {}
+    lappend res [info commands ::X]
+    set res
+} -cleanup {
+    unset res
+} -result {::X {}}
+
 # # ## ### ##### ######## ############# #####################
 
 test hwloc-create-3.0 {creation, bogus option} -body {
@@ -188,15 +210,15 @@ test hwloc-create-4.4.1 {creation, fs root, bad path} -body {
 } -result ::X
 
 test hwloc-create-4.4.2 {creation, fs root, empty dir} -setup {
-    set path [file mkdir $tcltest::testsDirectory foo bar]
+    set path [file join $tcltest::testsDirectory foo bar]
+    file mkdir $path
 } -body {
     hwloc create X -set_fsroot $path
-    X local
 } -cleanup {
-    file delete -force $path
+    file delete -force [file dirname $path]
     unset path
     X destroy
-} -result 0
+} -result ::X
 
 # # ## ### ##### ######## ############# #####################
 
@@ -208,12 +230,10 @@ test hwloc-create-4.5 {creation, pid, self} -body {
 
 # # ## ### ##### ######## ############# #####################
 
-# TODO - Aborts, empty topology, investigate, handle better
-test hwloc-create-4.6.0 {creation, synthetic, nothing} -constraints {investigate knownCore} -body {
+test hwloc-create-4.6.0 {creation, synthetic, nothing}  -body {
     hwloc create X -set_synthetic {}
-} -cleanup {
-    X destroy
-} -result ::X
+} -returnCodes error \
+    -result {Expected synthetic topology description, got ""}
 
 test hwloc-create-4.6.1 {creation, synthetic, bad syntax} -body {
     hwloc create X -set_synthetic {dsd 24590 dk}
@@ -233,16 +253,40 @@ test hwloc-create-4.7.0 {creation, xml, nothing} -body {
 } -returnCodes error -result {file doesn't exist or lacks read permission}
 
 test hwloc-create-4.7.1 {creation, xml, bad syntax} -setup {
-    # TODO, make a temp file for this.
+    set temp [tcltest::makeFile {fjkl;df0954 90245-} badtopo]
 } -body {
-    hwloc create X -set_xml {fjkl;df0954 90245-}
+    hwloc create X -set_xml $temp
 } -cleanup {
-    # TODO delete tempfile
-} -returnCodes error -result {}
+    tcltest::removeFile badtopo
+} -returnCodes error \
+    -result {hwloc_topology_set_xml() failed}
 
-test hwloc-create-4.7.2 {creation, xml} -body {
-    hwloc create X -set_xml {}
+test hwloc-create-4.7.2 {creation, xml, bad path} -setup {
+} -body {
+    hwloc create X -set_xml bogus
+} -returnCodes error \
+    -result {file doesn't exist or lacks read permission}
+
+test hwloc-create-4.7.3 {creation, xml} -setup {
+    set path [tcltest::makeFile {<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topology SYSTEM "hwloc.dtd">
+<topology>
+  <object type="Machine" os_level="-1" os_index="0" cpuset="0x00000001" complete_cpuset="0x00000001" online_cpuset="0x00000001" allowed_cpuset="0x00000001" local_memory="793800704">
+    <page_type size="4096" count="193799"/>
+    <page_type size="4194304" count="0"/>
+    <info name="Backend" value="Linux"/>
+    <info name="OSName" value="Linux"/>
+    <info name="OSRelease" value="2.6.7"/>
+    <info name="OSVersion" value="#1 Wed September 08 20:12:03 EDT 2001"/>
+    <info name="HostName" value="some-fake-box"/>
+    <info name="Architecture" value="i686"/>
+    <object type="PU" os_level="-1" os_index="0" cpuset="0x00000001" complete_cpuset="0x00000001" online_cpuset="0x00000001" allowed_cpuset="0x00000001"/>
+  </object>
+</topology>} topo]
+} -body {
+    hwloc create X -set_xml $path
 } -cleanup {
+    tcltest::removeFile topo
     X destroy
 } -result ::X
 
