@@ -2,7 +2,7 @@
 # # ## ### ##### ######## ############# #####################
 ##
 # Test suite for Tcl/Hwloc binding.
-# Bitmap manipulation commands.
+# Topology. Node/CPU set conversion.
 
 # # ## ### ##### ######## ############# #####################
 ## Requirements
@@ -23,7 +23,7 @@ load libtclhwloc0.1.so
 
 # # ## ### ##### ######## ############# #####################
 
-test hwloc-convert-1.0 "node/cpu conversion, wrong#args" -setup {
+test hwloc-topology-convert-1.0 "node/cpu conversion, wrong#args" -setup {
     hwloc create T
 } -body {
     T convert
@@ -31,7 +31,7 @@ test hwloc-convert-1.0 "node/cpu conversion, wrong#args" -setup {
     T destroy
 } -returnCodes error -result {wrong # args: should be "T convert ?-strict? -to_cpuset|-to_nodeset bitmap"}
 
-test hwloc-convert-1.1 "node/cpu conversion, wrong#args" -setup {
+test hwloc-topology-convert-1.1 "node/cpu conversion, wrong#args" -setup {
     hwloc create T
 } -body {
     T convert X
@@ -39,7 +39,7 @@ test hwloc-convert-1.1 "node/cpu conversion, wrong#args" -setup {
     T destroy
 } -returnCodes error -result {wrong # args: should be "T convert ?-strict? -to_cpuset|-to_nodeset bitmap"}
 
-test hwloc-convert-1.2 "node/cpu conversion, wrong#args" -setup {
+test hwloc-topology-convert-1.2 "node/cpu conversion, wrong#args" -setup {
     hwloc create T
 } -body {
     T convert X Y Z
@@ -47,7 +47,7 @@ test hwloc-convert-1.2 "node/cpu conversion, wrong#args" -setup {
     T destroy
 } -returnCodes error -result {wrong # args: should be "T convert ?-strict? -to_cpuset|-to_nodeset bitmap"}
 
-test hwloc-convert-1.3 "node/cpu conversion, wrong#args" -setup {
+test hwloc-topology-convert-1.3 "node/cpu conversion, wrong#args" -setup {
     hwloc create T
 } -body {
     T convert -strict X Y Z
@@ -57,7 +57,7 @@ test hwloc-convert-1.3 "node/cpu conversion, wrong#args" -setup {
 
 # - -- --- ----- -------- ------------- ---------------------
 
-test hwloc-convert-2.0 "node/cpu conversion, bad option" -setup {
+test hwloc-topology-convert-2.0 "node/cpu conversion, bad option" -setup {
     hwloc create T
 } -body {
     T convert -foo X
@@ -67,7 +67,7 @@ test hwloc-convert-2.0 "node/cpu conversion, bad option" -setup {
 
 # - -- --- ----- -------- ------------- ---------------------
 
-test hwloc-convert-3.0 "node/cpu conversion, bad bitmap" -setup {
+test hwloc-topology-convert-3.0 "node/cpu conversion, bad bitmap" -setup {
     hwloc create T
 } -body {
     T convert -to_nodeset X
@@ -75,7 +75,7 @@ test hwloc-convert-3.0 "node/cpu conversion, bad bitmap" -setup {
     T destroy
 } -returnCodes error -result {failed to parse bitmap}
 
-test hwloc-convert-3.1 "node/cpu conversion, bad bitmap" -setup {
+test hwloc-topology-convert-3.1 "node/cpu conversion, bad bitmap" -setup {
     hwloc create T
 } -body {
     T convert -to_cpuset X
@@ -85,7 +85,7 @@ test hwloc-convert-3.1 "node/cpu conversion, bad bitmap" -setup {
 
 # - -- --- ----- -------- ------------- ---------------------
 
-test hwloc-convert-4.1 "node -> cpu conversion" -setup {
+test hwloc-topology-convert-4.1 "node -> cpu conversion" -setup {
     hwloc create T
 } -body {
     T convert -to_cpuset 0
@@ -93,7 +93,7 @@ test hwloc-convert-4.1 "node -> cpu conversion" -setup {
     T destroy
 } -result 0-
 
-test hwloc-convert-4.2 "node -> cpu conversion, strict" -setup {
+test hwloc-topology-convert-4.2 "node -> cpu conversion, strict" -setup {
     hwloc create T
 } -body {
     T convert -strict -to_cpuset 0
@@ -101,7 +101,7 @@ test hwloc-convert-4.2 "node -> cpu conversion, strict" -setup {
     T destroy
 } -result {}
 
-test hwloc-convert-4.3 "cpu -> node conversion" -setup {
+test hwloc-topology-convert-4.3 "cpu -> node conversion" -setup {
     hwloc create T
 } -body {
     T convert -to_nodeset 0
@@ -109,7 +109,7 @@ test hwloc-convert-4.3 "cpu -> node conversion" -setup {
     T destroy
 } -result 0-
 
-test hwloc-convert-4.4 "cpu -> node conversion, strict" -setup {
+test hwloc-topology-convert-4.4 "cpu -> node conversion, strict" -setup {
     hwloc create T
 } -body {
     T convert -strict -to_nodeset 0

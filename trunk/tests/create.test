@@ -235,6 +235,7 @@ test hwloc-create-4.6.0 {creation, synthetic, nothing}  -body {
 } -returnCodes error \
     -result {Expected synthetic topology description, got ""}
 
+# TODO: How to disable libhwloc output to stdout ?
 test hwloc-create-4.6.1 {creation, synthetic, bad syntax} -body {
     hwloc create X -set_synthetic {dsd 24590 dk}
 } -returnCodes error \
@@ -252,6 +253,7 @@ test hwloc-create-4.7.0 {creation, xml, nothing} -body {
     hwloc create X -set_xml {}
 } -returnCodes error -result {file doesn't exist or lacks read permission}
 
+# TODO: How to disable libhwloc output to stdout ?
 test hwloc-create-4.7.1 {creation, xml, bad syntax} -setup {
     set temp [tcltest::makeFile {fjkl;df0954 90245-} badtopo]
 } -body {
