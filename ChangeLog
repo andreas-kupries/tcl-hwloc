@@ -1,5 +1,8 @@
 2011-09-14  Andreas Kupries  <andreask@activestate.com>
 
+	* tests/topology.test: Started conversion to proper testsuite, and
+	  expansion to all instance methods.
+
 	* generic/bitmap.c: Fixed warning about possible uninitialized variable.
 	* generic/hwloc.c: Added check to -set_synthetic processing to avoid
 	* tests/create.test: hwloc assertion and abort on empty description.
