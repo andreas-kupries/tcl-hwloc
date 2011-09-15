@@ -11,8 +11,8 @@
         return TCL_ERROR;				\
     }
 
-static hwloc_bitmap_t
-get_bitmap (Tcl_Interp* interp, Tcl_Obj* obj)
+hwloc_bitmap_t
+thwl_get_bitmap (Tcl_Interp* interp, Tcl_Obj* obj)
 {
     const char*    str    = Tcl_GetString (obj);
     hwloc_bitmap_t bitmap = hwloc_bitmap_alloc();
@@ -42,8 +42,8 @@ get_bitnum (Tcl_Interp* interp, Tcl_Obj* obj, int* value)
     return res;
 }
 
-static int
-set_result_bitmap (Tcl_Interp* interp, hwloc_bitmap_t bitmap) {
+int
+thwl_set_result_bitmap (Tcl_Interp* interp, hwloc_bitmap_t bitmap) {
     char* res;
 
     if (hwloc_bitmap_list_asprintf(&res, bitmap) == -1) {
@@ -101,7 +101,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	bitmap = hwloc_bitmap_alloc();
 	hwloc_bitmap_zero(bitmap);
 
-	return set_result_bitmap(interp, bitmap);
+	return thwl_set_result_bitmap(interp, bitmap);
 
     case BITMAP_FULL:
 	CHECK_FOR_ARG(3,NULL);
@@ -109,7 +109,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	bitmap = hwloc_bitmap_alloc();
 	hwloc_bitmap_fill(bitmap);
 
-	return set_result_bitmap(interp, bitmap);
+	return thwl_set_result_bitmap(interp, bitmap);
 
     case BITMAP_ONLY:
 	CHECK_FOR_ARG(4, "id");
@@ -119,7 +119,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	bitmap = hwloc_bitmap_alloc();
 	hwloc_bitmap_only(bitmap, (unsigned) id);
 
-	return set_result_bitmap(interp, bitmap);
+	return thwl_set_result_bitmap(interp, bitmap);
 
     case BITMAP_ALLBUT:
 	CHECK_FOR_ARG(4, "id");
@@ -129,7 +129,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	bitmap = hwloc_bitmap_alloc();
 	hwloc_bitmap_allbut(bitmap, (unsigned) id);
 
-	return set_result_bitmap(interp, bitmap);
+	return thwl_set_result_bitmap(interp, bitmap);
 
     case BITMAP_FROM_ULONG:
 	CHECK_FOR_ARG(4, "mask");
@@ -139,12 +139,12 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	bitmap = hwloc_bitmap_alloc();
 	hwloc_bitmap_from_ulong(bitmap, (unsigned long) mask);
 
-	return set_result_bitmap(interp, bitmap);
+	return thwl_set_result_bitmap(interp, bitmap);
 
     case BITMAP_TO_ULONG:
 	CHECK_FOR_ARG(4, "bitmap");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	res = hwloc_bitmap_to_ulong(bitmap);
@@ -161,19 +161,19 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     case BITMAP_SET:
 	CHECK_FOR_ARG(5, "bitmap id");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	if (get_bitnum (interp, objv[4], &id) == TCL_ERROR) goto cleanup;
 
 	hwloc_bitmap_set(bitmap, (unsigned) id);
 
-	return set_result_bitmap(interp, bitmap);
+	return thwl_set_result_bitmap(interp, bitmap);
 
     case BITMAP_SET_RANGE:
 	CHECK_FOR_ARG(6, "bitmap begin end");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	if (get_bitnum (interp, objv[4], &begin) == TCL_ERROR) goto cleanup;
@@ -181,24 +181,24 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 
 	hwloc_bitmap_set_range(bitmap, (unsigned) begin, (int) end);
 
-	return set_result_bitmap(interp, bitmap);
+	return thwl_set_result_bitmap(interp, bitmap);
 
     case BITMAP_CLEAR:
 	CHECK_FOR_ARG(5, "bitmap id");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	if (get_bitnum (interp, objv[4], &id) == TCL_ERROR) goto cleanup;
 
 	hwloc_bitmap_clr(bitmap, (unsigned) id);
 
-	return set_result_bitmap(interp, bitmap);
+	return thwl_set_result_bitmap(interp, bitmap);
 
     case BITMAP_CLEAR_RANGE:
 	CHECK_FOR_ARG(6, "bitmap begin end");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	if (get_bitnum (interp, objv[4], &begin) == TCL_ERROR) goto cleanup;
@@ -206,22 +206,22 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 
 	hwloc_bitmap_clr_range(bitmap, (unsigned) begin, (int) end);
 
-	return set_result_bitmap(interp, bitmap);
+	return thwl_set_result_bitmap(interp, bitmap);
 
     case BITMAP_SINGLIFY:
 	CHECK_FOR_ARG(4, "bitmap");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	hwloc_bitmap_singlify(bitmap);
 
-	return set_result_bitmap(interp, bitmap);
+	return thwl_set_result_bitmap(interp, bitmap);
 
     case BITMAP_IS_SET:
 	CHECK_FOR_ARG(5, "bitmap id");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	if (get_bitnum (interp, objv[4], &id) == TCL_ERROR) goto cleanup;
@@ -240,7 +240,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     case BITMAP_IS_EMPTY:
 	CHECK_FOR_ARG(4, "bitmap");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	flag = hwloc_bitmap_iszero(bitmap);
@@ -257,7 +257,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     case BITMAP_IS_FULL:
 	CHECK_FOR_ARG(4, "bitmap");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	flag = hwloc_bitmap_isfull(bitmap);
@@ -274,7 +274,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     case BITMAP_FIRST:
 	CHECK_FOR_ARG(4, "bitmap");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	flag = hwloc_bitmap_first(bitmap);
@@ -291,7 +291,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     case BITMAP_NEXT:
 	CHECK_FOR_ARG(5, "bitmap prev");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	if (hwloc_bitmap_iszero(bitmap)) {
@@ -321,7 +321,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     case BITMAP_LAST:
 	CHECK_FOR_ARG(4, "bitmap");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	flag = hwloc_bitmap_last(bitmap);
@@ -343,7 +343,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     case BITMAP_WEIGHT:
 	CHECK_FOR_ARG(4, "bitmap");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	flag = hwloc_bitmap_weight(bitmap);
@@ -363,10 +363,10 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     case BITMAP_XOR:
 	CHECK_FOR_ARG(5, "bitmapA bitmapB");
 
-	bitmap1 = get_bitmap (interp, objv[3]);
+	bitmap1 = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap1 == NULL) goto error;
 
-	bitmap2 = get_bitmap (interp, objv[4]);
+	bitmap2 = thwl_get_bitmap (interp, objv[4]);
 	if (bitmap2 == NULL) goto cleanup;
 
 	bitmap = hwloc_bitmap_alloc();
@@ -383,12 +383,12 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	hwloc_bitmap_free(bitmap1);
 	hwloc_bitmap_free(bitmap2);
 
-	return set_result_bitmap(interp, bitmap);
+	return thwl_set_result_bitmap(interp, bitmap);
 
     case BITMAP_NOT:
 	CHECK_FOR_ARG(4, "bitmap");
 
-	bitmap = get_bitmap (interp, objv[3]);
+	bitmap = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap == NULL) goto error;
 
 	bitmap1 = hwloc_bitmap_alloc();
@@ -396,7 +396,7 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
 	hwloc_bitmap_not(bitmap1, bitmap);
 	hwloc_bitmap_free(bitmap);
 
-	return set_result_bitmap(interp, bitmap1);
+	return thwl_set_result_bitmap(interp, bitmap1);
 
     case BITMAP_INTERSECTS:
     case BITMAP_IS_INCLUDED:
@@ -405,10 +405,10 @@ int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     case BITMAP_COMPARE_FIRST:
 	CHECK_FOR_ARG(5, "bitmapA bitmapB");
 
-	bitmap1 = get_bitmap (interp, objv[3]);
+	bitmap1 = thwl_get_bitmap (interp, objv[3]);
 	if (bitmap1 == NULL) goto error;
 
-	bitmap2 = get_bitmap (interp, objv[4]);
+	bitmap2 = thwl_get_bitmap (interp, objv[4]);
 	if (bitmap2 == NULL) goto cleanup;
 
 

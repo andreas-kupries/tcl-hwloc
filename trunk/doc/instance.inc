@@ -6,13 +6,48 @@ methods:
 [list_begin definitions]
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method convert] [arg ...]]
+[call [cmd topologyCmd] [method convert] [opt [option -strict]] [option -to_cpuset]  [arg set]]
+[call [cmd topologyCmd] [method convert] [opt [option -strict]] [option -to_nodeset] [arg set]]
+
+This method converts from bitmaps representing node sets to cpu sets,
+and vice versa. The returned result is again a bitmap, in the other
+domain.
+
+[para] If the [option -strict] option is specified the conversion will
+punt if the topology describes a non-NUMA system without NUMA nodes,
+and return an empty CPU or node, respectively.
+
+[para] Otherwise, the default, the conversion will treat the system as
+a single memory node and use the following heuristics:
+
+[list_begin enumerated]
+[enum] If the input set is empty, the result will be emptied as well.
+[enum] Otherwise the result will be entirely filled.
+[list_end]
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method cpubind] [arg ...]]
 
+@@@ TODO @@@ cpubind
+
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method cpuset] [arg ...]]
+[call [cmd topologyCmd] [method cpuset] [option -allowed]]
+[call [cmd topologyCmd] [method cpuset] [option -complete]]
+[call [cmd topologyCmd] [method cpuset] [option -online]]
+[call [cmd topologyCmd] [method cpuset] [option -topology]]
+
+This method returns a bitmap describing various types of CPU sets,
+i.e. subsets of the whole set of logical processors found in the
+topology.
+
+[list_begin options]
+[opt_def -allowed]  All [term allowed] processors.
+[opt_def -complete] All processors.
+[opt_def -online]   All [term online] (aka [term active] processors
+[opt_def -topology] All processors of the system.
+[list_end]
+
+@@@ TODO @@@ cpuset - Question - How does a cpu set relate to object types ?
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method depth] [opt "[option -type] [arg type]"]]
@@ -56,8 +91,23 @@ option [option -set_flags] with flag [const this_system], option
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method membind] [arg ...]]
 
+@@@ TODO @@@ membind
+
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method nodeset] [arg ...]]
+[call [cmd topologyCmd] [method nodeset] [option -allowed]]
+[call [cmd topologyCmd] [method nodeset] [option -complete]]
+[call [cmd topologyCmd] [method nodeset] [option -topology]]
+
+This method returns a bitmap describing various types of memory sets,
+i.e. subsets of the whole set of logical memory found in the topology.
+
+[list_begin options]
+[opt_def -allowed]  All [term allowed] memory nodes.
+[opt_def -complete] All memory nodes.
+[opt_def -topology] All memory of the system.
+[list_end]
+
+@@@ TODO @@@ nodeset - Question - How does a node set relate to object types ?
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [arg ...]]
