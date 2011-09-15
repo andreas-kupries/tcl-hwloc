@@ -253,7 +253,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
     case TOPO_CPUBIND: /* cpubind ...*/
         {
             if (objc < 3) {
-                Tcl_WrongNumArgs(interp, 2, objv, "args..");
+                Tcl_WrongNumArgs(interp, 2, objv, "args...");
                 return TCL_ERROR;
             }
 
@@ -263,7 +263,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
     case TOPO_MEMBIND: /* membind ...*/
         {
             if (objc < 3) {
-                Tcl_WrongNumArgs(interp, 2, objv, "args..");
+                Tcl_WrongNumArgs(interp, 2, objv, "args...");
                 return TCL_ERROR;
             }
 
@@ -273,7 +273,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
     case TOPO_CPUSET: /* cpuset...*/
         {
             if (objc < 3) {
-                Tcl_WrongNumArgs(interp, 2, objv, "args..");
+                Tcl_WrongNumArgs(interp, 2, objv, "args...");
                 return TCL_ERROR;
             }
 
@@ -283,7 +283,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
     case TOPO_NODESET: /* nodeset...*/
         {
             if (objc < 3) {
-                Tcl_WrongNumArgs(interp, 2, objv, "args..");
+                Tcl_WrongNumArgs(interp, 2, objv, "args...");
                 return TCL_ERROR;
             }
 
@@ -408,7 +408,7 @@ parse_convert_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
         CONVERT_TO_NODESET
     };
     char *list;
-    int index;
+    int index, res;
 
     int strict = 0;
     int offset = 0;
@@ -429,13 +429,8 @@ parse_convert_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
         return TCL_ERROR;
     }
 
-    /* TODO: publicize 'get_bitmap' in bitmap.c, reuse everywhere. */
-    setstr = Tcl_GetString(objv[3+offset]);
-    from_set = hwloc_bitmap_alloc();
-
-    if (hwloc_bitmap_list_sscanf(from_set, setstr) == -1) {
-        Tcl_SetResult(interp, "failed to parse bitmap", TCL_STATIC);
-        hwloc_bitmap_free(from_set);
+    from_set = thwl_get_bitmap (interp, objv[3+offset]);
+    if (from_set == NULL) {
         return TCL_ERROR;
     }
 
@@ -458,20 +453,9 @@ parse_convert_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 	break;
     }
 
-    if (hwloc_bitmap_list_asprintf(&list, to_set) == -1) {
-        Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
-        hwloc_bitmap_free(to_set);
-        hwloc_bitmap_free(from_set);
-        return TCL_ERROR;
-    }
+    hwloc_bitmap_free (from_set);
 
-    Tcl_SetObjResult(interp, Tcl_NewStringObj(list, -1));
-
-    hwloc_bitmap_free(to_set);
-    hwloc_bitmap_free(from_set);
-    free(list);
-
-    return TCL_OK;
+    return thwl_set_result_bitmap (interp, to_set);
 }
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */

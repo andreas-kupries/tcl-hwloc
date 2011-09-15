@@ -1,5 +1,15 @@
 2011-09-15  Andreas Kupries  <andreask@activestate.com>
 
+	* generic/bitmap.c: Exported the bitmap extraction and
+	* generic/bitmap.h: result functions, for general use
+	* generic/topology.c: everywhere bitmaps are handled.
+	* doc/instance.inc: Starting with node/cpu set 'convert'.
+	* doc/tcl-hwloc.man: Extended documentation.
+
+	* tests/topology_convert.test: Extended and more robust (Working
+	  on a synthetic configuration, not whatever the testing machine
+	  has). Missing: NUMA test cases.
+
 	* tests/create.test: Fixed left behind temp directory.
 
 	* doc/oid.inc: New file, syntax of object identifiers.
