@@ -1,5 +1,9 @@
 2011-09-15  Andreas Kupries  <andreask@activestate.com>
 
+	* generic/hwloc.c: Perform our own check of path viability for
+	* tests/create.test: -set_fsroot. 'hwloc_topology_set_fsroot'
+	  may or may not react to a bogus path.
+
 	* generic/bitmap.c: Exported the bitmap extraction and
 	* generic/bitmap.h: result functions, for general use
 	* generic/topology.c: everywhere bitmaps are handled.

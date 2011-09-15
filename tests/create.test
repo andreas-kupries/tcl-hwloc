@@ -199,15 +199,13 @@ test hwloc-create-4.3.5 {creation, flags, multiple flags, replicated} -body {
 
 test hwloc-create-4.4.0 {creation, fs root, empty path} -body {
     hwloc create X -set_fsroot {}
-} -cleanup {
-    X destroy
-} -result ::X
+} -returnCodes error \
+    -result {directory doesn't exist or lacks read permission}
 
 test hwloc-create-4.4.1 {creation, fs root, bad path} -body {
     hwloc create X -set_fsroot /BOGUS
-} -cleanup {
-    X destroy
-} -result ::X
+} -returnCodes error \
+    -result {directory doesn't exist or lacks read permission}
 
 test hwloc-create-4.4.2 {creation, fs root, empty dir} -setup {
     set path [tcltest::makeDirectory foo/bar]
