@@ -1,5 +1,8 @@
 2011-09-15  Andreas Kupries  <andreask@activestate.com>
 
+	* doc/oid.inc: New file, syntax of object identifiers.
+	* doc/tcl-hwloc.man: Added section about object identifiers.
+
 	* generic/topology.c: Fixed wrong args typo.
 	* doc/instance.inc: Continued extending documentation and
 	* tests/create.test: testsuite coverage of topology instance
