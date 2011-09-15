@@ -1,5 +1,14 @@
 2011-09-15  Andreas Kupries  <andreask@activestate.com>
 
+	* generic/topology.c: Fixed wrong args typo.
+	* doc/instance.inc: Continued extending documentation and
+	* tests/create.test: testsuite coverage of topology instance
+	* tests/topology.test: methods. Reworked the testsuite a bit to
+	  use XML files of saved real topologies instead of embedding
+	  them. See below.
+	* tests/pu4.xml: New files, saved topologies.
+	* tests/topology1.xml: 
+
 	* tests/bitmap.test: Updated test 3.0.13 to handle platform
 	  differences (word size).
 

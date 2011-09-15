@@ -53,9 +53,9 @@ test hwloc-topology-1.1 {bad method} -setup {
 ## depth	/2
 ## export	/3
 ## local	/4
-## object
-## object_by
-## root
+## object	/5
+## object_by	
+## root		
 ## type		/8
 ## width	/9
 
@@ -145,17 +145,7 @@ test hwloc-topology-3.2 {export} -setup {
     X destroy
     tcltest::removeFile Z
     unset path
-} -result {<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE topology SYSTEM "hwloc.dtd">
-<topology>
-  <object type="Machine" os_level="-1" os_index="0" cpuset="0x0000000f" complete_cpuset="0x0000000f" online_cpuset="0x0000000f" allowed_cpuset="0x0000000f">
-    <info name="Backend" value="Synthetic"/>
-    <object type="PU" os_level="-1" os_index="0" cpuset="0x00000001" complete_cpuset="0x00000001" online_cpuset="0x00000001" allowed_cpuset="0x00000001"/>
-    <object type="PU" os_level="-1" os_index="1" cpuset="0x00000002" complete_cpuset="0x00000002" online_cpuset="0x00000002" allowed_cpuset="0x00000002"/>
-    <object type="PU" os_level="-1" os_index="2" cpuset="0x00000004" complete_cpuset="0x00000004" online_cpuset="0x00000004" allowed_cpuset="0x00000004"/>
-    <object type="PU" os_level="-1" os_index="3" cpuset="0x00000008" complete_cpuset="0x00000008" online_cpuset="0x00000008" allowed_cpuset="0x00000008"/>
-  </object>
-</topology>}
+} -result [tcltest::viewFile pu4.xml $tcltest::testsDirectory]
 
 # - -- --- ----- -------- ------------- ---------------------
 ## local
@@ -185,8 +175,299 @@ test hwloc-topology-4.2 {local, no} -setup {
     X destroy
 } -result 0
 
+# - -- --- ----- -------- ------------- ---------------------
+## depth ?-type type?
 
+test hwloc-topology-5.0 {object, wrong\#args} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {wrong # args: should be "X object args..."}
 
+test hwloc-topology-5.1 {object, wrong\#args} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object Z
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {wrong # args: should be "X object args..."}
+
+test hwloc-topology-5.2 {object, bad id} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object Z foo
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {invalid object id}
+
+test hwloc-topology-5.3 {object, bad id} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object \{ foo
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {invalid object id}
+
+test hwloc-topology-5.4 {object, bad id} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object {x y} foo
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {expected integer but got "x"}
+
+test hwloc-topology-5.5 {object, bad id} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object {0 y} foo
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {expected integer but got "y"}
+
+test hwloc-topology-5.6 {object, out of range} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object {5 5} foo
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {object does not exist}
+
+test hwloc-topology-5.6 {object, bad method} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object {0 0} foo
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {bad option "foo": must be arity, attributes, children, cpuset, depth, first_child, info, last_child, logical_index, name, next_cousin, next_sibling, parent, prev_cousin, prev_sibling, sibling_rank, or type}
+
+set k 0
+foreach {method rc rr pc pr} {
+    arity         ok    4                                 ok    0
+    attributes    ok    Backend=Synthetic                 ok    {}
+    children      ok    {{1 0} {1 1} {1 2} {1 3}}         ok    {}
+    cpuset        ok    0x0000000f                        ok    0x00000004
+    depth         ok    0                                 ok    1
+    first_child   ok    {1 0}                             error {requested object does not exist}
+    info          ok    {{Backend Synthetic}}             ok    {}
+    last_child    ok    {1 3}                             error {requested object does not exist}
+    logical_index ok    0                                 ok    2
+    name          ok    {}                                ok    {}
+    next_cousin   error {requested object does not exist} ok    {1 3}
+    next_sibling  error {requested object does not exist} ok    {1 3}
+    parent        error {requested object does not exist} ok    {0 0}
+    prev_cousin   error {requested object does not exist} ok    {1 1}
+    prev_sibling  error {requested object does not exist} ok    {1 1}
+    sibling_rank  ok    0                                 ok    2
+    type          ok    Machine                           ok    PU
+} {
+    # Notes: cpuset - hex? why not bitmap?
+
+    test hwloc-topology-5.7.$k "object, $method wrong\#args" -setup {
+	hwloc create X -set_flags this_system -set_synthetic pu:4
+    } -body {
+	X object {0 0} $method Z
+    } -cleanup {
+	X destroy
+    } -returnCodes error \
+	-result "wrong # args: should be \"X object {0 0} $method\""
+
+    test hwloc-topology-5.8.$k "object, $method, result, root" -setup {
+	hwloc create X -set_flags this_system -set_synthetic pu:4
+    } -body {
+	X object {0 0} $method
+    } -cleanup {
+	X destroy
+    } -returnCodes $rc -result $rr
+
+    test hwloc-topology-5.9.$k "object, $method, result, leaf" -setup {
+	hwloc create X -set_flags this_system -set_synthetic pu:4
+    } -body {
+	X object {1 2} $method
+    } -cleanup {
+	X destroy
+    } -returnCodes $pc -result $pr
+
+    incr k
+}
+
+# More detailed look at attributes and info, using a saved real topology.
+set k 0
+foreach {method obj result} {
+    attributes {0 0} {local=775196KB total=775196KB Backend=Linux OSName=Linux OSRelease=2.6.7 OSVersion="#1 Wed September 08 20:12:03 EDT 2001" HostName=some-fake-box Architecture=i686}
+    info       {0 0} {{Backend Linux} {OSName Linux} {OSRelease 2.6.7} {OSVersion {#1 Wed September 08 20:12:03 EDT 2001}} {HostName some-fake-box} {Architecture i686}}
+    name       {0 0} {}
+    attributes {1 0} {}
+    info       {1 0} {}
+    name       {1 0} {}
+} {
+    test hwloc-topology-5.10.$k "object, $method, result" -setup {
+	hwloc create X -set_xml $tcltest::testsDirectory/topology1.xml
+    } -body {
+	X object $obj $method
+    } -cleanup {
+	X destroy
+    } -result $result
+
+    incr k
+}
+
+# - -- --- ----- -------- ------------- ---------------------
+## object_by
+
+test hwloc-topology-6.0 {object_by, wrong\#args} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {wrong # args: should be "X object_by {-depth value|-type value} index"}
+
+test hwloc-topology-6.1 {object_by, wrong\#args} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by A
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {wrong # args: should be "X object_by {-depth value|-type value} index"}
+
+test hwloc-topology-6.2 {object_by, wrong\#args} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by A B
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {wrong # args: should be "X object_by {-depth value|-type value} index"}
+
+test hwloc-topology-6.3 {object_by, wrong\#args} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by A B C D
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {wrong # args: should be "X object_by {-depth value|-type value} index"}
+
+test hwloc-topology-6.4 {object_by, bad option} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by -foo B C
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {must specify -depth or -type}
+# TODO: should be 'bad option ..., expected one of ...'
+
+test hwloc-topology-6.5 {object_by, bad option argument} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by -depth B C
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {expected integer but got "B"}
+
+test hwloc-topology-6.6 {object_by, bad option argument} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by -type B C
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {unrecognized object type}
+
+test hwloc-topology-6.7 {object_by, bad index} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by -depth 0 C
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {expected integer but got "C"}
+
+test hwloc-topology-6.8 {object_by, bad index} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by -type PU C
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {expected integer but got "C"}
+
+test hwloc-topology-6.9 {object_by, bad depth} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by -depth -1 0
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {object does not exist}
+
+test hwloc-topology-6.10 {object_by, out of range} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by -depth 0 1
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {object does not exist}
+
+test hwloc-topology-6.11 {object_by, unused type} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by -type Cache 0
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {object does not exist}
+
+test hwloc-topology-6.12 {object_by, by depth} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by -depth 1 1
+} -cleanup {
+    X destroy
+} -result {1 1}
+
+test hwloc-topology-6.13 {object_by, by type} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X object_by -type PU 2
+} -cleanup {
+    X destroy
+} -result {1 2}
+
+# - -- --- ----- -------- ------------- ---------------------
+## root
+
+test hwloc-topology-7.0 {root, wrong\#args} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X root Z
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {wrong # args: should be "X root"}
+
+test hwloc-topology-7.1 {root} -setup {
+    hwloc create X -set_flags this_system -set_synthetic pu:4
+} -body {
+    X root
+} -cleanup {
+    X destroy
+} -result {0 0}
 
 # - -- --- ----- -------- ------------- ---------------------
 ## type -depth n
@@ -364,25 +645,3 @@ test hwloc-topology-9.10 {width, specific depth} -setup {
 
 # # ## ### ##### ######## ############# #####################
 tcltest::cleanupTests
-
-puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-hwloc create topo0
-catch {
-    puts [topo0 type -depth 1]
-    puts [topo0 root]
-    puts [set a [topo0 object_by -type socket 0]]
-    puts "[topo0 object $a depth] [topo0 object $a logical_index]"
-    puts [set a [topo0 object_by -depth 2 0]]
-    puts "[topo0 object $a depth] [topo0 object $a logical_index]"
-    puts [topo0 object $a parent]
-    puts [topo0 object $a children]
-    puts [topo0 object $a type]
-    puts "attributes:[topo0 object $a attributes]"
-    puts "cpuset:[topo0 object $a cpuset]"
-    puts "info:[topo0 object $a info]"
-    puts [topo0 type -depth 0]
-}
-topo0 destroy
-
-hwloc create topo1 -ignore_type system -set_flags {whole_system this_system}
-rename topo1 {}
