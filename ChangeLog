@@ -1,5 +1,7 @@
 2011-09-15  Andreas Kupries  <andreask@activestate.com>
 
+	* tests/create.test: Fixed left behind temp directory.
+
 	* doc/oid.inc: New file, syntax of object identifiers.
 	* doc/tcl-hwloc.man: Added section about object identifiers.
 

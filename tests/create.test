@@ -215,6 +215,7 @@ test hwloc-create-4.4.2 {creation, fs root, empty dir} -setup {
     hwloc create X -set_fsroot $path
 } -cleanup {
     tcltest::removeDirectory foo/bar
+    tcltest::removeDirectory foo
     unset path
     X destroy
 } -result ::X
