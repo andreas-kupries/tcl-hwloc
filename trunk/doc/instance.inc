@@ -62,9 +62,144 @@ option [option -set_flags] with flag [const this_system], option
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [arg ...]]
 
+This method provides an ensemble of sub-commands enabling navigation
+in the tree of objects contained in the topology, relative to the
+object specified by [arg id]. See also method [method root].
+
+Please see section [sectref {Object Identifiers}] for details of the
+syntax used here. Errors are thrown for ids not following this syntax,
+or refering to objects not existing in the topology.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method arity]]
+
+This method returns an integer number, the number of children the
+object has.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method attributes]]
+
+This method, and [method info] below return similar information, this
+one more human-readable, the other machine-readable, and with a few
+keys excluded. The result here is a string shell variable assignments,
+separated by a single space.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method children]]
+
+This method returns a list of object identifiers, the children of the
+object.  If the object hs no children the result is the empty list.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method cpuset]]
+
+This method returns the CPU set associated with the object.
+
+-- Determine exactly what this means from the hwloc documentation --
+
+The result is an integer number formatted hexadecimally
+
+-- Might it not be better to get this as bitmap at least ? --
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method depth]]
+
+This method returns the depth the object is at. This is, in essence,
+the first element of its object identifier.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method first_child]]
+
+This method returns the object identifier of the first, leftmost child
+of the object. An error is thrown if the object has no children.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method info]]
+
+This method, and [method attributes] above return similar information,
+this one machine-readable, the other more human-readable, and with a
+few keys more. The result here is a list of pairs, with each pair
+containing key and vaue, in this order.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method last_child]]
+
+This method returns the object identifier of the last, rightmost child
+of the object. An error is thrown if the object has no children.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method logical_index]]
+
+This method returns the index of the object in its layer. This is, in
+essence, the second element of its object identifier.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method name]]
+
+This method returns a string, the name of the object.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method next_cousin]]
+
+This method returns the identifier of the right sibling of the object,
+if there is any, or the first child in the next sibling of its parent
+object. In essence it navigates to the right in its layer without
+being bound to the children of the current parent.
+
+The method throws an error if and only if the object is the last
+object in its layer.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method next_sibling]]
+
+This method returns the identifier of the right sibling of the object.
+The method throws an error if the object is the last child in its
+parent, i.e. does not have a right sibling.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method parent]]
+
+This method returns the identifier of the parent  of the object.
+The method throws an error if the object is the root of the topology.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method prev_cousin]]
+
+This method returns the identifier of the left sibling of the object,
+if there is any, or the last child in the previous sibling of its
+parent object. In essence it navigates to the left in its layer
+without being bound to the children of the current parent.
+
+The method throws an error if and only if the object is the first
+object in its layer.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method prev_sibling]]
+
+This method returns the identifier of the left sibling of the object.
+The method throws an error if the object is the first child in its
+parent, i.e. does not have a left sibling.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method sibling_rank]]
+
+This method returns the index of the object among the children of its
+parent.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method object] [arg id] [method type]]
+
+This method returns a string, the type of the object.
+
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object_by] [option -depth] [arg depth] [arg index]]
 [call [cmd topologyCmd] [method object_by] [option -type] [arg type] [arg index]]
+
+This method is a constructor for object identifiers. Either directly
+from [arg depth] and [arg index], or the depth specified indirectly
+through the object [arg type].
+
+An error is thrown if the intended object does not exist in the topology.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method root]]

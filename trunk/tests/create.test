@@ -210,12 +210,11 @@ test hwloc-create-4.4.1 {creation, fs root, bad path} -body {
 } -result ::X
 
 test hwloc-create-4.4.2 {creation, fs root, empty dir} -setup {
-    set path [file join $tcltest::testsDirectory foo bar]
-    file mkdir $path
+    set path [tcltest::makeDirectory foo/bar]
 } -body {
     hwloc create X -set_fsroot $path
 } -cleanup {
-    file delete -force [file dirname $path]
+    tcltest::removeDirectory foo/bar
     unset path
     X destroy
 } -result ::X
@@ -270,25 +269,11 @@ test hwloc-create-4.7.2 {creation, xml, bad path} -setup {
     -result {file doesn't exist or lacks read permission}
 
 test hwloc-create-4.7.3 {creation, xml} -setup {
-    set path [tcltest::makeFile {<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE topology SYSTEM "hwloc.dtd">
-<topology>
-  <object type="Machine" os_level="-1" os_index="0" cpuset="0x00000001" complete_cpuset="0x00000001" online_cpuset="0x00000001" allowed_cpuset="0x00000001" local_memory="793800704">
-    <page_type size="4096" count="193799"/>
-    <page_type size="4194304" count="0"/>
-    <info name="Backend" value="Linux"/>
-    <info name="OSName" value="Linux"/>
-    <info name="OSRelease" value="2.6.7"/>
-    <info name="OSVersion" value="#1 Wed September 08 20:12:03 EDT 2001"/>
-    <info name="HostName" value="some-fake-box"/>
-    <info name="Architecture" value="i686"/>
-    <object type="PU" os_level="-1" os_index="0" cpuset="0x00000001" complete_cpuset="0x00000001" online_cpuset="0x00000001" allowed_cpuset="0x00000001"/>
-  </object>
-</topology>} topo]
+    set path $tcltest::testsDirectory/topology1.xml
 } -body {
     hwloc create X -set_xml $path
 } -cleanup {
-    tcltest::removeFile topo
+    unset path
     X destroy
 } -result ::X
 

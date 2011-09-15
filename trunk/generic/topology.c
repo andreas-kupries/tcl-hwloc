@@ -225,7 +225,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
             hwloc_obj_t obj;
 
             if (objc < 4) {
-                Tcl_WrongNumArgs(interp, 2, objv, "object args..");
+                Tcl_WrongNumArgs(interp, 2, objv, "args...");
                 return TCL_ERROR;
             }
 
