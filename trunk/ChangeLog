@@ -1,3 +1,18 @@
+2011-09-15  Andreas Kupries  <andreask@activestate.com>
+
+	* tests/bitmap.test: Updated test 3.0.13 to handle platform
+	  differences (word size).
+
+	* tests/convert.test: Renamed/deleted. Added a 'topology_'
+	* tests/cpu_node_set.test: prefix to clarify what section
+	* tests/cpubind.test: of the API they belong to.
+	* tests/membind.test:
+
+	* tests/topology_convert.test: Renamed/Added. See above.
+	* tests/topology_cpu_node_set.test:
+	* tests/topology_cpubind.test:
+	* tests/topology_membind.test:
+
 2011-09-14  Andreas Kupries  <andreask@activestate.com>
 
 	* doc/instance.inc: Extended documentation and testsuite, covering
@@ -34,7 +49,7 @@
 
 	* tests/bitmap.test: Updated for the new name and version
 	* tests/convert.test: of the package and shared library.
-	* tests/cpu_node_set.test"
+	* tests/cpu_node_set.test:
 	* tests/cpubind.test:
 	* tests/destroy.test:
 	* tests/membind.test:

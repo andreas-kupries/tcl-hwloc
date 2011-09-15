@@ -119,10 +119,14 @@ foreach {n v r} {
     } -result $v
 }
 
-# The binding treats negative numbers as unsigned, i.e. large positive.
+# The binding treats negative numbers as unsigned, i.e. large
+# positive.  This also exposes word size differences between 32/64 bit
+# platforms, hence the use of tcl_platform to compute the expected
+# most significant bit.
+
 test hwloc-bitmap-3.0.13 "unary bitmap operations, from_ulong -1" -body {
     hwloc bitmap from_ulong -1
-} -result 0-31
+} -result 0-[expr {(8*$tcl_platform(wordSize))-1}]
 
 # - -- --- ----- -------- ------------- ---------------------
 # allbut = full & !bitmap-of(id)

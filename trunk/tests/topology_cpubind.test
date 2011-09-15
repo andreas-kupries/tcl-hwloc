@@ -1,0 +1,21 @@
+# -*- tcl -*-
+puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+load ./libtclhwloc0.1.so
+hwloc create topo0
+catch {
+    puts "cpubind:[topo0 cpubind get]"
+    puts "cpubind -pid 1 :[topo0 cpubind get -pid 1]"
+    puts "cpubind -pid 1 -type thread :[topo0 cpubind get -pid 1 -type thread]"
+    puts "Setting cpubind to 0"
+    topo0 cpubind set "0"
+    puts "Setting cpubind to 1"
+    topo0 cpubind set -pid [pid] "1"
+    topo0 cpubind set -pid [pid] -type process "1"
+    puts "cpubind:[topo0 cpubind get]"
+
+    puts "Overloading a single core for 20secs"
+    set running 1
+    after 20000 [list set running 0]
+    while {$running} { incr a ; update }
+}
+topo0 destroy
