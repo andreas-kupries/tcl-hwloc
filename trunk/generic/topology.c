@@ -6,6 +6,7 @@
 #include "object.h"
 #include "cpubind.h"
 #include "membind.h"
+#include "bitmap.h"
 
 static int parse_cpuset_args  (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
 static int parse_nodeset_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
@@ -407,13 +408,11 @@ parse_convert_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
         CONVERT_TO_CPUSET,
         CONVERT_TO_NODESET
     };
-    char *list;
-    int index, res;
 
+    int index;
     int strict = 0;
     int offset = 0;
 
-    const char *setstr;
     hwloc_bitmap_t from_set;
     hwloc_bitmap_t to_set;
 
