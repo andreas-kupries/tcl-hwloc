@@ -56,8 +56,8 @@ test hwloc-topology-1.1 {bad method} -setup {
 ## object
 ## object_by
 ## root
-## type
-## width
+## type		/8
+## width	/9
 
 # - -- --- ----- -------- ------------- ---------------------
 ## depth ?-type type?
@@ -367,19 +367,21 @@ tcltest::cleanupTests
 
 puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 hwloc create topo0
-puts [topo0 type -depth 1]
-puts [topo0 root]
-puts [set a [topo0 object_by -type socket 0]]
-puts "[topo0 object $a depth] [topo0 object $a logical_index]"
-puts [set a [topo0 object_by -depth 2 0]]
-puts "[topo0 object $a depth] [topo0 object $a logical_index]"
-puts [topo0 object $a parent]
-puts [topo0 object $a children]
-puts [topo0 object $a type]
-puts "attributes:[topo0 object $a attributes]"
-puts "cpuset:[topo0 object $a cpuset]"
-puts "info:[topo0 object $a info]"
-puts [topo0 type -depth 0]
+catch {
+    puts [topo0 type -depth 1]
+    puts [topo0 root]
+    puts [set a [topo0 object_by -type socket 0]]
+    puts "[topo0 object $a depth] [topo0 object $a logical_index]"
+    puts [set a [topo0 object_by -depth 2 0]]
+    puts "[topo0 object $a depth] [topo0 object $a logical_index]"
+    puts [topo0 object $a parent]
+    puts [topo0 object $a children]
+    puts [topo0 object $a type]
+    puts "attributes:[topo0 object $a attributes]"
+    puts "cpuset:[topo0 object $a cpuset]"
+    puts "info:[topo0 object $a info]"
+    puts [topo0 type -depth 0]
+}
 topo0 destroy
 
 hwloc create topo1 -ignore_type system -set_flags {whole_system this_system}
