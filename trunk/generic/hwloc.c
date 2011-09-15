@@ -287,6 +287,11 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 		    goto on_error;
 		}
 
+		if(access(Tcl_GetString(objv[objc_curr+1]), R_OK) != 0 ) {
+		    Tcl_SetResult(interp, "directory doesn't exist or lacks read permission", TCL_STATIC);
+		    goto on_error;
+		}
+
 		if (hwloc_topology_set_fsroot(data->topology, Tcl_GetString(objv[objc_curr+1])) == -1) {
 		    Tcl_SetResult(interp, "hwloc_topology_set_fsroot() failed", TCL_STATIC);
 		    goto on_error;
