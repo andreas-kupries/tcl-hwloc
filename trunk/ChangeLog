@@ -1,5 +1,10 @@
 2011-09-15  Andreas Kupries  <andreask@activestate.com>
 
+	* doc/instance.inc: Started on the cpu binding documentation.
+	* generic/cpubind.c: Reworked the cpubind implementation, using
+	  the bitmap functions to simplify internals, plus extended error
+	  reporting and coalescing the get/last code branches.
+
 	* doc/concepts.inc: Replaced the short draft notes with proper
 	  text. The parts of a topology are now called 'elements' instead
 	  of 'object's, to avoid confusion with the topology objects
