@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE topology SYSTEM "hwloc.dtd">
+<topology>
+  <object type="Machine" os_level="-1" os_index="0" cpuset="0x0000003f" complete_cpuset="0x0000003f" online_cpuset="0x0000003f" allowed_cpuset="0x0000003f" local_memory="16825073664">
+    <page_type size="4096" count="4107684"/>
+    <page_type size="2097152" count="0"/>
+    <info name="DMIProductName" value="To be filled by O.E.M."/>
+    <info name="DMIProductVersion" value="To be filled by O.E.M."/>
+    <info name="DMIBoardVendor" value="Stars And Sparks"/>
+    <info name="DMIBoardName" value="Pluto"/>
+    <info name="DMIBoardVersion" value="Rev 1.xx"/>
+    <info name="DMIBoardAssetTag" value="To be filled by O.E.M."/>
+    <info name="DMIChassisVendor" value="To Be Filled By O.E.M."/>
+    <info name="DMIChassisType" value="3"/>
+    <info name="DMIChassisVersion" value="To Be Filled By O.E.M."/>
+    <info name="DMIChassisAssetTag" value="To Be Filled By O.E.M."/>
+    <info name="DMIBIOSVendor" value="Megaroad."/>
+    <info name="DMIBIOSVersion" value="0108"/>
+    <info name="DMIBIOSDate" value="01/01/1967"/>
+    <info name="DMISysVendor" value="To be filled by O.E.M."/>
+    <info name="Backend" value="Linux"/>
+    <info name="OSName" value="Linux"/>
+    <info name="OSRelease" value="1.2a1"/>
+    <info name="OSVersion" value="Triluminary"/>
+    <info name="HostName" value="fake"/>
+    <info name="Architecture" value="x86_64"/>
+    <object type="Socket" os_level="-1" os_index="0" cpuset="0x0000003f" complete_cpuset="0x0000003f" online_cpuset="0x0000003f" allowed_cpuset="0x0000003f">
+      <object type="Cache" os_level="-1" cpuset="0x0000003f" complete_cpuset="0x0000003f" online_cpuset="0x0000003f" allowed_cpuset="0x0000003f" cache_size="6291456" depth="3" cache_linesize="64">
+        <object type="Cache" os_level="-1" cpuset="0x00000001" complete_cpuset="0x00000001" online_cpuset="0x00000001" allowed_cpuset="0x00000001" cache_size="524288" depth="2" cache_linesize="64">
+          <object type="Cache" os_level="-1" cpuset="0x00000001" complete_cpuset="0x00000001" online_cpuset="0x00000001" allowed_cpuset="0x00000001" cache_size="65536" depth="1" cache_linesize="64">
+            <object type="Core" os_level="-1" os_index="0" cpuset="0x00000001" complete_cpuset="0x00000001" online_cpuset="0x00000001" allowed_cpuset="0x00000001">
+              <object type="PU" os_level="-1" os_index="0" cpuset="0x00000001" complete_cpuset="0x00000001" online_cpuset="0x00000001" allowed_cpuset="0x00000001"/>
+            </object>
+          </object>
+        </object>
+        <object type="Cache" os_level="-1" cpuset="0x00000002" complete_cpuset="0x00000002" online_cpuset="0x00000002" allowed_cpuset="0x00000002" cache_size="524288" depth="2" cache_linesize="64">
+          <object type="Cache" os_level="-1" cpuset="0x00000002" complete_cpuset="0x00000002" online_cpuset="0x00000002" allowed_cpuset="0x00000002" cache_size="65536" depth="1" cache_linesize="64">
+            <object type="Core" os_level="-1" os_index="1" cpuset="0x00000002" complete_cpuset="0x00000002" online_cpuset="0x00000002" allowed_cpuset="0x00000002">
+              <object type="PU" os_level="-1" os_index="1" cpuset="0x00000002" complete_cpuset="0x00000002" online_cpuset="0x00000002" allowed_cpuset="0x00000002"/>
+            </object>
+          </object>
+        </object>
+        <object type="Cache" os_level="-1" cpuset="0x00000004" complete_cpuset="0x00000004" online_cpuset="0x00000004" allowed_cpuset="0x00000004" cache_size="524288" depth="2" cache_linesize="64">
+          <object type="Cache" os_level="-1" cpuset="0x00000004" complete_cpuset="0x00000004" online_cpuset="0x00000004" allowed_cpuset="0x00000004" cache_size="65536" depth="1" cache_linesize="64">
+            <object type="Core" os_level="-1" os_index="2" cpuset="0x00000004" complete_cpuset="0x00000004" online_cpuset="0x00000004" allowed_cpuset="0x00000004">
+              <object type="PU" os_level="-1" os_index="2" cpuset="0x00000004" complete_cpuset="0x00000004" online_cpuset="0x00000004" allowed_cpuset="0x00000004"/>
+            </object>
+          </object>
+        </object>
+        <object type="Cache" os_level="-1" cpuset="0x00000008" complete_cpuset="0x00000008" online_cpuset="0x00000008" allowed_cpuset="0x00000008" cache_size="524288" depth="2" cache_linesize="64">
+          <object type="Cache" os_level="-1" cpuset="0x00000008" complete_cpuset="0x00000008" online_cpuset="0x00000008" allowed_cpuset="0x00000008" cache_size="65536" depth="1" cache_linesize="64">
+            <object type="Core" os_level="-1" os_index="3" cpuset="0x00000008" complete_cpuset="0x00000008" online_cpuset="0x00000008" allowed_cpuset="0x00000008">
+              <object type="PU" os_level="-1" os_index="3" cpuset="0x00000008" complete_cpuset="0x00000008" online_cpuset="0x00000008" allowed_cpuset="0x00000008"/>
+            </object>
+          </object>
+        </object>
+        <object type="Cache" os_level="-1" cpuset="0x00000010" complete_cpuset="0x00000010" online_cpuset="0x00000010" allowed_cpuset="0x00000010" cache_size="524288" depth="2" cache_linesize="64">
+          <object type="Cache" os_level="-1" cpuset="0x00000010" complete_cpuset="0x00000010" online_cpuset="0x00000010" allowed_cpuset="0x00000010" cache_size="65536" depth="1" cache_linesize="64">
+            <object type="Core" os_level="-1" os_index="4" cpuset="0x00000010" complete_cpuset="0x00000010" online_cpuset="0x00000010" allowed_cpuset="0x00000010">
+              <object type="PU" os_level="-1" os_index="4" cpuset="0x00000010" complete_cpuset="0x00000010" online_cpuset="0x00000010" allowed_cpuset="0x00000010"/>
+            </object>
+          </object>
+        </object>
+        <object type="Cache" os_level="-1" cpuset="0x00000020" complete_cpuset="0x00000020" online_cpuset="0x00000020" allowed_cpuset="0x00000020" cache_size="524288" depth="2" cache_linesize="64">
+          <object type="Cache" os_level="-1" cpuset="0x00000020" complete_cpuset="0x00000020" online_cpuset="0x00000020" allowed_cpuset="0x00000020" cache_size="65536" depth="1" cache_linesize="64">
+            <object type="Core" os_level="-1" os_index="5" cpuset="0x00000020" complete_cpuset="0x00000020" online_cpuset="0x00000020" allowed_cpuset="0x00000020">
+              <object type="PU" os_level="-1" os_index="5" cpuset="0x00000020" complete_cpuset="0x00000020" online_cpuset="0x00000020" allowed_cpuset="0x00000020"/>
+            </object>
+          </object>
+        </object>
+      </object>
+    </object>
+  </object>
+</topology>

@@ -18,11 +18,11 @@ This package is a binding to the
 library (short: hwloc), making its functionality available to Tcl scripts.
 
 [comment =====================================================================]
-[section Concepts]             [include concepts.inc]
-[section {Class API}]          [include class.inc]
-[section {Instance API}]       [include instance.inc]
-[section {Bitmap API}]         [include bitmap.inc]
-[section {Object Identifiers}] [include oid.inc]
+[section Concepts]              [include concepts.inc]
+[section {Class API}]           [include class.inc]
+[section {Instance API}]        [include instance.inc]
+[section {Bitmap API}]          [include bitmap.inc]
+[section {Element Identifiers}] [include oid.inc]
 
 [section References]
 [list_begin enumerated]
