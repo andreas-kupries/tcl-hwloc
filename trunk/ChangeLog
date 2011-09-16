@@ -1,5 +1,19 @@
 2011-09-16  Andreas Kupries  <andreask@activestate.com>
 
+	* generic/misc.h: New files.
+	* generic/misc.c: Added to configure.
+	* configure.in:
+	* configure: Regenerated.
+
+	* tests/topology_cpu_node_set.test: Moved the testing of the
+	* tests/topology.test: per-element node/cpuset methods here.
+	
+	* doc/instance.inc: Documented new per-element nodeset method,
+	* generic/bitmap.h: and the changes to cpuset method: bitmap result,
+	* generic/object.c: and new argument to specify which of the
+	* generic/bitmap.c: different sets associated with an element to
+	* generic/topology.c: return (analogous to the per-topology sets).
+
 	* generic/topology.c: Better argument check and error for the
 	  topology global 'cpuset' and 'nodeset' methods.
 

@@ -5,6 +5,8 @@
 #include <assert.h>
 #include "topology.h"
 #include "object.h"
+#include "bitmap.h"
+#include "misc.h"
 
 /*
  * topology object id ...
@@ -14,30 +16,42 @@ parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 		   hwloc_obj_t obj)
 {
     static const char* cmds[] = {
-	"arity",          "attributes", "children",     "cpuset",
-	"depth",         "first_child", "info",         "last_child",
-	"logical_index", "name",        "next_cousin",  "next_sibling",
-	"parent",        "prev_cousin", "prev_sibling", "sibling_rank",
-        "type",
+	"arity",         "attributes",  "children",    "cpuset",
+	"depth",         "first_child", "info",        "last_child",
+	"logical_index", "name",        "next_cousin", "next_sibling",
+	"nodeset",       "parent",      "prev_cousin", "prev_sibling",
+	"sibling_rank",  "type",
         NULL
     };
     enum options {
-	ELEM_ARITY,         ELEM_ATTRIBUTES,  ELEM_CHILDREN,     ELEM_CPUSET,
-	ELEM_DEPTH,         ELEM_FIRST_CHILD, ELEM_INFO,         ELEM_LAST_CHILD,
-	ELEM_LOGICAL_INDEX, ELEM_NAME,        ELEM_NEXT_COUSIN,  ELEM_NEXT_SIBLING,
-	ELEM_PARENT,        ELEM_PREV_COUSIN, ELEM_PREV_SIBLING, ELEM_SIBLING_RANK,
-	ELEM_TYPE
+	ELEM_ARITY,         ELEM_ATTRIBUTES,  ELEM_CHILDREN,    ELEM_CPUSET,
+	ELEM_DEPTH,         ELEM_FIRST_CHILD, ELEM_INFO,        ELEM_LAST_CHILD,
+	ELEM_LOGICAL_INDEX, ELEM_NAME,        ELEM_NEXT_COUSIN, ELEM_NEXT_SIBLING,
+	ELEM_NODESET,       ELEM_PARENT,      ELEM_PREV_COUSIN, ELEM_PREV_SIBLING,
+	ELEM_SIBLING_RANK,  ELEM_TYPE
     };
 
     int index;
     Tcl_Obj* lv [2];
 
-    if (objc > 4) {
-        Tcl_WrongNumArgs(interp, 4, objv, NULL);
-        return TCL_ERROR;
-    }
     if (Tcl_GetIndexFromObj(interp, objv[3], cmds, "option", 2, &index) != TCL_OK) {
         return TCL_ERROR;
+    }
+
+    if ((index == ELEM_CPUSET) ||
+	(index == ELEM_NODESET)) {
+	if (objc != 5) {
+	    Tcl_WrongNumArgs(interp, 4, objv, 
+			     index == ELEM_CPUSET
+			     ? "cpuset-type"
+			     : "nodeset-type");
+	    return TCL_ERROR;
+	}
+    } else {
+	if (objc != 4) {
+	    Tcl_WrongNumArgs(interp, 4, objv, NULL);
+	    return TCL_ERROR;
+	}
     }
 
     switch (index) {
@@ -108,15 +122,52 @@ parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	}
     case ELEM_CPUSET:
 	{
-	    /* XXX There can be an element array here. */
-	    int len = hwloc_obj_cpuset_snprintf(NULL, 0, 1, &obj);
-	    char* buffer = ckalloc (len+2);
+	    hwloc_const_cpuset_t cpuset = 0;
+	    thwl_cpuset_type index;
 
-	    hwloc_obj_cpuset_snprintf(buffer, len+1, 1, &obj);
+	    if (thwl_get_cpuset_type (interp, objv[4], &index) != TCL_OK) {
+		return TCL_ERROR;
+	    }
 
-	    Tcl_SetObjResult(interp, Tcl_NewStringObj(buffer, -1));
-	    ckfree (buffer);
-	    break;
+	    switch (index) { 
+	    case CPUSET_COMPLETE: 
+		cpuset = obj->complete_cpuset;
+		break;
+	    case CPUSET_ALLOWED: 
+		cpuset = obj->allowed_cpuset;
+		break;
+	    case CPUSET_ONLINE: 
+		cpuset = obj->online_cpuset;
+		break;
+	    case CPUSET_TOPOLOGY: 
+		cpuset = obj->cpuset;
+		break;
+	    }
+
+	    return thwl_set_result_cbitmap (interp, cpuset);
+	}
+    case ELEM_NODESET:
+	{
+	    hwloc_const_nodeset_t nodeset = 0;
+	    thwl_nodeset_type index;
+
+	    if (thwl_get_nodeset_type (interp, objv[4], &index) != TCL_OK) {
+		return TCL_ERROR;
+	    }
+
+	    switch (index) { 
+	    case NODESET_COMPLETE: 
+		nodeset = obj->complete_nodeset;
+		break;
+	    case NODESET_ALLOWED: 
+		nodeset = obj->allowed_nodeset;
+		break;
+	    case NODESET_TOPOLOGY: 
+		nodeset = obj->nodeset;
+		break;
+	    }
+
+	    return thwl_set_result_cbitmap (interp, nodeset);
 	}
     case ELEM_INFO:
 	{

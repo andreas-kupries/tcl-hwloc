@@ -4690,7 +4690,7 @@ HWLOC_CFLAGS=`pkg-config --cflags hwloc`
 HWLOC_LIBS=`pkg-config --libs hwloc`
 
 
-    vars="topology.c object.c cpubind.c membind.c bitmap.c hwloc.c"
+    vars="topology.c object.c cpubind.c membind.c bitmap.c hwloc.c misc.c"
     for i in $vars; do
 	case $i in
 	    \$*)

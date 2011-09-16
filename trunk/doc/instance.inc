@@ -37,20 +37,20 @@ a single memory node and use the following heuristics:
 @@@ TODO @@@ cpubind
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method cpuset] [option -allowed]]
-[call [cmd topologyCmd] [method cpuset] [option -complete]]
-[call [cmd topologyCmd] [method cpuset] [option -online]]
-[call [cmd topologyCmd] [method cpuset] [option -topology]]
+[call [cmd topologyCmd] [method {cpuset allowed}]]
+[call [cmd topologyCmd] [method {cpuset complete}]]
+[call [cmd topologyCmd] [method {cpuset online}]]
+[call [cmd topologyCmd] [method {cpuset topology}]]
 
 This method returns a bitmap describing various types of CPU sets,
 i.e. subsets of the whole set of logical processors found in the
 topology.
 
-[list_begin options]
-[opt_def -allowed]  All [term allowed] processors.
-[opt_def -complete] All processors.
-[opt_def -online]   All [term online] (aka [term active] processors
-[opt_def -topology] All processors of the system.
+[list_begin definitions]
+[def allowed]  All [term allowed] processors.
+[def complete] All processors.
+[def online]   All [term online] (aka [term active] processors
+[def topology] All processors of the system.
 [list_end]
 
 @@@ TODO @@@ cpuset - Question - How does a cpu set relate to object types ?
@@ -99,23 +99,22 @@ option [option -set_flags] with flag [const this_system], option
 @@@ TODO @@@ membind
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method nodeset] [option -allowed]]
-[call [cmd topologyCmd] [method nodeset] [option -complete]]
-[call [cmd topologyCmd] [method nodeset] [option -topology]]
+[call [cmd topologyCmd] [method {nodeset allowed}]]
+[call [cmd topologyCmd] [method {nodeset complete}]]
+[call [cmd topologyCmd] [method {nodeset topology}]]
 
-This method returns a bitmap describing various types of memory sets,
-i.e. subsets of the whole set of logical memory found in the topology.
+This method returns a bitmap describing various types of numa node
+sets, i.e. subsets of the whole set of logical memory found in the
+topology.
 
-[list_begin options]
-[opt_def -allowed]  All [term allowed] memory nodes.
-[opt_def -complete] All memory nodes.
-[opt_def -topology] All memory of the system.
+[list_begin definitions]
+[def allowed]  All [term allowed] numa nodes.
+[def complete] All numa nodes.
+[def topology] All numa nodes of the system.
 [list_end]
 
-@@@ TODO @@@ nodeset - Question - How does a node set relate to object types ?
-
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [arg ...]]
+[call [cmd topologyCmd] [method element] [arg id] [arg ...]]
 
 This method provides an ensemble of sub-commands enabling navigation
 in the tree of elements contained in the topology, relative to the
@@ -126,13 +125,13 @@ syntax used here. Errors are thrown for identifiers not following this
 syntax, or refering to elements not existing in the topology.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method arity]]
+[call [cmd topologyCmd] [method element] [arg id] [method arity]]
 
 This method returns an integer number, the number of children for the
 element.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method attributes]]
+[call [cmd topologyCmd] [method element] [arg id] [method attributes]]
 
 This method, and [method info] below return similar information, this
 one more human-readable, the other machine-readable, and with a few
@@ -140,37 +139,35 @@ keys excluded. The result here is a string shell variable assignments,
 separated by a single space.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method children]]
+[call [cmd topologyCmd] [method element] [arg id] [method children]]
 
 This method returns a list of element identifiers, the children of the
 element. If the element hs no children the result is the empty list.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method cpuset]]
+[call [cmd topologyCmd] [method element] [arg id] [method {cpuset allowed}]]
+[call [cmd topologyCmd] [method element] [arg id] [method {cpuset complete}]]
+[call [cmd topologyCmd] [method element] [arg id] [method {cpuset online}]]
+[call [cmd topologyCmd] [method element] [arg id] [method {cpuset topology}]]
 
-This method returns the CPU set associated with the element.
-
--- Determine exactly what this means from the hwloc documentation --
-
-The result is an integer number formatted hexadecimally
-
--- Might it not be better to get this as bitmap at least ? --
+This method returns a bitmap, one of several CPU sets associated with
+the element.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method depth]]
+[call [cmd topologyCmd] [method element] [arg id] [method depth]]
 
 This method returns the depth the element is at. This is, in essence,
 the first element of its element identifier.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method first_child]]
+[call [cmd topologyCmd] [method element] [arg id] [method first_child]]
 
 This method returns the element identifier of the first, leftmost
 child of the element. An error is thrown if the element has no
 children.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method info]]
+[call [cmd topologyCmd] [method element] [arg id] [method info]]
 
 This method, and [method attributes] above return similar information,
 this one machine-readable, the other more human-readable, and with a
@@ -178,25 +175,25 @@ few keys more. The result here is a list of pairs, with each pair
 containing key and vaue, in this order.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method last_child]]
+[call [cmd topologyCmd] [method element] [arg id] [method last_child]]
 
 This method returns the element identifier of the last, rightmost
 child of the element. An error is thrown if the element has no
 children.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method logical_index]]
+[call [cmd topologyCmd] [method element] [arg id] [method logical_index]]
 
 This method returns the index of the element in its layer. This is, in
 essence, the second element of its element identifier.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method name]]
+[call [cmd topologyCmd] [method element] [arg id] [method name]]
 
 This method returns a string, the name of the element.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method next_cousin]]
+[call [cmd topologyCmd] [method element] [arg id] [method next_cousin]]
 
 This method returns the identifier of the right sibling of the
 element, if there is any, or the first child in the next sibling of
@@ -207,20 +204,29 @@ The method throws an error if and only if the element is the last
 element in its layer.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method next_sibling]]
+[call [cmd topologyCmd] [method element] [arg id] [method next_sibling]]
 
 This method returns the identifier of the right sibling of the
 element.  The method throws an error if the element is the last child
 in its parent, i.e. does not have a right sibling.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method parent]]
+[call [cmd topologyCmd] [method element] [arg id] [method {nodeset allowed}]]
+[call [cmd topologyCmd] [method element] [arg id] [method {nodeset complete}]]
+[call [cmd topologyCmd] [method element] [arg id] [method {nodeset online}]]
+[call [cmd topologyCmd] [method element] [arg id] [method {nodeset topology}]]
+
+This method returns a bitmap, one of several NUMA node sets associated
+with the element.
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method element] [arg id] [method parent]]
 
 This method returns the identifier of the parent of the element.  The
 method throws an error if the element is the root of the topology.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method prev_cousin]]
+[call [cmd topologyCmd] [method element] [arg id] [method prev_cousin]]
 
 This method returns the identifier of the left sibling of the element,
 if there is any, or the last child in the previous sibling of its
@@ -231,26 +237,26 @@ The method throws an error if and only if the element is the first
 element in its layer.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method prev_sibling]]
+[call [cmd topologyCmd] [method element] [arg id] [method prev_sibling]]
 
 This method returns the identifier of the left sibling of the element.
 The method throws an error if the element is the first child in its
 parent, i.e. does not have a left sibling.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method sibling_rank]]
+[call [cmd topologyCmd] [method element] [arg id] [method sibling_rank]]
 
 This method returns an integer number, the index of the element among
 the children of its parent.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object] [arg id] [method type]]
+[call [cmd topologyCmd] [method element] [arg id] [method type]]
 
 This method returns a string, the type of the element.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method object_by] [option -depth] [arg depth] [arg index]]
-[call [cmd topologyCmd] [method object_by] [option -type] [arg type] [arg index]]
+[call [cmd topologyCmd] [method element_by] [option -depth] [arg depth] [arg index]]
+[call [cmd topologyCmd] [method element_by] [option -type] [arg type] [arg index]]
 
 This method is a constructor for element identifiers. Either directly
 from [arg depth] and [arg index], or the depth specified indirectly

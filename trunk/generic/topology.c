@@ -7,6 +7,7 @@
 #include "cpubind.h"
 #include "membind.h"
 #include "bitmap.h"
+#include "misc.h"
 
 static int parse_cpuset_args  (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
 static int parse_nodeset_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
@@ -274,7 +275,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
     case TOPO_CPUSET: /* cpuset...*/
         {
             if (objc != 3) {
-                Tcl_WrongNumArgs(interp, 2, objv, "-allowed|-complete|-online|-topology");
+                Tcl_WrongNumArgs(interp, 2, objv, "cpuset-type");
                 return TCL_ERROR;
             }
 
@@ -284,7 +285,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
     case TOPO_NODESET: /* nodeset...*/
         {
             if (objc != 3) {
-                Tcl_WrongNumArgs(interp, 2, objv, "-allowed|-complete|-topology");
+                Tcl_WrongNumArgs(interp, 2, objv, "nodeset-type");
                 return TCL_ERROR;
             }
 
@@ -316,85 +317,53 @@ TopologyCmd_CleanUp(ClientData clientData) {
 
 static int
 parse_cpuset_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
-    static const char* cmds[] = {
-        "-allowed", "-complete", "-online", "-topology",
-        NULL
-    };
-    enum options {
-        CPUSET_ALLOWED, CPUSET_COMPLETE, CPUSET_ONLINE, CPUSET_TOPOLOGY
-    };
-    hwloc_const_cpuset_t set = 0;
-    char *list;
-    int index;
+    hwloc_const_cpuset_t cpuset = 0;
+    thwl_cpuset_type index;
 
-    if (Tcl_GetIndexFromObj(interp, objv[2], cmds, "option", 2, &index) != TCL_OK) {
-        return TCL_ERROR;
+    if (thwl_get_cpuset_type (interp, objv[2], &index) != TCL_OK) {
+	return TCL_ERROR;
     }
 
     switch (index) { 
     case CPUSET_COMPLETE: 
-	set = hwloc_topology_get_complete_cpuset(data->topology);
+	cpuset = hwloc_topology_get_complete_cpuset(data->topology);
 	break;
     case CPUSET_ALLOWED: 
-	set = hwloc_topology_get_allowed_cpuset(data->topology);
+	cpuset = hwloc_topology_get_allowed_cpuset(data->topology);
 	break;
     case CPUSET_ONLINE: 
-	set = hwloc_topology_get_online_cpuset(data->topology);
+	cpuset = hwloc_topology_get_online_cpuset(data->topology);
 	break;
     case CPUSET_TOPOLOGY: 
-	set = hwloc_topology_get_topology_cpuset(data->topology);
+	cpuset = hwloc_topology_get_topology_cpuset(data->topology);
 	break;
     }
 
-    if (hwloc_bitmap_list_asprintf(&list, set) == -1) {
-        Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
-        return TCL_ERROR;
-    }
-
-    Tcl_SetObjResult(interp, Tcl_NewStringObj(list, -1));
-    free(list);
-
-    return TCL_OK;
+    return thwl_set_result_cbitmap (interp, cpuset);
 }
 
 static int
 parse_nodeset_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
-    static const char* cmds[] = {
-	"-allowed", "-complete", "-topology",
-        NULL
-    };
-    enum options {
-        NODESET_ALLOWED, NODESET_COMPLETE, NODESET_TOPOLOGY
-    };
-    hwloc_const_nodeset_t set = 0;
-    int index;
-    char *list;
+    hwloc_const_nodeset_t nodeset = 0;
+    thwl_nodeset_type index;
 
-    if (Tcl_GetIndexFromObj(interp, objv[2], cmds, "option", 2, &index) != TCL_OK) {
-        return TCL_ERROR;
+    if (thwl_get_nodeset_type (interp, objv[2], &index) != TCL_OK) {
+	return TCL_ERROR;
     }
 
     switch (index) { 
     case NODESET_COMPLETE: 
-	set = hwloc_topology_get_complete_nodeset(data->topology);
+	nodeset = hwloc_topology_get_complete_nodeset(data->topology);
 	break;
     case NODESET_ALLOWED: 
-	set = hwloc_topology_get_allowed_nodeset(data->topology);
+	nodeset = hwloc_topology_get_allowed_nodeset(data->topology);
 	break;
     case NODESET_TOPOLOGY: 
-	set = hwloc_topology_get_topology_nodeset(data->topology);
+	nodeset = hwloc_topology_get_topology_nodeset(data->topology);
 	break;
     }
 
-    if (hwloc_bitmap_list_asprintf(&list, set) == -1) {
-        Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
-        return TCL_ERROR;
-    }
-
-    Tcl_SetObjResult(interp, Tcl_NewStringObj(list, -1));
-    free(list);
-
-    return TCL_OK;
+    return thwl_set_result_cbitmap (interp, nodeset);
 }
 
 static int
