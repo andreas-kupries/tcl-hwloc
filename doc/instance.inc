@@ -26,7 +26,13 @@ a single memory node and use the following heuristics:
 [list_end]
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method cpubind] [arg ...]]
+[call [cmd topologyCmd] [method {cpubind get}]  [opt "[option -pid] [arg pid]"] [opt "[option -type] [arg type]"]]
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method {cpubind last}] [opt "[option -pid] [arg pid]"] [opt "[option -type] [arg type]"]]
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method {cpubind set}]  [opt "[option -pid] [arg pid]"] [opt "[option -type] [arg type]"] [arg cpuset]]
 
 @@@ TODO @@@ cpubind
 
