@@ -273,8 +273,8 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
         }
     case TOPO_CPUSET: /* cpuset...*/
         {
-            if (objc < 3) {
-                Tcl_WrongNumArgs(interp, 2, objv, "args...");
+            if (objc != 3) {
+                Tcl_WrongNumArgs(interp, 2, objv, "-allowed|-complete|-online|-topology");
                 return TCL_ERROR;
             }
 
@@ -283,8 +283,8 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
         }
     case TOPO_NODESET: /* nodeset...*/
         {
-            if (objc < 3) {
-                Tcl_WrongNumArgs(interp, 2, objv, "args...");
+            if (objc != 3) {
+                Tcl_WrongNumArgs(interp, 2, objv, "-allowed|-complete|-topology");
                 return TCL_ERROR;
             }
 

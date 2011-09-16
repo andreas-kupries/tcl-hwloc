@@ -23,7 +23,7 @@ int parse_cpubind_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *
 
     hwloc_bitmap_t thecpuset;
 
-    int index, res;
+    int index, res = 0;
     int objv_idx = 3;
     int pid = 0;
     int flags = 0;
@@ -42,8 +42,7 @@ int parse_cpubind_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *
 
     if ((objc >= objv_idx+2) &&
 	strcmp((const char *) Tcl_GetString(objv[objv_idx]), "-type") == 0) {
-        int res = 0;
-        if (parse_flags(interp, &res, objv[objv_idx+1]) == TCL_ERROR) {
+        if (parse_flags(interp, &flags, objv[objv_idx+1]) == TCL_ERROR) {
             return TCL_ERROR;
 	}
         objv_idx += 2;
@@ -51,61 +50,58 @@ int parse_cpubind_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *
 
     switch (index) {
     case CPUBIND_SET:
-	{
-	    if (objc != (objv_idx+1)) {
-		Tcl_WrongNumArgs(interp, objv_idx, objv, "cpuset");
-		return TCL_ERROR;
-	    }
-
-	    thecpuset = thwl_get_bitmap (interp, objv[objv_idx]);
-	    if (thecpuset == NULL) {
-		return TCL_ERROR;
-	    }
-
-	    if (pid) {
-		res = hwloc_set_proc_cpubind(data->topology, pid, thecpuset, flags);
-	    } else {
-		res = hwloc_set_cpubind(data->topology, thecpuset, flags);
-	    }
-
-	    hwloc_bitmap_free(thecpuset);
-	    if (res == -1) goto bind_error;
-	    break;
+	if (objc != (objv_idx+1)) {
+	    Tcl_WrongNumArgs(interp, objv_idx, objv, "cpuset");
+	    return TCL_ERROR;
 	}
+
+	thecpuset = thwl_get_bitmap (interp, objv[objv_idx]);
+	if (thecpuset == NULL) {
+	    return TCL_ERROR;
+	}
+
+	if (pid) {
+	    res = hwloc_set_proc_cpubind(data->topology, pid, thecpuset, flags);
+	} else {
+	    res = hwloc_set_cpubind(data->topology, thecpuset, flags);
+	}
+
+	hwloc_bitmap_free(thecpuset);
+	if (res == -1) goto bind_error;
+	break;
+
     case CPUBIND_GET:
     case CPUBIND_LAST:
-	{
-	    if (objc > objv_idx) {
-		Tcl_WrongNumArgs(interp, objv_idx, objv, NULL);
-		return TCL_ERROR;
-	    }
-
-	    thecpuset = hwloc_bitmap_alloc();
-
-	    switch (index) {
-	    case CPUBIND_GET:
-		if (pid) {
-		    res = hwloc_get_proc_cpubind(data->topology, pid, thecpuset, flags);
-		} else {
-		    res = hwloc_get_cpubind(data->topology, thecpuset, flags);
-		}
-		break;
-	    case CPUBIND_LAST:
-		if (pid) {
-		    res = hwloc_get_proc_last_cpu_location(data->topology, pid, thecpuset, flags);
-		} else {
-		    res = hwloc_get_last_cpu_location(data->topology, thecpuset, flags);
-		}
-		break;
-	    }
-
-	    if (res == -1) {
-		hwloc_bitmap_free(thecpuset);
-		goto bind_error;
-	    }
-
-	    return thwl_set_result_bitmap (interp, thecpuset);
+	if (objc > objv_idx) {
+	    Tcl_WrongNumArgs(interp, objv_idx, objv, NULL);
+	    return TCL_ERROR;
 	}
+
+	thecpuset = hwloc_bitmap_alloc();
+
+	switch (index) {
+	case CPUBIND_GET:
+	    if (pid) {
+		res = hwloc_get_proc_cpubind(data->topology, pid, thecpuset, flags);
+	    } else {
+		res = hwloc_get_cpubind(data->topology, thecpuset, flags);
+	    }
+	    break;
+	case CPUBIND_LAST:
+	    if (pid) {
+		res = hwloc_get_proc_last_cpu_location(data->topology, pid, thecpuset, flags);
+	    } else {
+		res = hwloc_get_last_cpu_location(data->topology, thecpuset, flags);
+	    }
+	    break;
+	}
+
+	if (res == -1) {
+	    hwloc_bitmap_free(thecpuset);
+	    goto bind_error;
+	}
+
+	return thwl_set_result_bitmap (interp, thecpuset);
     }
 
     return TCL_OK;
