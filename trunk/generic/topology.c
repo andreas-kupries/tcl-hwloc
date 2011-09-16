@@ -16,16 +16,16 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
     topo_data* data = (struct topo_data *) clientData;
 
     static const char* cmds[] = {
-        "convert", "cpubind", "cpuset",    "depth",
-	"destroy", "export",  "local",     "membind",
-	"nodeset", "object",  "object_by", "root",
+        "convert", "cpubind", "cpuset",     "depth",
+	"destroy", "element", "element_by", "export",
+	"local",   "membind", "nodeset",    "root",
 	"type",    "width",
         NULL
     };
     enum options {
-        TOPO_CONVERT, TOPO_CPUBIND, TOPO_CPUSET,    TOPO_DEPTH,
-	TOPO_DESTROY, TOPO_EXPORT,  TOPO_LOCAL,     TOPO_MEMBIND,
-	TOPO_NODESET, TOPO_OBJECT,  TOPO_OBJECT_BY, TOPO_ROOT,
+        TOPO_CONVERT, TOPO_CPUBIND, TOPO_CPUSET,     TOPO_DEPTH,
+	TOPO_DESTROY, TOPO_ELEMENT, TOPO_ELEMENT_BY, TOPO_EXPORT,
+	TOPO_LOCAL,   TOPO_MEMBIND, TOPO_NODESET,    TOPO_ROOT,
 	TOPO_TYPE,    TOPO_WIDTH
     };
     int index;
@@ -67,7 +67,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
                 hwloc_obj_type_t type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[3]));
 
                 if (type == -1) {
-                    Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
+                    Tcl_SetResult(interp, "unrecognized element type", TCL_STATIC);
                     return TCL_ERROR;
                 }
 
@@ -123,7 +123,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
                 hwloc_obj_type_t type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[3]));
 
                 if (type == -1) {
-                    Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
+                    Tcl_SetResult(interp, "unrecognized element type", TCL_STATIC);
                     return TCL_ERROR;
                 }
 
@@ -163,7 +163,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
             Tcl_SetObjResult(interp, Tcl_NewListObj(2, lv));
             break;
         }
-    case TOPO_OBJECT_BY: /* object_by {-depth value|-type value} index */
+    case TOPO_ELEMENT_BY: /* element_by {-depth value|-type value} index */
         {
             hwloc_obj_t obj = NULL;
 	    Tcl_Obj* lv [2];
@@ -186,7 +186,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 
                 obj = hwloc_get_obj_by_depth (data->topology, (unsigned) depth, (unsigned) idx);
                 if (obj == NULL) {
-                    Tcl_SetResult(interp, "object does not exist", TCL_STATIC);
+                    Tcl_SetResult(interp, "element does not exist", TCL_STATIC);
                     return TCL_ERROR;
                 }
             } else if (strcmp((const char *) Tcl_GetString(objv[2]), "-type") == 0) {
@@ -194,7 +194,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
                 hwloc_obj_type_t type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[3]));
 
                 if (type == -1) {
-                    Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
+                    Tcl_SetResult(interp, "unrecognized element type", TCL_STATIC);
                     return TCL_ERROR;
                 }
                 if (Tcl_GetIntFromObj(interp, objv[4], &idx) == TCL_ERROR) {
@@ -203,7 +203,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 
                 obj = hwloc_get_obj_by_type(data->topology, type, (unsigned) idx);
                 if (obj == NULL) {
-                    Tcl_SetResult(interp, "object does not exist", TCL_STATIC);
+                    Tcl_SetResult(interp, "element does not exist", TCL_STATIC);
                     return TCL_ERROR;
                 }
             } else {
@@ -217,7 +217,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
             Tcl_SetObjResult(interp, Tcl_NewListObj(2, lv));
             break;
         }
-    case TOPO_OBJECT: /* object id ... */
+    case TOPO_ELEMENT: /* element id ... */
         {
             Tcl_Obj **obj_objv;
             int obj_objc;
@@ -231,7 +231,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
             }
 
             if (Tcl_ListObjGetElements(interp, objv[2], &obj_objc, &obj_objv) == TCL_ERROR || obj_objc != 2) {
-                Tcl_SetResult(interp, "invalid object id", TCL_STATIC);
+                Tcl_SetResult(interp, "invalid element id", TCL_STATIC);
                 return TCL_ERROR;
             }
             
@@ -244,7 +244,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 
 	    obj = hwloc_get_obj_by_depth(data->topology, (unsigned) depth, (unsigned) idx);
             if (obj == NULL) {
-                Tcl_SetResult(interp, "object does not exist", TCL_STATIC);
+                Tcl_SetResult(interp, "element does not exist", TCL_STATIC);
                 return TCL_ERROR;
             }
 

@@ -53,12 +53,11 @@ topology.
 [call [cmd topologyCmd] [method depth] [opt "[option -type] [arg type]"]]
 
 This method returns the depth of the topology as an integer value, or
-the depth at which the objects of the specified [arg type] are
-found.
+the depth at which the elements of the specified [arg type] are found.
 
 An error is thrown if an invalid [arg type] is specified. A negative
 value, [const -1] to be precise, is returned if the [arg type] is
-valid but the topology does not contain objects of that type.
+valid but the topology does not contain elements of that type.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method destroy]]
@@ -113,18 +112,18 @@ i.e. subsets of the whole set of logical memory found in the topology.
 [call [cmd topologyCmd] [method object] [arg id] [arg ...]]
 
 This method provides an ensemble of sub-commands enabling navigation
-in the tree of objects contained in the topology, relative to the
-object specified by [arg id]. See also method [method root].
+in the tree of elements contained in the topology, relative to the
+element specified by the [arg id]. See also method [method root].
 
-Please see section [sectref {Object Identifiers}] for details of the
-syntax used here. Errors are thrown for ids not following this syntax,
-or refering to objects not existing in the topology.
+Please see section [sectref {Element Identifiers}] for details of the
+syntax used here. Errors are thrown for identifiers not following this
+syntax, or refering to elements not existing in the topology.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method arity]]
 
-This method returns an integer number, the number of children the
-object has.
+This method returns an integer number, the number of children for the
+element.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method attributes]]
@@ -137,13 +136,13 @@ separated by a single space.
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method children]]
 
-This method returns a list of object identifiers, the children of the
-object.  If the object hs no children the result is the empty list.
+This method returns a list of element identifiers, the children of the
+element. If the element hs no children the result is the empty list.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method cpuset]]
 
-This method returns the CPU set associated with the object.
+This method returns the CPU set associated with the element.
 
 -- Determine exactly what this means from the hwloc documentation --
 
@@ -154,14 +153,15 @@ The result is an integer number formatted hexadecimally
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method depth]]
 
-This method returns the depth the object is at. This is, in essence,
-the first element of its object identifier.
+This method returns the depth the element is at. This is, in essence,
+the first element of its element identifier.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method first_child]]
 
-This method returns the object identifier of the first, leftmost child
-of the object. An error is thrown if the object has no children.
+This method returns the element identifier of the first, leftmost
+child of the element. An error is thrown if the element has no
+children.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method info]]
@@ -174,96 +174,98 @@ containing key and vaue, in this order.
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method last_child]]
 
-This method returns the object identifier of the last, rightmost child
-of the object. An error is thrown if the object has no children.
+This method returns the element identifier of the last, rightmost
+child of the element. An error is thrown if the element has no
+children.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method logical_index]]
 
-This method returns the index of the object in its layer. This is, in
-essence, the second element of its object identifier.
+This method returns the index of the element in its layer. This is, in
+essence, the second element of its element identifier.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method name]]
 
-This method returns a string, the name of the object.
+This method returns a string, the name of the element.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method next_cousin]]
 
-This method returns the identifier of the right sibling of the object,
-if there is any, or the first child in the next sibling of its parent
-object. In essence it navigates to the right in its layer without
-being bound to the children of the current parent.
+This method returns the identifier of the right sibling of the
+element, if there is any, or the first child in the next sibling of
+its parent element. In essence it navigates to the right in its layer
+without being bound to the children of the current parent.
 
-The method throws an error if and only if the object is the last
-object in its layer.
+The method throws an error if and only if the element is the last
+element in its layer.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method next_sibling]]
 
-This method returns the identifier of the right sibling of the object.
-The method throws an error if the object is the last child in its
-parent, i.e. does not have a right sibling.
+This method returns the identifier of the right sibling of the
+element.  The method throws an error if the element is the last child
+in its parent, i.e. does not have a right sibling.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method parent]]
 
-This method returns the identifier of the parent  of the object.
-The method throws an error if the object is the root of the topology.
+This method returns the identifier of the parent of the element.  The
+method throws an error if the element is the root of the topology.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method prev_cousin]]
 
-This method returns the identifier of the left sibling of the object,
+This method returns the identifier of the left sibling of the element,
 if there is any, or the last child in the previous sibling of its
-parent object. In essence it navigates to the left in its layer
+parent element. In essence it navigates to the left in its layer
 without being bound to the children of the current parent.
 
-The method throws an error if and only if the object is the first
-object in its layer.
+The method throws an error if and only if the element is the first
+element in its layer.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method prev_sibling]]
 
-This method returns the identifier of the left sibling of the object.
-The method throws an error if the object is the first child in its
+This method returns the identifier of the left sibling of the element.
+The method throws an error if the element is the first child in its
 parent, i.e. does not have a left sibling.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method sibling_rank]]
 
-This method returns the index of the object among the children of its
-parent.
+This method returns an integer number, the index of the element among
+the children of its parent.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object] [arg id] [method type]]
 
-This method returns a string, the type of the object.
+This method returns a string, the type of the element.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method object_by] [option -depth] [arg depth] [arg index]]
 [call [cmd topologyCmd] [method object_by] [option -type] [arg type] [arg index]]
 
-This method is a constructor for object identifiers. Either directly
+This method is a constructor for element identifiers. Either directly
 from [arg depth] and [arg index], or the depth specified indirectly
-through the object [arg type].
+through the element [arg type].
 
-An error is thrown if the intended object does not exist in the topology.
+An error is thrown if the intended element does not exist in the
+topology.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method root]]
 
-This method returns the identifier for the root object of the topology
-tree.
+This method returns the identifier for the root element of the
+topology tree.
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method type] [opt "[option -depth] [arg depth]"]]
 
-This method returns a string, the type of the objects at the specified
-[arg depth] of the topology. An error is thrown if an invalid depth is
-specified, i.e. either a value less than zero, or greater than the
-value returned by
+This method returns a string, the type of the elements at the
+specified [arg depth] of the topology. An error is thrown if an
+invalid depth is specified, i.e. either a value less than zero, or
+greater than the value returned by
 
 [example {
     topology depth
@@ -273,13 +275,12 @@ value returned by
 [call [cmd topologyCmd] [method width] [opt "[option -type] [arg type]"]]
 [call [cmd topologyCmd] [method width] [opt "[option -depth] [arg depth]"]]
 
-This method returns an integer value, the number of objects contained
+This method returns an integer value, the number of elements contained
 in the topology which are of either the specified [arg type], or found
 at the specified [arg depth].
 
-[para] An error is thrown if an invalid depth is specified,
-i.e. either a value less than zero, or greater than the value returned
-by
+[para] An error is thrown if an invalid depth is specified, i.e. either
+a value less than zero, or greater than the value returned by
 
 [example {
     topology depth
@@ -287,6 +288,6 @@ by
 
 [para] Alternatively, an error is also thrown if an invalid [arg type]
 is specified. The value [const 0] is returned if the [arg type] is
-valid but the topology does not contain objects of that type.
+valid but the topology does not contain elements of that type.
 
 [list_end]

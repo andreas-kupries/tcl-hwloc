@@ -9,7 +9,10 @@
 /*
  * topology object id ...
  */
-int parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[], hwloc_obj_t obj) {
+int
+parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[],
+		   hwloc_obj_t obj)
+{
     static const char* cmds[] = {
 	"arity",          "attributes", "children",     "cpuset",
 	"depth",         "first_child", "info",         "last_child",
@@ -19,11 +22,11 @@ int parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *C
         NULL
     };
     enum options {
-	OBJ_ARITY,         OBJ_ATTRIBUTES,  OBJ_CHILDREN,     OBJ_CPUSET,
-	OBJ_DEPTH,         OBJ_FIRST_CHILD, OBJ_INFO,         OBJ_LAST_CHILD,
-	OBJ_LOGICAL_INDEX, OBJ_NAME,        OBJ_NEXT_COUSIN,  OBJ_NEXT_SIBLING,
-	OBJ_PARENT,        OBJ_PREV_COUSIN, OBJ_PREV_SIBLING, OBJ_SIBLING_RANK,
-	OBJ_TYPE
+	ELEM_ARITY,         ELEM_ATTRIBUTES,  ELEM_CHILDREN,     ELEM_CPUSET,
+	ELEM_DEPTH,         ELEM_FIRST_CHILD, ELEM_INFO,         ELEM_LAST_CHILD,
+	ELEM_LOGICAL_INDEX, ELEM_NAME,        ELEM_NEXT_COUSIN,  ELEM_NEXT_SIBLING,
+	ELEM_PARENT,        ELEM_PREV_COUSIN, ELEM_PREV_SIBLING, ELEM_SIBLING_RANK,
+	ELEM_TYPE
     };
 
     int index;
@@ -38,7 +41,7 @@ int parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *C
     }
 
     switch (index) {
-    case OBJ_CHILDREN:
+    case ELEM_CHILDREN:
 	{
 	    Tcl_Obj *resultPtr = Tcl_NewListObj(0, NULL);
 	    int i;
@@ -53,46 +56,46 @@ int parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	    Tcl_SetObjResult(interp, resultPtr);
 	    break;
 	}
-    case OBJ_PARENT:
+    case ELEM_PARENT:
 	obj = obj->parent;
 	goto return_obj;
-    case OBJ_NEXT_COUSIN:
+    case ELEM_NEXT_COUSIN:
 	obj = obj->next_cousin;
 	goto return_obj;
-    case OBJ_PREV_COUSIN:
+    case ELEM_PREV_COUSIN:
 	obj = obj->prev_cousin;
 	goto return_obj;
-    case OBJ_NEXT_SIBLING:
+    case ELEM_NEXT_SIBLING:
 	obj = obj->next_sibling;
 	goto return_obj;
-    case OBJ_PREV_SIBLING:
+    case ELEM_PREV_SIBLING:
 	obj = obj->prev_sibling;
 	goto return_obj;
-    case OBJ_FIRST_CHILD:
+    case ELEM_FIRST_CHILD:
 	obj = obj->first_child;
 	goto return_obj;
-    case OBJ_LAST_CHILD:
+    case ELEM_LAST_CHILD:
 	obj = obj->last_child;
 	goto return_obj;
-    case OBJ_TYPE:
+    case ELEM_TYPE:
 	Tcl_SetObjResult(interp, Tcl_NewStringObj(hwloc_obj_type_string(obj->type), -1));
 	break;
-    case OBJ_NAME:
+    case ELEM_NAME:
 	Tcl_SetObjResult(interp, Tcl_NewStringObj (obj->name, -1));
 	break;
-    case OBJ_DEPTH:
+    case ELEM_DEPTH:
 	Tcl_SetObjResult(interp, Tcl_NewIntObj (obj->depth));
 	break;
-    case OBJ_LOGICAL_INDEX:
+    case ELEM_LOGICAL_INDEX:
 	Tcl_SetObjResult(interp, Tcl_NewIntObj (obj->logical_index));
 	break;
-    case OBJ_SIBLING_RANK:
+    case ELEM_SIBLING_RANK:
 	Tcl_SetObjResult(interp, Tcl_NewIntObj (obj->sibling_rank));
 	break;
-    case OBJ_ARITY:
+    case ELEM_ARITY:
 	Tcl_SetObjResult(interp, Tcl_NewIntObj (obj->arity));
 	break;
-    case OBJ_ATTRIBUTES:
+    case ELEM_ATTRIBUTES:
 	{
 	    int len = hwloc_obj_attr_snprintf(NULL, 0, obj, NULL, 1);
 	    char* buffer = ckalloc (len+2);
@@ -103,9 +106,9 @@ int parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	    ckfree (buffer);
 	    break;
 	}
-    case OBJ_CPUSET:
+    case ELEM_CPUSET:
 	{
-	    /* XXX There can be an object array here. */
+	    /* XXX There can be an element array here. */
 	    int len = hwloc_obj_cpuset_snprintf(NULL, 0, 1, &obj);
 	    char* buffer = ckalloc (len+2);
 
@@ -115,7 +118,7 @@ int parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	    ckfree (buffer);
 	    break;
 	}
-    case OBJ_INFO:
+    case ELEM_INFO:
 	{
 	    Tcl_Obj *resultPtr = Tcl_NewListObj(0, NULL);
 	    int i;
@@ -136,7 +139,7 @@ int parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *C
 
  return_obj:
     if (obj == NULL) {
-        Tcl_SetResult(interp, "requested object does not exist", TCL_STATIC);
+        Tcl_SetResult(interp, "requested element does not exist", TCL_STATIC);
         return TCL_ERROR;
     }
 
