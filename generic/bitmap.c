@@ -60,6 +60,20 @@ thwl_set_result_bitmap (Tcl_Interp* interp, hwloc_bitmap_t bitmap) {
     return TCL_OK;
 }
 
+int
+thwl_set_result_cbitmap (Tcl_Interp* interp, hwloc_const_bitmap_t bitmap) {
+    char* res;
+
+    if (hwloc_bitmap_list_asprintf(&res, bitmap) == -1) {
+        Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
+        return TCL_ERROR;
+    }
+
+    Tcl_SetObjResult(interp, Tcl_NewStringObj(res, -1));
+    free(res);
+    return TCL_OK;
+}
+
 /* hwloc bitmap option... */
 int parse_bitmap_args(Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     static const char* cmds[] = {

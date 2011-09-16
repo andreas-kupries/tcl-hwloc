@@ -44,10 +44,10 @@ test hwloc-topology-1.1 {bad method} -setup {
 # # ## ### ##### ######## ############# #####################
 ## convert  --> topology_convert.test
 ## cpubind  --> topology_cpubind.test
-## cpuset   --> topology_cpu_node_set.test
+## cpuset   --> topology_cpu_node_set.test (including 'element cpuset')
 ## destroy  --> create.test
 ## membind  --> topology_membind.test
-## nodeset  --> topology_cpu_node_set.test
+## nodeset  --> topology_cpu_node_set.test (including 'element nodeset')
 
 # # ## ### ##### ######## ############# #####################
 ## depth	/2
@@ -248,14 +248,13 @@ test hwloc-topology-5.6 {element, bad method} -setup {
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {bad option "foo": must be arity, attributes, children, cpuset, depth, first_child, info, last_child, logical_index, name, next_cousin, next_sibling, parent, prev_cousin, prev_sibling, sibling_rank, or type}
+    -result {bad option "foo": must be arity, attributes, children, cpuset, depth, first_child, info, last_child, logical_index, name, next_cousin, next_sibling, nodeset, parent, prev_cousin, prev_sibling, sibling_rank, or type}
 
 set k 0
 foreach {method rc rr pc pr} {
     arity         ok    4                                 ok    0
     attributes    ok    Backend=Synthetic                 ok    {}
     children      ok    {{1 0} {1 1} {1 2} {1 3}}         ok    {}
-    cpuset        ok    0x0000000f                        ok    0x00000004
     depth         ok    0                                 ok    1
     first_child   ok    {1 0}                             error {requested element does not exist}
     info          ok    {{Backend Synthetic}}             ok    {}
@@ -270,8 +269,6 @@ foreach {method rc rr pc pr} {
     sibling_rank  ok    0                                 ok    2
     type          ok    Machine                           ok    PU
 } {
-    # Notes: cpuset - hex? why not bitmap?
-
     test hwloc-topology-5.7.$k "element, $method wrong\#args" -setup {
 	hwloc create X -set_flags this_system -set_synthetic pu:4
     } -body {
