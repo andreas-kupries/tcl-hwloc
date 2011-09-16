@@ -1,12 +1,197 @@
-puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-load ./libtclhwloc0.1.so
-hwloc create topo0
-puts "complete cpuset:[topo0 cpuset -complete]"
-puts "allowed cpuset:[topo0 cpuset -allowed]"
-puts "online cpuset:[topo0 cpuset -online]"
-puts "topology cpuset:[topo0 cpuset -topology]"
-puts "complete nodeset:[topo0 nodeset -complete]"
-puts "allowed nodeset:[topo0 nodeset -allowed]"
-puts "topology nodeset:[topo0 nodeset -topology]"
+# -*- tcl -*-
+# # ## ### ##### ######## ############# #####################
+##
+# Test suite for Tcl/Hwloc binding.
+# Topology. Node/CPU set introspection.
 
-topo0 destroy
+# # ## ### ##### ######## ############# #####################
+## Requirements
+
+package require Tcl 8.5
+
+if {[catch {package require tcltest 2}]} {
+    puts stderr "Skipping tests in [info script].  tcltest 2 required."
+    return
+}
+
+# # ## ### ##### ######## ############# #####################
+##
+# Get the functionality under test, directly from the build directory,
+# which is the CWD.
+
+load libtclhwloc0.1.so
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-topology-cpuset-1.0 "cpuset introspection, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpuset
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpuset -allowed|-complete|-online|-topology"}
+
+test hwloc-topology-cpuset-1.1 "cpuset introspection, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpuset X Y
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpuset -allowed|-complete|-online|-topology"}
+
+# - -- --- ----- -------- ------------- ---------------------
+
+test hwloc-topology-cpuset-2.0 "cpuset introspection, bad option" -setup {
+    hwloc create T
+} -body {
+    T cpuset -foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {bad option "-foo": must be -allowed, -complete, -online, or -topology}
+
+# - -- --- ----- -------- ------------- ---------------------
+
+test hwloc-topology-cpuset-3.0 "cpuset introspection, non-numa, allowed" -setup {
+    hwloc create T -set_synthetic pu:4
+} -body {
+    T cpuset -allowed
+} -cleanup {
+    T destroy
+} -result 0-3
+
+test hwloc-topology-cpuset-3.1 "cpuset introspection, non-numa, online" -setup {
+    hwloc create T -set_synthetic pu:4
+} -body {
+    T cpuset -online
+} -cleanup {
+    T destroy
+} -result 0-3
+
+test hwloc-topology-cpuset-3.2 "cpuset introspection, non-numa, complete" -setup {
+    hwloc create T -set_synthetic pu:4
+} -body {
+    T cpuset -complete
+} -cleanup {
+    T destroy
+} -result 0-3
+
+test hwloc-topology-cpuset-3.3 "cpuset introspection, non-numa, topology" -setup {
+    hwloc create T -set_synthetic pu:4
+} -body {
+    T cpuset -topology
+} -cleanup {
+    T destroy
+} -result 0-3
+
+test hwloc-topology-cpuset-3.4 "cpuset introspection, numa, allowed" -setup {
+    hwloc create T -set_synthetic {node:3 pu:4}
+} -body {
+    T cpuset -allowed
+} -cleanup {
+    T destroy
+} -result 0-11
+
+test hwloc-topology-cpuset-3.5 "cpuset introspection, numa, online" -setup {
+    hwloc create T -set_synthetic {node:3 pu:4}
+} -body {
+    T cpuset -online
+} -cleanup {
+    T destroy
+} -result 0-11
+
+test hwloc-topology-cpuset-3.6 "cpuset introspection, numa, complete" -setup {
+    hwloc create T -set_synthetic {node:3 pu:4}
+} -body {
+    T cpuset -complete
+} -cleanup {
+    T destroy
+} -result 0-11
+
+test hwloc-topology-cpuset-3.7 "cpuset introspection, numa, topology" -setup {
+    hwloc create T -set_synthetic {node:3 pu:4}
+} -body {
+    T cpuset -topology
+} -cleanup {
+    T destroy
+} -result 0-11
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-topology-nodeset-1.0 "nodeset introspection, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T nodeset
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T nodeset -allowed|-complete|-topology"}
+
+test hwloc-topology-nodeset-1.1 "nodeset introspection, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T nodeset X Y
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T nodeset -allowed|-complete|-topology"}
+
+# - -- --- ----- -------- ------------- ---------------------
+
+test hwloc-topology-nodeset-2.0 "nodeset introspection, bad option" -setup {
+    hwloc create T
+} -body {
+    T nodeset -foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {bad option "-foo": must be -allowed, -complete, or -topology}
+
+# - -- --- ----- -------- ------------- ---------------------
+
+test hwloc-topology-nodeset-3.0 "nodeset introspection, non-numa, allowed" -setup {
+    hwloc create T -set_synthetic pu:4
+} -body {
+    T nodeset -allowed
+} -cleanup {
+    T destroy
+} -result 0-
+
+test hwloc-topology-nodeset-3.1 "nodeset introspection, non-numa, complete" -setup {
+    hwloc create T -set_synthetic pu:4
+} -body {
+    T nodeset -complete
+} -cleanup {
+    T destroy
+} -result 0-
+
+test hwloc-topology-nodeset-3.2 "nodeset introspection, non-numa, topology" -setup {
+    hwloc create T -set_synthetic pu:4
+} -body {
+    T nodeset -topology
+} -cleanup {
+    T destroy
+} -result 0-
+
+test hwloc-topology-nodeset-3.3 "nodeset introspection, numa, allowed" -setup {
+    hwloc create T -set_synthetic {node:3 pu:4}
+} -body {
+    T nodeset -allowed
+} -cleanup {
+    T destroy
+} -result 0-2
+
+test hwloc-topology-nodeset-3.4 "nodeset introspection, numa, complete" -setup {
+    hwloc create T -set_synthetic {node:3 pu:4}
+} -body {
+    T nodeset -complete
+} -cleanup {
+    T destroy
+} -result 0-2
+
+test hwloc-topology-nodeset-3.5 "nodeset introspection, numa, topology" -setup {
+    hwloc create T -set_synthetic {node:3 pu:4}
+} -body {
+    T nodeset -topology
+} -cleanup {
+    T destroy
+} -result 0-2
+
+# # ## ### ##### ######## ############# #####################
+tcltest::cleanupTests

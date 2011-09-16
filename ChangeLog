@@ -1,3 +1,14 @@
+2011-09-16  Andreas Kupries  <andreask@activestate.com>
+
+	* generic/topology.c: Better argument check and error for the
+	  topology global 'cpuset' and 'nodeset' methods.
+
+	* generic/cpubind.c: Re-indented.
+
+	* tests/topology_convert.test: Added tests for the NUMA case.
+
+	* tests/topology_cpu_node_set.test: Converted to proper testsuite.
+
 2011-09-15  Andreas Kupries  <andreask@activestate.com>
 
 	* doc/instance.inc: Started on the cpu binding documentation.
