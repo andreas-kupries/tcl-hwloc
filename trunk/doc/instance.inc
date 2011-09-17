@@ -28,13 +28,60 @@ a single memory node and use the following heuristics:
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method {cpubind get}]  [opt "[option -pid] [arg pid]"] [opt "[option -type] [arg type]"]]
 
+
+@@@ TODO @@@ cpubind get
+
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method {cpubind last}] [opt "[option -pid] [arg pid]"] [opt "[option -type] [arg type]"]]
 
-[comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method {cpubind set}]  [opt "[option -pid] [arg pid]"] [opt "[option -type] [arg type]"] [arg cpuset]]
+@@@ TODO @@@ cpubind last
 
-@@@ TODO @@@ cpubind
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method {cpubind set}] [option options...] [arg cpuset]]
+
+By default this method binds the current process, assumed to be
+single-threaded, to the specified [arg cpuset]. This is the most
+portable way of using this method.
+
+The behaviour can be modified by specifying one or more of the options
+below:
+
+[list_begin options]
+[opt_def -pid [arg pid]]
+Bind the referenced process instead.
+
+[opt_def -process]
+Bind all threads of the (possibly multithreaded) process.
+
+[opt_def -thread]
+Bind just the current thread of the current process. This option
+cannot be used together with [option -pid]. I.e. when binding a
+different process we have no control over how that process' threads
+are bound in detail.
+
+[opt_def -strict]
+Request a strict binding. By default, the OS may shift the process
+and/or thread to CPUs it was not strictly bound to, if the designated
+CPUs are busy and others are idle, to ensure progress. A strict
+binding prevents this, i.e. the process or thread will never go
+anywhere but the designated CPUs.
+
+[para] Note such a request may fail, as the OS may not implement this
+functionality, or it may have been be disabled by the system's
+administrator.
+
+[opt_def -nomembind]
+
+Instructs the system to not change memory bindings. I.e there are
+operating systems there binding a process/thread to a (set of) CPU(s)
+will also bind its memory to the associated NUMA node, by default. If
+this is a problem for the process then using this flag causes Hwloc to
+avoid the OS functions which would bind memory as well.
+
+[para] Note however that depending on system configuration and OS this
+may fail.
+
+[list_end]
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method {cpuset allowed}]]
@@ -49,11 +96,9 @@ topology.
 [list_begin definitions]
 [def allowed]  All [term allowed] processors.
 [def complete] All processors.
-[def online]   All [term online] (aka [term active] processors
+[def online]   All [term online] (aka [term active] processors.
 [def topology] All processors of the system.
 [list_end]
-
-@@@ TODO @@@ cpuset - Question - How does a cpu set relate to object types ?
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method depth] [opt "[option -type] [arg type]"]]
@@ -153,6 +198,13 @@ element. If the element hs no children the result is the empty list.
 This method returns a bitmap, one of several CPU sets associated with
 the element.
 
+[list_begin definitions]
+[def allowed]  All [term allowed] processors.
+[def complete] All processors.
+[def online]   All [term online] (aka [term active] processors.
+[def topology] All processors of the system.
+[list_end]
+
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method element] [arg id] [method depth]]
 
@@ -213,11 +265,16 @@ in its parent, i.e. does not have a right sibling.
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method element] [arg id] [method {nodeset allowed}]]
 [call [cmd topologyCmd] [method element] [arg id] [method {nodeset complete}]]
-[call [cmd topologyCmd] [method element] [arg id] [method {nodeset online}]]
 [call [cmd topologyCmd] [method element] [arg id] [method {nodeset topology}]]
 
 This method returns a bitmap, one of several NUMA node sets associated
 with the element.
+
+[list_begin definitions]
+[def allowed]  All [term allowed] numa nodes.
+[def complete] All numa nodes.
+[def topology] All numa nodes of the system.
+[list_end]
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method element] [arg id] [method parent]]
