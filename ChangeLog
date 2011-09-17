@@ -1,5 +1,8 @@
 2011-09-16  Andreas Kupries  <andreask@activestate.com>
 
+	* doc/instance.inc: Small fixes, plus start on the cpubind
+	  ensemble.
+
 	* generic/misc.h: New files.
 	* generic/misc.c: Added to configure.
 	* configure.in:
