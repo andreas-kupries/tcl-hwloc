@@ -28,13 +28,72 @@ a single memory node and use the following heuristics:
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method {cpubind get}]  [opt "[option -pid] [arg pid]"] [opt "[option -type] [arg type]"]]
 
+This method returns currently set binding for the current process.
 
-@@@ TODO @@@ cpubind get
+The behaviour can be modified by specifying one or more of the options
+below:
+
+[list_begin options]
+[opt_def -pid [arg pid]]
+Return the information for the referenced process instead.
+
+[opt_def -process]
+Return the information for all threads of the (possibly multithreaded)
+process.
+
+[opt_def -thread]
+Return the binding of the current thread of the current process. This
+option cannot be used together with [option -pid]. I.e. when querying
+a different process we cannot query that process' threads in detail.
+
+[opt_def -strict]
+When specified the system checks whether all threads of the process
+actually have the same binding. By default, the binding of each thread
+will be accumulated, i.e. the union of all bindings returned.
+
+[para] [emph Note] that this flag is meaningless when retrieving the
+binding of a thread.
+
+[opt_def -nomembind]
+
+???? @@@ TODO @@@ cpubind last -nomembind semantics
+
+[list_end]
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method {cpubind last}] [opt "[option -pid] [arg pid]"] [opt "[option -type] [arg type]"]]
 
-@@@ TODO @@@ cpubind last
+This method returns the CPU where the current thread or process was
+run last time it executed.  Note that the may be outdated, i.e. not be
+the CPU it is currently running on, as the OS may have shifted it
+around already according to their binding, as it saw fit.
+
+The behaviour can be modified by specifying one or more of the options
+below:
+
+[list_begin options]
+[opt_def -pid [arg pid]]
+Return the information for the referenced process instead.
+
+[opt_def -process]
+Return the information for all threads of the (possibly multithreaded)
+process.
+
+[opt_def -thread]
+
+Return the location of the current thread of the current process. This
+option cannot be used together with [option -pid]. I.e. when querying
+a different process we cannot query that process' threads in detail.
+
+[opt_def -strict]
+
+???? @@@ TODO @@@ cpubind last -strict semantics
+
+[opt_def -nomembind]
+
+???? @@@ TODO @@@ cpubind last -nomembind semantics
+
+[list_end]
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method {cpubind set}] [option options...] [arg cpuset]]
