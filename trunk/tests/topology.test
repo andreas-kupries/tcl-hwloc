@@ -42,12 +42,12 @@ test hwloc-topology-1.1 {bad method} -setup {
     -result {bad option "bogus": must be convert, cpubind, cpuset, depth, destroy, element, element_by, export, local, membind, nodeset, root, type, or width}
 
 # # ## ### ##### ######## ############# #####################
-## convert  --> topology_convert.test
+## convert  --> /topology_convert.test
 ## cpubind  --> topology_cpubind.test
-## cpuset   --> topology_cpu_node_set.test (including 'element cpuset')
-## destroy  --> create.test
+## cpuset   --> /topology_cpu_node_set.test (including 'element cpuset')
+## destroy  --> /create.test
 ## membind  --> topology_membind.test
-## nodeset  --> topology_cpu_node_set.test (including 'element nodeset')
+## nodeset  --> /topology_cpu_node_set.test (including 'element nodeset')
 
 # # ## ### ##### ######## ############# #####################
 ## depth	/2
