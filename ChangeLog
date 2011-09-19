@@ -1,5 +1,9 @@
 2011-09-19  Andreas Kupries  <andreask@activestate.com>
 
+	* generic/membind.c: Reworked the 'membind' method to be have
+	* doc/instance.inc: the same API as the 'cpubind' method, within
+	  reason. Started on the documentation for 'membind'.
+
 	* generic/cpubind.c: Added check excluding use of -thread together
 	 with -pid for 'get' and 'last'.
 	* tests/topology_cpubind.test: Added tests for the above, and

@@ -26,25 +26,25 @@ a single memory node and use the following heuristics:
 [list_end]
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method {cpubind get}]  [opt "[option -pid] [arg pid]"] [opt "[option -type] [arg type]"]]
+[call [cmd topologyCmd] [method {cpubind get}] [opt options...]]
 
-This method returns currently set binding for the current process.
+This method returns the currently set CPU bindings for the current
+process.
 
 The behaviour can be modified by specifying one or more of the options
 below:
 
 [list_begin options]
+[opt_def -nomembind]
+
+???? @@@ TODO @@@ cpubind last -nomembind semantics
+
 [opt_def -pid [arg pid]]
 Return the information for the referenced process instead.
 
 [opt_def -process]
 Return the information for all threads of the (possibly multithreaded)
 process.
-
-[opt_def -thread]
-Return the binding of the current thread of the current process. This
-option cannot be used together with [option -pid]. I.e. when querying
-a different process we cannot query that process' threads in detail.
 
 [opt_def -strict]
 When specified the system checks whether all threads of the process
@@ -54,14 +54,15 @@ will be accumulated, i.e. the union of all bindings returned.
 [para] [emph Note] that this flag is meaningless when retrieving the
 binding of a thread.
 
-[opt_def -nomembind]
-
-???? @@@ TODO @@@ cpubind last -nomembind semantics
+[opt_def -thread]
+Return the binding of the current thread of the current process. This
+option cannot be used together with [option -pid]. I.e. when querying
+a different process we cannot query that process' threads in detail.
 
 [list_end]
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method {cpubind last}] [opt "[option -pid] [arg pid]"] [opt "[option -type] [arg type]"]]
+[call [cmd topologyCmd] [method {cpubind last}] [opt options...]]
 
 This method returns the CPU where the current thread or process was
 run last time it executed.  Note that the may be outdated, i.e. not be
@@ -72,6 +73,10 @@ The behaviour can be modified by specifying one or more of the options
 below:
 
 [list_begin options]
+[opt_def -nomembind]
+
+???? @@@ TODO @@@ cpubind last -nomembind semantics
+
 [opt_def -pid [arg pid]]
 Return the information for the referenced process instead.
 
@@ -79,24 +84,20 @@ Return the information for the referenced process instead.
 Return the information for all threads of the (possibly multithreaded)
 process.
 
+[opt_def -strict]
+
+???? @@@ TODO @@@ cpubind last -strict semantics
+
 [opt_def -thread]
 
 Return the location of the current thread of the current process. This
 option cannot be used together with [option -pid]. I.e. when querying
 a different process we cannot query that process' threads in detail.
 
-[opt_def -strict]
-
-???? @@@ TODO @@@ cpubind last -strict semantics
-
-[opt_def -nomembind]
-
-???? @@@ TODO @@@ cpubind last -nomembind semantics
-
 [list_end]
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method {cpubind set}] [option options...] [arg cpuset]]
+[call [cmd topologyCmd] [method {cpubind set}] [opt options...] [arg cpuset]]
 
 By default this method binds the current process, assumed to be
 single-threaded, to the specified [arg cpuset]. This is the most
@@ -106,17 +107,22 @@ The behaviour can be modified by specifying one or more of the options
 below:
 
 [list_begin options]
+[opt_def -nomembind]
+
+Instructs the system to not change memory bindings. I.e there are
+operating systems there binding a process/thread to a (set of) CPU(s)
+will also bind its memory to the associated NUMA node, by default. If
+this is a problem for the process then using this flag causes Hwloc to
+avoid the OS functions which would bind memory as well.
+
+[para] Note however that depending on system configuration and OS this
+may fail.
+
 [opt_def -pid [arg pid]]
 Bind the referenced process instead.
 
 [opt_def -process]
 Bind all threads of the (possibly multithreaded) process.
-
-[opt_def -thread]
-Bind just the current thread of the current process. This option
-cannot be used together with [option -pid]. I.e. when binding a
-different process we have no control over how that process' threads
-are bound in detail.
 
 [opt_def -strict]
 Request a strict binding. By default, the OS may shift the process
@@ -129,16 +135,11 @@ anywhere but the designated CPUs.
 functionality, or it may have been be disabled by the system's
 administrator.
 
-[opt_def -nomembind]
-
-Instructs the system to not change memory bindings. I.e there are
-operating systems there binding a process/thread to a (set of) CPU(s)
-will also bind its memory to the associated NUMA node, by default. If
-this is a problem for the process then using this flag causes Hwloc to
-avoid the OS functions which would bind memory as well.
-
-[para] Note however that depending on system configuration and OS this
-may fail.
+[opt_def -thread]
+Bind just the current thread of the current process. This option
+cannot be used together with [option -pid]. I.e. when binding a
+different process we have no control over how that process' threads
+are bound in detail.
 
 [list_end]
 
@@ -198,9 +199,143 @@ option [option -set_flags] with flag [const this_system], option
 [option -set_fsroot] and option [option -set_xml].
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method membind] [arg ...]]
+[call [cmd topologyCmd] [method {membind get}] [opt options...]]
 
-@@@ TODO @@@ membind
+This method returns a list containing the currently set NUMA bindings
+and policy for the current process.
+
+The behaviour can be modified by specifying one or more of the options
+below:
+
+[list_begin options]
+
+[opt_def -cpu]
+
+???? @@@ TODO @@@ membind get -cpu semantics
+
+[opt_def -migrate]
+
+[opt_def -nocpubind]
+
+???? @@@ TODO @@@ membind get -nocpubind semantics
+
+[opt_def -pid [arg pid]]
+Return the information for the referenced process instead.
+
+[opt_def -process]
+Return the information for all threads of the (possibly multithreaded)
+process.
+
+[opt_def -strict]
+When specified the system checks whether all threads of the process
+actually have the same binding. By default, the binding of each thread
+will be accumulated, i.e. the union of all bindings returned.
+
+[para] [emph Note] that this flag is meaningless when retrieving the
+binding of a thread.
+
+[opt_def -thread]
+Return the binding of the current thread of the current process. This
+option cannot be used together with [option -pid]. I.e. when querying
+a different process we cannot query that process' threads in detail.
+
+[list_end]
+
+
+
+[comment ---------------------------------------------------------------------]
+[call [cmd topologyCmd] [method {membind set}] [opt options...] [arg nodeset policy]]
+
+This method sets the memory binding and [arg policy] for the current
+process and/or thread. I.e. which NUMA nodes to use when allocating
+memory, and how.
+
+Its behaviour can be modified by specifying one or more of the options
+below:
+
+[list_begin options]
+
+[opt_def -cpu]
+The [arg nodeset] argument is a a [term cpuset] instead, and
+internally converted into the associated set of NUMA nodes.
+
+[opt_def -migrate]
+If specified the system will attempt to migrate existing allocated
+memory to the specified NUMA nodes. Failure to perform the migration
+is not repoted by default, however if [option -strict] is specified
+also an error will be thrown.
+
+[opt_def -nocpubind]
+
+Instructs the system to not change cpu bindings. I.e there are
+operating systems there binding a process/thread to a (set of) NUMA
+nodes will also bind its execution to the associated CPUs, by
+default. If this is a problem for the process then using this flag
+causes Hwloc to avoid the OS functions which would bind cpus as well.
+
+[para] Note however that depending on system configuration and OS this
+may fail.
+
+[opt_def -pid [arg pid]]
+
+[opt_def -process]
+
+Specifying this flag causes the policy to be set for all threads of
+the specified (possibly multi-threaded) process. Usage of this flag
+excludes usage of [option -thread].
+
+[opt_def -strict]
+[opt_def -thread]
+
+Specifying this flag causes the policy to be set for a specific thread of the
+current process. Usage of this flag excludes usage of [option -process].
+
+[list_end]
+
+The following policies are accepted as legal. Remember however that
+not all systems support all policies, and attempting an unsupported
+policy causes errors to be thrown.
+
+[list_begin definitions]
+[def [const bind]]
+Allocate memory on the specified NUMA nodes.
+
+[def [const default]]
+Reset the memory allocation policy to the system default. This is the
+only policy which is fully portable across systems.
+
+[def [const firsttouch]]
+Allocated memory is not immediately bound to a specific locality. Each
+page in the allocation is individually bound to the local NUMA node of
+the first thread that touches it, at the time of this touch.
+
+[def [const interleave]]
+Allocate the memory on the specified nodes in an interleaved /
+round-robin manner. The precise layout of the memory across multiple
+NUMA nodes is OS/system specific. Interleaving can be useful when
+threads distributed across the specified NUMA nodes will all be
+accessing the whole memory range concurrently, since the interleave
+will then balance the memory references.
+
+[def [const mixed]]
+This policy is returned when multiple threads or parts of a memory
+area have differing memory binding policies. It is not usable for
+setting a policy.
+
+[def [const nexttouch]]
+For each page bound with this policy, the next time it is touched (and
+next time only), it is moved from its current location to the local
+NUMA node of the thread where the memory reference occurred (if it
+needs to be moved at all).
+
+[def [const replicate]]
+
+Replicate memory on the given nodes; reads from this memory will
+attempt to be serviced from the NUMA node local to the reading
+thread. Replicating can be useful when multiple threads from the
+specified NUMA nodes will be sharing the same read-only data.
+
+[list_end]
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method {nodeset allowed}]]
