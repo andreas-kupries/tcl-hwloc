@@ -18,7 +18,7 @@ thwl_get_cpuset_type (Tcl_Interp* interp, Tcl_Obj* obj, thwl_cpuset_type* t)
         NULL
     };
 
-    return Tcl_GetIndexFromObj(interp, obj, types, "cpuset-type", TCL_EXACT, t);
+    return Tcl_GetIndexFromObj(interp, obj, types, "cpuset-type", TCL_EXACT, (int*) t);
 }
 
 /*
@@ -38,7 +38,7 @@ thwl_get_nodeset_type (Tcl_Interp* interp, Tcl_Obj* obj, thwl_nodeset_type* t)
         NULL
     };
 
-    return Tcl_GetIndexFromObj(interp, obj, types, "nodeset-type", TCL_EXACT, t);
+    return Tcl_GetIndexFromObj(interp, obj, types, "nodeset-type", TCL_EXACT, (int*) t);
 }
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */

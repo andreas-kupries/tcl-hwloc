@@ -1,4 +1,204 @@
 # -*- tcl -*-
+# # ## ### ##### ######## ############# #####################
+##
+# Test suite for Tcl/Hwloc binding.
+# Topology. CPU bindings.
+
+# # ## ### ##### ######## ############# #####################
+## Requirements
+
+package require Tcl 8.5
+
+if {[catch {package require tcltest 2}]} {
+    puts stderr "Skipping tests in [info script].  tcltest 2 required."
+    return
+}
+
+# # ## ### ##### ######## ############# #####################
+##
+# Get the functionality under test, directly from the build directory,
+# which is the CWD.
+
+load libtclhwloc0.1.so
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-topology-cpubind-1.0 "cpu binding, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpubind
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpubind method ..."}
+
+test hwloc-topology-cpubind-1.1 "cpu binding, bad method" -setup {
+    hwloc create T
+} -body {
+    T cpubind X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {bad option "X": must be get, last, or set}
+
+test hwloc-topology-cpubind-1.2 "cpu binding, set, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpubind set
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpubind set ?options? cpuset"}
+
+test hwloc-topology-cpubind-1.3 "cpu binding, set, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpubind set -nomembind
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpubind set ?options? cpuset"}
+
+test hwloc-topology-cpubind-1.4 "cpu binding, set, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpubind set -pid
+} -cleanup {
+    T destroy
+} -returnCodes error -result {Missing argument for -pid.}
+
+test hwloc-topology-cpubind-1.5 "cpu binding, set, bad pid" -setup {
+    hwloc create T
+} -body {
+    T cpubind set -pid foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {expected integer but got "foo"}
+
+test hwloc-topology-cpubind-1.6 "cpu binding, set, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpubind set X Y
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpubind set ?options? cpuset"}
+
+test hwloc-topology-cpubind-1.7 "cpu binding, set, bad bitmap" -setup {
+    hwloc create T
+} -body {
+    T cpubind set X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {Expected bitmap but got "X"}
+
+test hwloc-topology-cpubind-1.8 "cpu binding, set, bad option" -setup {
+    hwloc create T
+} -body {
+    T cpubind set -foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {bad flag "-foo": must be -nomembind, -pid, -process, -strict, or -thread}
+
+# - -- --- ----- -------- ------------- ---------------------
+
+test hwloc-topology-cpubind-2.0 "cpu binding, get, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpubind get X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpubind get ?options?"}
+
+test hwloc-topology-cpubind-2.1 "cpu binding, get, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpubind get -nomembind X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpubind get ?options?"}
+
+test hwloc-topology-cpubind-2.2 "cpu binding, get, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpubind get -pid 2 X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpubind get ?options?"}
+
+test hwloc-topology-cpubind-2.3 "cpu binding, get, bad pid" -setup {
+    hwloc create T
+} -body {
+    T cpubind get -pid foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {expected integer but got "foo"}
+
+test hwloc-topology-cpubind-2.4 "cpu binding, set, bad option" -setup {
+    hwloc create T
+} -body {
+    T cpubind set -foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {bad flag "-foo": must be -nomembind, -pid, -process, -strict, or -thread}
+
+# - -- --- ----- -------- ------------- ---------------------
+
+test hwloc-topology-cpubind-3.0 "cpu binding, last, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpubind last X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpubind last ?options?"}
+
+test hwloc-topology-cpubind-3.1 "cpu binding, last, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpubind last -nomembind X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpubind last ?options?"}
+
+test hwloc-topology-cpubind-3.2 "cpu binding, last, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T cpubind last -pid 2 X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T cpubind last ?options?"}
+
+test hwloc-topology-cpubind-3.3 "cpu binding, last, bad pid" -setup {
+    hwloc create T
+} -body {
+    T cpubind last -pid foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {expected integer but got "foo"}
+
+test hwloc-topology-cpubind-3.4 "cpu binding, set, bad option" -setup {
+    hwloc create T
+} -body {
+    T cpubind set -foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {bad flag "-foo": must be -nomembind, -pid, -process, -strict, or -thread}
+
+# - -- --- ----- -------- ------------- ---------------------
+
+# # ## ### ##### ######## ############# #####################
+tcltest::cleanupTests
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 load ./libtclhwloc0.1.so
 hwloc create topo0

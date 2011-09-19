@@ -1,3 +1,18 @@
+2011-09-19  Andreas Kupries  <andreask@activestate.com>
+
+	* generic/cpubind.c: Reworked the option processing. More general,
+	  accepting any order of options, repetition, etc. And flattened,
+	  with each type-flag becoming its own option.
+	* generic/topology.c: Tweaks to cpubind/membind argument error
+	  messages.
+
+	* tests/topology_cpubind.test: Started on proper testsuite,
+	  argument checks only for the moment.
+
+	* tests/topology.test: Noted the subordinate files which are done.
+
+	* generic/misc.c: Suppress some warnings.
+
 2011-09-16  Andreas Kupries  <andreask@activestate.com>
 
 	* doc/instance.inc: Small fixes, plus start on the cpubind

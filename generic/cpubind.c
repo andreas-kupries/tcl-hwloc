@@ -7,8 +7,12 @@
 #include "cpubind.h"
 #include "bitmap.h"
 
+/*
+ * Helper function for parse_cpubind_args below. Processes all the options
+ */
+
 static int
-parse_flags (Tcl_Interp *interp, int *result, Tcl_Obj *obj);
+parse_options (Tcl_Interp* interp, int objc, Tcl_Obj* CONST objv[], int* pid, int* flags);
 
 /*
  * topology cpubind ?-pid pid? ?-type flags_list? ...
@@ -23,8 +27,7 @@ int parse_cpubind_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *
 
     hwloc_bitmap_t thecpuset;
 
-    int index, res = 0;
-    int objv_idx = 3;
+    int at, index, res = 0;
     int pid = 0;
     int flags = 0;
 
@@ -32,30 +35,19 @@ int parse_cpubind_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *
         return TCL_ERROR;
     }
 
-    if ((objc >= objv_idx+2) &&
-	strcmp((const char *) Tcl_GetString(objv[objv_idx]), "-pid") == 0) {
-        if (Tcl_GetIntFromObj(interp, objv[objv_idx+1], &pid) == TCL_ERROR) {
-            return TCL_ERROR;
-	}
-        objv_idx += 2;
-    }
-
-    if ((objc >= objv_idx+2) &&
-	strcmp((const char *) Tcl_GetString(objv[objv_idx]), "-type") == 0) {
-        if (parse_flags(interp, &flags, objv[objv_idx+1]) == TCL_ERROR) {
-            return TCL_ERROR;
-	}
-        objv_idx += 2;
+    at = parse_options (interp, objc, objv, &pid, &flags);
+    if (at < 0) {
+	return TCL_ERROR;
     }
 
     switch (index) {
     case CPUBIND_SET:
-	if (objc != (objv_idx+1)) {
-	    Tcl_WrongNumArgs(interp, objv_idx, objv, "cpuset");
+	if (at != (objc-1)) {
+	    Tcl_WrongNumArgs(interp, 3, objv, "?options? cpuset");
 	    return TCL_ERROR;
 	}
 
-	thecpuset = thwl_get_bitmap (interp, objv[objv_idx]);
+	thecpuset = thwl_get_bitmap (interp, objv[objc-1]);
 	if (thecpuset == NULL) {
 	    return TCL_ERROR;
 	}
@@ -72,8 +64,8 @@ int parse_cpubind_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *
 
     case CPUBIND_GET:
     case CPUBIND_LAST:
-	if (objc > objv_idx) {
-	    Tcl_WrongNumArgs(interp, objv_idx, objv, NULL);
+	if (at != objc) {
+	    Tcl_WrongNumArgs(interp, 3, objv, "?options?");
 	    return TCL_ERROR;
 	}
 
@@ -116,39 +108,62 @@ int parse_cpubind_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *
     }
     return TCL_ERROR;
 }
+
+/*
+ * Helper function for parse_cpubind_args below. Processes all the options
+ */
 
-static int parse_flags (Tcl_Interp *interp, int *result, Tcl_Obj *obj) {
-    static const char* flags[] = {
-        "nomembind", "process",
-	"strict",    "thread", NULL
+static int
+parse_options (Tcl_Interp* interp, int objc, Tcl_Obj* CONST objv[], int* pid, int* flags)
+{
+    static const char* options[] = {
+        "-nomembind", "-pid",    "-process",
+	"-strict",    "-thread", NULL
     };
     enum options {
-        CPUBIND_NOMEMBIND, CPUBIND_PROCESS,
+        CPUBIND_NOMEMBIND, CPUBIND_PID, CPUBIND_PROCESS,
 	CPUBIND_STRICT,    CPUBIND_THREAD
     };
     static int map [] = {
-	HWLOC_CPUBIND_NOMEMBIND, HWLOC_CPUBIND_PROCESS,
+	HWLOC_CPUBIND_NOMEMBIND, 0, HWLOC_CPUBIND_PROCESS,
 	HWLOC_CPUBIND_STRICT,    HWLOC_CPUBIND_THREAD
     };
 
-    int i, index;
+    int index, at;
 
-    int       obj_objc;
-    Tcl_Obj **obj_objv;
+    *pid   = 0;
+    *flags = 0;
 
-    if (Tcl_ListObjGetElements(interp, obj, &obj_objc, &obj_objv) == TCL_ERROR) {
-        Tcl_SetResult(interp, "parsing flags failed", TCL_STATIC);
-        return TCL_ERROR;
-    }
-
-    for (i = 0; i < obj_objc; i++) {  
-        if (Tcl_GetIndexFromObj(interp, obj_objv[i], flags, "flag", 0, &index) != TCL_OK) {
-            return TCL_ERROR;
+    /* topo/0 cpubind/1 method/2 ... => at = 3 */
+    for (at = 3; at < objc; at++) {
+        if (Tcl_GetIndexFromObj(interp, objv[at], options, "flag", 0, &index) != TCL_OK) {
+	    if(Tcl_GetString (objv[at])[0] == '-') {
+		return -1;
+	    }
+	    return at;
 	}
-	*result |= map [index];
+
+	if (index != CPUBIND_PID) {
+	    *flags |= map [index];
+	    continue;
+	}
+
+	/*
+	 * -pid has an argument. Check for and process it.
+	 */
+
+	at ++;
+	if (at >= objc) {
+	    Tcl_SetResult (interp, "Missing argument for -pid.", TCL_STATIC);
+	    return -1;
+	}
+
+        if (Tcl_GetIntFromObj(interp, objv[at], pid) == TCL_ERROR) {
+            return -1;
+	}
     }
 
-    return TCL_OK;
+    return at;
 }
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
