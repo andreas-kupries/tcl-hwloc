@@ -104,6 +104,8 @@ int parse_cpubind_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *
     return TCL_OK;
 
  bind_error:
+    Tcl_PosixError(interp);
+
     if (errno == ENOSYS) {
 	Tcl_SetResult(interp, "operation not supported", TCL_STATIC);
     } else if (errno == EXDEV) {

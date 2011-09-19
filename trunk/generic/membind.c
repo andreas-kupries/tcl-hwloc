@@ -5,16 +5,18 @@
 #include <assert.h>
 #include "topology.h"
 #include "membind.h"
+#include "bitmap.h"
 
-static int      parse_flags (Tcl_Interp *interp, int *result, Tcl_Obj *obj);
-static int      obj2policy  (Tcl_Interp *interp, hwloc_membind_policy_t *policy, Tcl_Obj *obj);
-static Tcl_Obj* policy2obj  (Tcl_Interp *interp, hwloc_membind_policy_t policy);
+static int      parse_options (Tcl_Interp* interp, int objc, Tcl_Obj* CONST objv[], int* pid, int* cpu, int* flags);
+static int      obj2policy    (Tcl_Interp *interp, hwloc_membind_policy_t *policy, Tcl_Obj *obj);
+static Tcl_Obj* policy2obj    (Tcl_Interp *interp, hwloc_membind_policy_t policy);
 
 /*
  * topology membind get ?-type flags? ?-cpuset? ?-pid pid?
  * topology membind set ?-type flags? ?-cpuset? ?-pid pid? nodeset
  */
-int parse_membind_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+int
+parse_membind_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     static const char* cmds[] = {
         "get", "set", NULL
     };
@@ -22,198 +24,175 @@ int parse_membind_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *C
         MEMBIND_GET, MEMBIND_SET
     };
 
-    int index;
-    int objv_idx = 3;
+    hwloc_bitmap_t         thenodeset;
+    hwloc_membind_policy_t policy = 0;
+
+    int index, res, at;
     int pid = 0;
     int flags = 0;
-    int cpuset = 0;
+    int cpu = 0;
+    Tcl_Obj* lv [2];
 
     if (Tcl_GetIndexFromObj(interp, objv[2], cmds, "option", 2, &index) != TCL_OK)
         return TCL_ERROR;
 
-
-    if ((objc >= objv_idx+2) &&
-	strcmp((const char *) Tcl_GetString(objv[objv_idx]), "-pid") == 0) {
-        if (Tcl_GetIntFromObj(interp, objv[objv_idx+1], &pid) == TCL_ERROR) {
-            return TCL_ERROR;
-	}
-        objv_idx += 2;
-    }
-
-    if ((objc >= objv_idx+2) &&
-	strcmp((const char *) Tcl_GetString(objv[objv_idx]), "-type") == 0) {
-        int res = 0;
-        if (parse_flags(interp, &res, objv[objv_idx+1]) == TCL_ERROR) {
-            return TCL_ERROR;
-	}
-        objv_idx += 2;
-    }
-
-    if ((objc >= objv_idx+1) &&
-	strcmp((const char *) Tcl_GetString(objv[objv_idx]), "-cpuset") == 0) {
-        cpuset = 1;
-        objv_idx++;
+    at = parse_options (interp, objc, objv, &pid, &cpu, &flags);
+    if (at < 0) {
+	return TCL_ERROR;
     }
 
     switch (index) {
     case MEMBIND_SET:
-	{
-	    if (objc == objv_idx+2) {
-		hwloc_membind_policy_t policy = 0;
-		const char *setstr = Tcl_GetString(objv[objv_idx]);
-		hwloc_bitmap_t set = hwloc_bitmap_alloc();
-
-		if (hwloc_bitmap_list_sscanf(set, setstr) == -1) {
-		    Tcl_SetResult(interp, "failed to parse bitmap", TCL_STATIC);
-		    hwloc_bitmap_free(set);
-		    return TCL_ERROR;
-		}
-
-		if (obj2policy(interp, &policy, objv[objv_idx+1]) == TCL_ERROR) {
-		    return TCL_ERROR;
-		}
-
-		if (pid) {
-		    if (cpuset) {
-			if (hwloc_set_proc_membind(data->topology, pid, set, policy, flags) == -1) {
-			    Tcl_SetResult(interp, "hwloc_set_proc_membind() failed", TCL_STATIC);
-			    hwloc_bitmap_free(set);
-			    Tcl_PosixError(interp);
-			    return TCL_ERROR;
-			}
-		    } else {
-			if (hwloc_set_proc_membind_nodeset(data->topology, pid, set, policy, flags) == -1) {
-			    Tcl_SetResult(interp, "hwloc_set_proc_membind_nodeset() failed", TCL_STATIC);
-			    hwloc_bitmap_free(set);
-			    Tcl_PosixError(interp);
-			    return TCL_ERROR;
-			}
-		    }
-		} else {
-		    if (cpuset) {
-			if (hwloc_set_membind(data->topology, set, policy, flags) == -1) {
-			    Tcl_SetResult(interp, "hwloc_set_membind() failed", TCL_STATIC);
-			    hwloc_bitmap_free(set);
-			    Tcl_PosixError(interp);
-			    return TCL_ERROR;
-			}
-		    } else {
-			if (hwloc_set_membind_nodeset(data->topology, set, policy, flags) == -1) {
-			    Tcl_SetResult(interp, "hwloc_set_membind_nodeset() failed", TCL_STATIC);
-			    hwloc_bitmap_free(set);
-			    Tcl_PosixError(interp);
-			    return TCL_ERROR;
-			}
-		    }
-		}
-
-		hwloc_bitmap_free(set);
-	    } else {
-		Tcl_WrongNumArgs(interp, objv_idx, objv, "bitmap policy");
-		return TCL_ERROR;
-	    }
-	    break;
+	if (at != (objc-2)) {
+	    Tcl_WrongNumArgs(interp, 3, objv, "?options? nodeset policy");
+	    return TCL_ERROR;
 	}
+
+	if (obj2policy(interp, &policy, objv[objc-1]) == TCL_ERROR) {
+	    return TCL_ERROR;
+	}
+
+	thenodeset = thwl_get_bitmap (interp, objv[objc-2]);
+	if (thenodeset == NULL) {
+	    return TCL_ERROR;
+	}
+
+	if (pid) {
+	    if (cpu) {
+		res = hwloc_set_proc_membind(data->topology, pid, thenodeset, policy, flags);
+	    } else {
+		res = hwloc_set_proc_membind_nodeset(data->topology, pid, thenodeset, policy, flags);
+	    }
+	} else {
+	    if (cpu) {
+		res = hwloc_set_membind(data->topology, thenodeset, policy, flags);
+	    } else {
+		res = hwloc_set_membind_nodeset(data->topology, thenodeset, policy, flags);
+	    }
+	}
+
+	hwloc_bitmap_free(thenodeset);
+
+	if (res == -1) goto bind_error;
+	break;
+
     case MEMBIND_GET:
-	{
-	    hwloc_bitmap_t set;
-	    hwloc_membind_policy_t policy = 0;
-	    char *list;
-	    Tcl_Obj* lv [2];
-
-	    if (objc > objv_idx) {
-		Tcl_WrongNumArgs(interp, objv_idx, objv, NULL);
-		return TCL_ERROR;
-	    }
-
-	    set = hwloc_bitmap_alloc();
-
-	    if (pid) {
-		if (cpuset) {
-		    if (hwloc_get_proc_membind(data->topology, pid, set, &policy, flags) == -1) {
-			Tcl_SetResult(interp, "hwloc_get_proc_membind() failed", TCL_STATIC);
-			hwloc_bitmap_free(set);
-			Tcl_PosixError(interp);
-			return TCL_ERROR;
-		    }
-		} else {
-		    if (hwloc_get_proc_membind_nodeset(data->topology, pid, set, &policy, flags) == -1) {
-			Tcl_SetResult(interp, "hwloc_get_proc_membind_nodeset() failed", TCL_STATIC);
-			hwloc_bitmap_free(set);
-			Tcl_PosixError(interp);
-			return TCL_ERROR;
-		    }
-		}
-	    } else {
-		if (cpuset) {
-		    if (hwloc_get_membind(data->topology, set, &policy, flags) == -1) {
-			Tcl_SetResult(interp, "hwloc_get_membind() failed", TCL_STATIC);
-			hwloc_bitmap_free(set);
-			Tcl_PosixError(interp);
-			return TCL_ERROR;
-		    }
-		} else {
-		    if (hwloc_get_membind_nodeset(data->topology, set, &policy, flags) == -1) {
-			Tcl_SetResult(interp, "hwloc_get_membind_nodeset() failed", TCL_STATIC);
-			hwloc_bitmap_free(set);
-			Tcl_PosixError(interp);
-			return TCL_ERROR;
-		    }
-		}
-	    }
-
-	    if (hwloc_bitmap_list_asprintf(&list, set) == -1) {
-		Tcl_SetResult(interp, "hwloc_bitmap_list_asprintf() failed", TCL_STATIC);
-		hwloc_bitmap_free(set);
-		return TCL_ERROR;
-	    }
-
-	    lv [0] = Tcl_NewStringObj (list, -1);
-	    lv [1] = policy2obj(interp, policy);
-
-	    Tcl_SetObjResult(interp, Tcl_NewListObj(2, lv));
-
-	    hwloc_bitmap_free(set);
-	    free(list);
-	    break;
+	if (at != (objc-1)) {
+	    Tcl_WrongNumArgs(interp, 3, objv, NULL);
+	    return TCL_ERROR;
 	}
+
+	thenodeset = hwloc_bitmap_alloc();
+
+	if (pid) {
+	    if (cpu) {
+		res = hwloc_get_proc_membind(data->topology, pid, thenodeset, &policy, flags);
+	    } else {
+		res = hwloc_get_proc_membind_nodeset(data->topology, pid, thenodeset, &policy, flags);
+	    }
+	} else {
+	    if (cpu) {
+		res = hwloc_get_membind(data->topology, thenodeset, &policy, flags);
+	    } else {
+		res = hwloc_get_membind_nodeset(data->topology, thenodeset, &policy, flags);
+	    }
+	}
+
+	hwloc_bitmap_free(thenodeset);
+
+	if (res == -1) {
+	    hwloc_bitmap_free(thenodeset);
+	    goto bind_error;
+	}
+
+	if (thwl_set_result_bitmap (interp, thenodeset) != TCL_OK) {
+	    return TCL_ERROR;
+	}
+
+	lv [0] = Tcl_GetObjResult (interp);
+	lv [1] = policy2obj(interp, policy);
+
+	Tcl_SetObjResult(interp, Tcl_NewListObj(2, lv));
+	break;
     }
 
     return TCL_OK;
+ bind_error:
+    Tcl_PosixError(interp);
+
+    if (errno == ENOSYS) {
+	Tcl_SetResult(interp, "operation not supported", TCL_STATIC);
+    } else if (errno == EXDEV) {
+	Tcl_SetResult(interp, "binding not enforceable", TCL_STATIC);
+    } else {
+	Tcl_SetResult(interp, "general NUMA binding failure", TCL_STATIC);
+    }
+    return TCL_ERROR;
 }
 
 static int
-parse_flags (Tcl_Interp *interp, int *result, Tcl_Obj *obj) {
-    static const char* flags[] = {
-        "migrate", "nocpubind",
-	"process", "strict",
-	"thread",
+parse_options (Tcl_Interp* interp, int objc, Tcl_Obj* CONST objv[], int* pid, int* cpu, int* flags)
+{
+    static const char* options[] = {
+	"-cpu",     "-migrate", "-nocpubind", "-pid",
+	"-process", "-strict",  "-thread",
         NULL
     };
     enum options {
-        MEMBIND_MIGRATE, MEMBIND_NOCPUBIND,
-	MEMBIND_PROCESS, MEMBIND_STRICT,
-	MEMBIND_THREAD
+        MEMBIND_CPU,     MEMBIND_MIGRATE, MEMBIND_NOCPUBIND, MEMBIND_PID,
+	MEMBIND_PROCESS, MEMBIND_STRICT,  MEMBIND_THREAD
+    };
+    static int map [] = {
+	0,
+	HWLOC_MEMBIND_MIGRATE,
+	HWLOC_MEMBIND_NOCPUBIND,
+	0,
+	HWLOC_MEMBIND_PROCESS,
+	HWLOC_MEMBIND_STRICT,
+	HWLOC_MEMBIND_THREAD
     };
 
-    int i, index;
+    int index, at;
 
-    Tcl_Obj **obj_objv;
-    int       obj_objc;
+    *pid   = 0;
+    *flags = 0;
+    *cpu = 0;
 
-    if (Tcl_ListObjGetElements(interp, obj, &obj_objc, &obj_objv) == TCL_ERROR) {
-        Tcl_SetResult(interp, "parsing flags failed", TCL_STATIC);
-        return TCL_ERROR;
-    }
-
-    for (i = 0; i < obj_objc; i++) {  
-        if (Tcl_GetIndexFromObj(interp, obj_objv[i], flags, "flag", 0, &index) != TCL_OK) {
-            return TCL_ERROR;
+    /* topo/0 membind/1 method/2 ... => at = 3 */
+    for (at = 3; at < objc; at++) {
+        if (Tcl_GetIndexFromObj(interp, objv[at], options, "flag", 0, &index) != TCL_OK) {
+	    if(Tcl_GetString (objv[at])[0] == '-') {
+		return -1;
+	    }
+	    return at;
 	}
-	*result |= index;
+
+	if (index == MEMBIND_CPU) {
+	    *cpu = 1;
+	    continue;
+	}
+
+	if (index != MEMBIND_PID) {
+	    *flags |= map [index];
+	    continue;
+	}
+
+	/*
+	 * -pid has an argument. Check for and process it.
+	 */
+
+	at ++;
+	if (at >= objc) {
+	    Tcl_SetResult (interp, "Missing argument for -pid.", TCL_STATIC);
+	    return -1;
+	}
+
+        if (Tcl_GetIntFromObj(interp, objv[at], pid) == TCL_ERROR) {
+            return -1;
+	}
     }
 
-    return TCL_OK;
+    return at;
 }
 
 static const char* policy_flags[] = {
