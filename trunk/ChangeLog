@@ -1,5 +1,11 @@
 2011-09-19  Andreas Kupries  <andreask@activestate.com>
 
+	* generic/cpubind.c: Added check excluding use of -thread together
+	 with -pid for 'get' and 'last'.
+	* tests/topology_cpubind.test: Added tests for the above, and
+	  fixed a few typos.
+	* doc/instance.inc: Near-complete documentation of cpubind.
+
 	* generic/cpubind.c: Reworked the option processing. More general,
 	  accepting any order of options, repetition, etc. And flattened,
 	  with each type-flag becoming its own option.
