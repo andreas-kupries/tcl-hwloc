@@ -37,7 +37,8 @@ below:
 [list_begin options]
 [opt_def -nomembind]
 
-???? @@@ TODO @@@ cpubind last -nomembind semantics
+This option is accepted, but ignored. It has no meaning for the
+method in question.
 
 [opt_def -pid [arg pid]]
 Return the information for the referenced process instead.
@@ -75,7 +76,8 @@ below:
 [list_begin options]
 [opt_def -nomembind]
 
-???? @@@ TODO @@@ cpubind last -nomembind semantics
+This option is accepted, but ignored. It has no meaning for the
+method in question.
 
 [opt_def -pid [arg pid]]
 Return the information for the referenced process instead.
@@ -86,7 +88,8 @@ process.
 
 [opt_def -strict]
 
-???? @@@ TODO @@@ cpubind last -strict semantics
+This option is accepted, but ignored. It has no meaning for the
+method in question.
 
 [opt_def -thread]
 
@@ -112,8 +115,8 @@ below:
 Instructs the system to not change memory bindings. I.e there are
 operating systems there binding a process/thread to a (set of) CPU(s)
 will also bind its memory to the associated NUMA node, by default. If
-this is a problem for the process then using this flag causes Hwloc to
-avoid the OS functions which would bind memory as well.
+this is a problem for the process then using this flag causes the
+package to avoid the OS functions which would bind memory as well.
 
 [para] Note however that depending on system configuration and OS this
 may fail.
@@ -201,94 +204,173 @@ option [option -set_flags] with flag [const this_system], option
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method {membind get}] [opt options...]]
 
-This method returns a list containing the currently set NUMA bindings
-and policy for the current process.
+This method returns a 2-element list containing the currently set
+default NUMA bindings and policies for a process and/or thread, in
+this order. The bindings are represented by a bitmap representing
+either a nodeset (default) or a cpuset.
 
-The behaviour can be modified by specifying one or more of the options
+Its behaviour can be modified by specifying one or more of the options
 below:
 
 [list_begin options]
+[opt_def -migrate]
+[opt_def -nocpubind]
+
+These two options are relevant only for [method {membind set}].
+While this method accepts them, they are ignored.
+
+[comment {--- TODO --- Rework the implementation to not accept them}]
 
 [opt_def -cpu]
 
-???? @@@ TODO @@@ membind get -cpu semantics
+By default the bitmap returned by the method represents a nodeset.
 
-[opt_def -migrate]
+When this option is specified a cpuset is returned instead, with the
+method internally converting the nodeset result to it.
 
-[opt_def -nocpubind]
-
-???? @@@ TODO @@@ membind get -nocpubind semantics
+For convenience sake's all descriptions below talk only about
+nodesets, with the conversion implied where needed.
 
 [opt_def -pid [arg pid]]
-Return the information for the referenced process instead.
+
+By default this method queries the current process or its threads.
+
+When this option is specified the referenced process is queried
+instead, and we lose the ability for a finegrained query of
+threads. I.e. usage of option [option -thread] is forbidden, and
+[option -process] is implied.
 
 [opt_def -process]
-Return the information for all threads of the (possibly multithreaded)
-process.
+[opt_def -thread]
+
+These two options exclude each other, i.e. when using one use of the
+other is forbidden.
+
+[para] By default, i.e. when neither of the options is present, the
+process is assumed to be single threaded. The package will then use
+either process-based OS functions or thread-based OS functions,
+depending on which are available and fitting. This makes this the most
+portable method.
+
+[para] Passing option [option -process] causes the return of the
+current policies and nodesets for all the threads in the specified
+process (current, or referenced by option [option -pid]).
+
+The exact nature of the result depends on the presence of option
+[option -strict], and will be explained there.
+
+[para] Passing option [option -thread] specifies to return the current
+policy and nodeset for the current thread invoking the method, in the
+current process.
+
+Use of this option is forbidden when option [option -pid] is present.
 
 [opt_def -strict]
-When specified the system checks whether all threads of the process
-actually have the same binding. By default, the binding of each thread
-will be accumulated, i.e. the union of all bindings returned.
+The (non-)presence of this option guides the handling of multiple
+threads.
 
-[para] [emph Note] that this flag is meaningless when retrieving the
-binding of a thread.
+In the default case of either a single-threaded process (neither
+[option -process], nor [option -thread] present) or when querying a
+single thread (via [option -thread]) we have only a single nodeset and
+policy, these are returned, and this option is ignored when specified.
 
-[opt_def -thread]
-Return the binding of the current thread of the current process. This
-option cannot be used together with [option -pid]. I.e. when querying
-a different process we cannot query that process' threads in detail.
+[para] Now when [option -process] or [option -pid] are used we are
+querying (potentially) multiple threads and have to merge the nodesets
+and policies in some way.
+
+By default that is exactly what happens. The union of all found
+nodesets is computed and returned. For the policies, if all are
+identical this one policy is returned, and otherwise "mixed" is
+returned.
+
+[para] By specifying this option we disable the above merging process
+and replace it with a check. If the nodesets and policies of all the
+queried threads are identical, then this information is returned as
+usual. If there are differences however, then an error is thrown
+instead.
 
 [list_end]
 
-
-
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method {membind set}] [opt options...] [arg nodeset policy]]
+[call [cmd topologyCmd] [method {membind set}] [opt options...] [arg nodeset] [arg policy]]
 
-This method sets the memory binding and [arg policy] for the current
-process and/or thread. I.e. which NUMA nodes to use when allocating
-memory, and how.
+This method sets the default memory binding [arg policy] and to prefer
+the NUMA node(s) specified by the [arg nodeset]. This determines which
+NUMA modes to use when allocating memory.
 
 Its behaviour can be modified by specifying one or more of the options
 below:
 
 [list_begin options]
 
-[opt_def -cpu]
-The [arg nodeset] argument is a a [term cpuset] instead, and
-internally converted into the associated set of NUMA nodes.
-
 [opt_def -migrate]
-If specified the system will attempt to migrate existing allocated
-memory to the specified NUMA nodes. Failure to perform the migration
-is not repoted by default, however if [option -strict] is specified
-also an error will be thrown.
+
+If specified the package will attempt to migrate existing allocated
+memory to the specified NUMA nodes.
+
+By default failure to perform the migration is not reported. However
+if the option [option -strict] is specified also, an error will be
+thrown.
 
 [opt_def -nocpubind]
 
-Instructs the system to not change cpu bindings. I.e there are
-operating systems there binding a process/thread to a (set of) NUMA
-nodes will also bind its execution to the associated CPUs, by
-default. If this is a problem for the process then using this flag
-causes Hwloc to avoid the OS functions which would bind cpus as well.
+Specifying this option instructs the package to not change cpu
+bindings. I.e there are operating systems where binding a process
+and/or thread to a (set of) NUMA node(s) will also bind its execution
+to the associated CPUs, by default. If this is a problem for the
+process then using this flag causes the package to avoid the OS
+functions which would bind cpus as well.
 
 [para] Note however that depending on system configuration and OS this
 may fail.
 
+[opt_def -cpu]
+
+By default the bitmap taken by the method represents a [arg nodeset].
+
+When this option is specified a cpuset is taken instead, with the
+method internally converting it to a nodeset.
+
+For convenience sake's all descriptions below talk only about
+nodesets, with the conversion implied where needed.
+
 [opt_def -pid [arg pid]]
 
+By default this method operates on the current process or its threads.
+
+When this option is specified the referenced process is operated on
+instead, and we lose the ability for a finegrained handling of
+threads. I.e. usage of option [option -thread] is forbidden, and
+[option -process] is implied.
+
+[opt_def -thread]
 [opt_def -process]
 
-Specifying this flag causes the policy to be set for all threads of
-the specified (possibly multi-threaded) process. Usage of this flag
-excludes usage of [option -thread].
+These two options exclude each other, i.e. when using one use of the
+other is forbidden.
+
+[para] By default, i.e. when neither of the options is present, the
+process is assumed to be single threaded. The package will then use
+either process-based OS functions or thread-based OS functions,
+depending on which are available and fitting. This makes this the most
+portable form.
+
+[para] Passing [option -process] sets the policy for all threads of
+the specified (possibly multithreaded) process.
+
+[para] Passing [option -thread] sets the policy for the current thread
+of the current process.
 
 [opt_def -strict]
-[opt_def -thread]
 
-Specifying this flag causes the policy to be set for a specific thread of the
-current process. Usage of this flag excludes usage of [option -process].
+Presence of this option requests a strict binding from the OS. The
+function will fail if the binding can not be guaranteed / completely
+enforced.
+
+This flag has slightly different meanings depending on the presence of
+the options [option -pid] and [option -cpu].
+
+Hwloc's documentation doesn't go into further detail.
 
 [list_end]
 

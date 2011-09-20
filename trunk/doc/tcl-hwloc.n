@@ -1,276 +1,1317 @@
 '\"
-.so man.macros
-.TH tcl-hwloc n 1.0 "Tcl-Extensions"
-.HS tcl-hwloc tcl
+'\" Generated from file 'doc/tcl-hwloc.man' by tcllib/doctools with format 'nroff'
+'\" Copyright (c) 2011 George Andreou, Andreas Kupries
+'\" Copyright (c) 2011 Documentation, Andreas Kupries
+'\"
+'\" The definitions below are for supplemental macros used in Tcl/Tk
+'\" manual entries.
+'\"
+'\" .AP type name in/out ?indent?
+'\"	Start paragraph describing an argument to a library procedure.
+'\"	type is type of argument (int, etc.), in/out is either "in", "out",
+'\"	or "in/out" to describe whether procedure reads or modifies arg,
+'\"	and indent is equivalent to second arg of .IP (shouldn't ever be
+'\"	needed;  use .AS below instead)
+'\"
+'\" .AS ?type? ?name?
+'\"	Give maximum sizes of arguments for setting tab stops.  Type and
+'\"	name are examples of largest possible arguments that will be passed
+'\"	to .AP later.  If args are omitted, default tab stops are used.
+'\"
+'\" .BS
+'\"	Start box enclosure.  From here until next .BE, everything will be
+'\"	enclosed in one large box.
+'\"
+'\" .BE
+'\"	End of box enclosure.
+'\"
+'\" .CS
+'\"	Begin code excerpt.
+'\"
+'\" .CE
+'\"	End code excerpt.
+'\"
+'\" .VS ?version? ?br?
+'\"	Begin vertical sidebar, for use in marking newly-changed parts
+'\"	of man pages.  The first argument is ignored and used for recording
+'\"	the version when the .VS was added, so that the sidebars can be
+'\"	found and removed when they reach a certain age.  If another argument
+'\"	is present, then a line break is forced before starting the sidebar.
+'\"
+'\" .VE
+'\"	End of vertical sidebar.
+'\"
+'\" .DS
+'\"	Begin an indented unfilled display.
+'\"
+'\" .DE
+'\"	End of indented unfilled display.
+'\"
+'\" .SO
+'\"	Start of list of standard options for a Tk widget.  The
+'\"	options follow on successive lines, in four columns separated
+'\"	by tabs.
+'\"
+'\" .SE
+'\"	End of list of standard options for a Tk widget.
+'\"
+'\" .OP cmdName dbName dbClass
+'\"	Start of description of a specific option.  cmdName gives the
+'\"	option's name as specified in the class command, dbName gives
+'\"	the option's name in the option database, and dbClass gives
+'\"	the option's class in the option database.
+'\"
+'\" .UL arg1 arg2
+'\"	Print arg1 underlined, then print arg2 normally.
+'\"
+'\" RCS: @(#) $Id: man.macros,v 1.1 2009/01/30 04:56:47 andreas_kupries Exp $
+'\"
+'\"	# Set up traps and other miscellaneous stuff for Tcl/Tk man pages.
+.if t .wh -1.3i ^B
+.nr ^l \n(.l
+.ad b
+'\"	# Start an argument description
+.de AP
+.ie !"\\$4"" .TP \\$4
+.el \{\
+.   ie !"\\$2"" .TP \\n()Cu
+.   el          .TP 15
+.\}
+.ta \\n()Au \\n()Bu
+.ie !"\\$3"" \{\
+\&\\$1	\\fI\\$2\\fP	(\\$3)
+.\".b
+.\}
+.el \{\
+.br
+.ie !"\\$2"" \{\
+\&\\$1	\\fI\\$2\\fP
+.\}
+.el \{\
+\&\\fI\\$1\\fP
+.\}
+.\}
+..
+'\"	# define tabbing values for .AP
+.de AS
+.nr )A 10n
+.if !"\\$1"" .nr )A \\w'\\$1'u+3n
+.nr )B \\n()Au+15n
+.\"
+.if !"\\$2"" .nr )B \\w'\\$2'u+\\n()Au+3n
+.nr )C \\n()Bu+\\w'(in/out)'u+2n
+..
+.AS Tcl_Interp Tcl_CreateInterp in/out
+'\"	# BS - start boxed text
+'\"	# ^y = starting y location
+'\"	# ^b = 1
+.de BS
+.br
+.mk ^y
+.nr ^b 1u
+.if n .nf
+.if n .ti 0
+.if n \l'\\n(.lu\(ul'
+.if n .fi
+..
+'\"	# BE - end boxed text (draw box now)
+.de BE
+.nf
+.ti 0
+.mk ^t
+.ie n \l'\\n(^lu\(ul'
+.el \{\
+.\"	Draw four-sided box normally, but don't draw top of
+.\"	box if the box started on an earlier page.
+.ie !\\n(^b-1 \{\
+\h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.el \}\
+\h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\l'|0u-1.5n\(ul'
+.\}
+.\}
+.fi
+.br
+.nr ^b 0
+..
+'\"	# VS - start vertical sidebar
+'\"	# ^Y = starting y location
+'\"	# ^v = 1 (for troff;  for nroff this doesn't matter)
+.de VS
+.if !"\\$2"" .br
+.mk ^Y
+.ie n 'mc \s12\(br\s0
+.el .nr ^v 1u
+..
+'\"	# VE - end of vertical sidebar
+.de VE
+.ie n 'mc
+.el \{\
+.ev 2
+.nf
+.ti 0
+.mk ^t
+\h'|\\n(^lu+3n'\L'|\\n(^Yu-1v\(bv'\v'\\n(^tu+1v-\\n(^Yu'\h'-|\\n(^lu+3n'
+.sp -1
+.fi
+.ev
+.\}
+.nr ^v 0
+..
+'\"	# Special macro to handle page bottom:  finish off current
+'\"	# box/sidebar if in box/sidebar mode, then invoked standard
+'\"	# page bottom macro.
+.de ^B
+.ev 2
+'ti 0
+'nf
+.mk ^t
+.if \\n(^b \{\
+.\"	Draw three-sided box if this is the box's first page,
+.\"	draw two sides but no top otherwise.
+.ie !\\n(^b-1 \h'-1.5n'\L'|\\n(^yu-1v'\l'\\n(^lu+3n\(ul'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.el \h'-1.5n'\L'|\\n(^yu-1v'\h'\\n(^lu+3n'\L'\\n(^tu+1v-\\n(^yu'\h'|0u'\c
+.\}
+.if \\n(^v \{\
+.nr ^x \\n(^tu+1v-\\n(^Yu
+\kx\h'-\\nxu'\h'|\\n(^lu+3n'\ky\L'-\\n(^xu'\v'\\n(^xu'\h'|0u'\c
+.\}
+.bp
+'fi
+.ev
+.if \\n(^b \{\
+.mk ^y
+.nr ^b 2
+.\}
+.if \\n(^v \{\
+.mk ^Y
+.\}
+..
+'\"	# DS - begin display
+.de DS
+.RS
+.nf
+.sp
+..
+'\"	# DE - end display
+.de DE
+.fi
+.RE
+.sp
+..
+'\"	# SO - start of list of standard options
+.de SO
+.SH "STANDARD OPTIONS"
+.LP
+.nf
+.ta 4c 8c 12c
+.ft B
+..
+'\"	# SE - end of list of standard options
+.de SE
+.fi
+.ft R
+.LP
+See the \\fBoptions\\fR manual entry for details on the standard options.
+..
+'\"	# OP - start of full description for a single option
+.de OP
+.LP
+.nf
+.ta 4c
+Command-Line Name:	\\fB\\$1\\fR
+Database Name:	\\fB\\$2\\fR
+Database Class:	\\fB\\$3\\fR
+.fi
+.IP
+..
+'\"	# CS - begin code excerpt
+.de CS
+.RS
+.nf
+.ta .25i .5i .75i 1i
+..
+'\"	# CE - end code excerpt
+.de CE
+.fi
+.RE
+..
+.de UL
+\\$1\l'|0\(ul'\\$2
+..
+.TH "tcl-hwloc" n 0.1 tcl-hwloc "Tcl Hwloc"
 .BS
-'\" Note:  do not modify the .SH NAME line immediately below!
-
 .SH NAME
-tcl-hwloc \- Portable Hardware Locality (hwloc) for Tcl
-
+tcl-hwloc \- Tcl Hwloc Binding
 .SH SYNOPSIS
-.B package require hwloc
-.PP
-.B hwloc version
-.br
-
-.PP
-.B hwloc create
-.I ?options?
-.br
-
-.PP
-.I topology
-.B destroy
-.br
-
-.PP
-.I topology
-.B export 
-.I filepath
-.br
-
-.PP
-.I topology
-.B depth
-.br
-
-.PP
-.I topology
-.B depth -type
-.I type
-.br
-
-.PP
-.I topology
-.B type -depth 
-.I depth
-.br
-
-.PP
-.I topology
-.B width -depth 
-.I depth
-.br
-
-.PP
-.I topology
-.B width -type
-.I type
-.br
-
-.PP
-.I topology
-.B local 
-.I filepath
-.br
-
-.PP
-.I topology
-.B root 
-.br
-
-.PP
-.I topology
-.B object_by ( -depth 
-.I depth
-.B | -type 
-.I type
-.B ) 
-.I index
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I children
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I parent
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I next_cousin
-.B | 
-.I prev_cousin
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I next_sibling
-.B | 
-.I prev_sibling
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I first_child
-.B | 
-.I last_child
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I type
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I name
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I depth
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I logical_index
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I sibling_rank
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I arity
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I attributes
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I cpuset
-.br
-
-.PP
-.I topology
-.B object
-.I object 
-.I info
-.br
-
-.PP
-.I topology
-.B cpubind set ? -type 
-.I flags 
-.B ? ? -pid 
-.I pid
-.B ? 
-.I cpuset
-.br
-
-.PP
-.I topology
-.B cpubind get ? -type 
-.I flags 
-.B ? ? -pid 
-.I pid 
-.B ?
-.br
-
-.PP
-.I topology
-.B cpubind last ? -type 
-.I flags
-.B ? ? -pid 
-.I pid 
-.B ?
-.br
-
-.PP
-.I XXX bitmap API
-.br
-
-.PP
-.I topology
-.B membind get ?-pid 
-.I pid
-.B ? ?-type 
-.I flags
-.B ? ?-cpuset? 
-.br
-
-.PP
-.I topology
-.B membind set ?-pid 
-.I pid
-.B ? ?-type 
-.I flags
-.B ? ?-cpuset? 
-.I nodeset policy
-.br
-
-.PP
-.I topology
-.B cpuset ?-complete|-allowed|-online|-topology?
-.br
-
-.PP
-.I topology
-.B nodeset ?-complete|-allowed|-topology?
-.br
-
-.PP
-.I topology
-.B convert ? -strict ? -to_cpuset | -to_nodeset 
-.I bitmap
-.br
-
+package require \fBTcl  8.5\fR
+.sp
+package require \fBtclhwloc  ?0.1?\fR
+.sp
+\fBhwloc\fR \fBbitmap\fR \fI...\fR
+.sp
+\fBhwloc\fR \fBcreate\fR \fIobject\fR \fI...\fR
+.sp
+\fBhwloc\fR \fBversion\fR
+.sp
+\fBtopologyCmd\fR \fBconvert\fR ?\fB-strict\fR? \fB-to_cpuset\fR \fIset\fR
+.sp
+\fBtopologyCmd\fR \fBconvert\fR ?\fB-strict\fR? \fB-to_nodeset\fR \fIset\fR
+.sp
+\fBtopologyCmd\fR \fBcpubind get\fR ?options...?
+.sp
+\fBtopologyCmd\fR \fBcpubind last\fR ?options...?
+.sp
+\fBtopologyCmd\fR \fBcpubind set\fR ?options...? \fIcpuset\fR
+.sp
+\fBtopologyCmd\fR \fBcpuset allowed\fR
+.sp
+\fBtopologyCmd\fR \fBcpuset complete\fR
+.sp
+\fBtopologyCmd\fR \fBcpuset online\fR
+.sp
+\fBtopologyCmd\fR \fBcpuset topology\fR
+.sp
+\fBtopologyCmd\fR \fBdepth\fR ?\fB-type\fR \fItype\fR?
+.sp
+\fBtopologyCmd\fR \fBdestroy\fR
+.sp
+\fBtopologyCmd\fR \fBexport\fR \fIpath\fR
+.sp
+\fBtopologyCmd\fR \fBlocal\fR
+.sp
+\fBtopologyCmd\fR \fBmembind get\fR ?options...?
+.sp
+\fBtopologyCmd\fR \fBmembind set\fR ?options...? \fInodeset\fR \fIpolicy\fR
+.sp
+\fBtopologyCmd\fR \fBnodeset allowed\fR
+.sp
+\fBtopologyCmd\fR \fBnodeset complete\fR
+.sp
+\fBtopologyCmd\fR \fBnodeset topology\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fI...\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBarity\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBattributes\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBchildren\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBcpuset allowed\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBcpuset complete\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBcpuset online\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBcpuset topology\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBdepth\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBfirst_child\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBinfo\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBlast_child\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBlogical_index\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBname\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBnext_cousin\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBnext_sibling\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBnodeset allowed\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBnodeset complete\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBnodeset topology\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBparent\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBprev_cousin\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBprev_sibling\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBsibling_rank\fR
+.sp
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBtype\fR
+.sp
+\fBtopologyCmd\fR \fBelement_by\fR \fB-depth\fR \fIdepth\fR \fIindex\fR
+.sp
+\fBtopologyCmd\fR \fBelement_by\fR \fB-type\fR \fItype\fR \fIindex\fR
+.sp
+\fBtopologyCmd\fR \fBroot\fR
+.sp
+\fBtopologyCmd\fR \fBtype\fR ?\fB-depth\fR \fIdepth\fR?
+.sp
+\fBtopologyCmd\fR \fBwidth\fR ?\fB-type\fR \fItype\fR?
+.sp
+\fBtopologyCmd\fR \fBwidth\fR ?\fB-depth\fR \fIdepth\fR?
+.sp
+\fBhwloc bitmap\fR \fBempty\fR
+.sp
+\fBhwloc bitmap\fR \fBfull\fR
+.sp
+\fBhwloc bitmap\fR \fBallbut\fR \fIid\fR
+.sp
+\fBhwloc bitmap\fR \fBonly\fR \fIid\fR
+.sp
+\fBhwloc bitmap\fR \fBfirst\fR \fIbitmap\fR
+.sp
+\fBhwloc bitmap\fR \fBlast\fR \fIbitmap\fR
+.sp
+\fBhwloc bitmap\fR \fBnext\fR \fIbitmap\fR \fIprev\fR
+.sp
+\fBhwloc bitmap\fR \fBfrom_ulong\fR \fImask\fR
+.sp
+\fBhwloc bitmap\fR \fBto_ulong\fR \fIbitmap\fR
+.sp
+\fBhwloc bitmap\fR \fBis_empty\fR \fIbitmap\fR
+.sp
+\fBhwloc bitmap\fR \fBis_full\fR \fIbitmap\fR
+.sp
+\fBhwloc bitmap\fR \fBnot\fR \fIbitmap\fR
+.sp
+\fBhwloc bitmap\fR \fBsinglify\fR \fIbitmap\fR
+.sp
+\fBhwloc bitmap\fR \fBweight\fR \fIbitmap\fR
+.sp
+\fBhwloc bitmap\fR \fBand\fR \fIbitmap1\fR \fIbitmap2\fR
+.sp
+\fBhwloc bitmap\fR \fBandnot\fR \fIbitmap1\fR \fIbitmap2\fR
+.sp
+\fBhwloc bitmap\fR \fBor\fR \fIbitmap1\fR \fIbitmap2\fR
+.sp
+\fBhwloc bitmap\fR \fBxor\fR \fIbitmap1\fR \fIbitmap2\fR
+.sp
+\fBhwloc bitmap\fR \fBis_equal\fR \fIbitmap1\fR \fIbitmap2\fR
+.sp
+\fBhwloc bitmap\fR \fBis_included\fR \fIbitmapsub\fR \fIbitmapsuper\fR
+.sp
+\fBhwloc bitmap\fR \fBcompare\fR \fIbitmap1\fR \fIbitmap2\fR
+.sp
+\fBhwloc bitmap\fR \fBcompare_first\fR \fIbitmap1\fR \fIbitmap2\fR
+.sp
+\fBhwloc bitmap\fR \fBintersects\fR \fIbitmap1\fR \fIbitmap2\fR
+.sp
+\fBhwloc bitmap\fR \fBset\fR \fIbitmap\fR \fIid\fR
+.sp
+\fBhwloc bitmap\fR \fBclear\fR \fIbitmap\fR \fIid\fR
+.sp
+\fBhwloc bitmap\fR \fBis_set\fR \fIbitmap\fR \fIid\fR
+.sp
+\fBhwloc bitmap\fR \fBset_range\fR \fIbitmap\fR \fIbegin\fR \fIend\fR
+.sp
+\fBhwloc bitmap\fR \fBclear_range\fR \fIbitmap\fR \fIbegin\fR \fIend\fR
+.sp
 .BE
 .SH DESCRIPTION
-This manual page explains the
-.B tcl-hwloc
-program. This program...
+This package is a binding to the
+\fIPortable Hardware Locality\fR [http://www.open-mpi.org/projects/hwloc/]
+library (short: hwloc), making its functionality available to Tcl scripts.
+.SH CONCEPTS
+Information about most of the concepts needed to handle hwloc can be
+found at its website, in particular at
+\fIhttp://www.open-mpi.org/projects/hwloc/doc/v1.2.1/modules.php\fR
+and equivalent urls for other versions of the underlying package.
 .PP
-\fBtcl-hwloc\fP is for...
+Because of this only an abridged summary is provided here, with
+the expectation that searchers for deeper knowledge will go to the
+above site.
+.PP
+At the heart of the package is the \fItopology\fR, an object
+which encapsulates a whole system and its configuration, i.e. the
+\fIelements\fR it consists of, and their relationships.
+The latter is modeled as a tree, with the relation of "X is child of
+Y" meaning "X is (conceptually) contained in Y".
+This puts the whole system at the top, as the root of the tree, and
+the most basic processing elements at the bottom, contained in a
+hierarchy of \fIcaches\fR, \fIcpus\fR, \fIsockets\fR, and the like.
+.PP
+This same tree can also be viewed as a \fImatrix\fR, with each
+row representing a layer of the system, from the processing elements
+up to the whole system. This second view is especially useful for
+identifying and adressing each of the elements in the topology, as two
+numbers are sufficient for this, the depth in the hierachy (counting
+up while going down from the top), and an index in the layer (counting
+up from the left).
+.PP
+An important side note here is that all elements in a layer are
+of the same type, which also allows addressing by type, with the depth
+implied by it. At least for elements usually existing only in a single
+layer. A good counter example are caches, which may occupy more than
+one layer, representing the hierarchy of cache levels in the system.
+.PP
+Beyond simple introspection of the system's configuration the
+package also enables its user to pin processes and threads to specific
+parts of the system, either in terms of logical processors, or in
+terms of memory. The former is more relevant for multi-macore
+machines, and the latter for NUMA machines.
+The central concepts there are cpu and (memory) node sets, both of
+which are represented by (possibly infinite) \fIbitmaps\fR.
+Conversion between both types is possible, as is going from topology
+elements to cpu sets.
+.SH "CLASS API"
+The main API provides three methods, to retrive version information, create
+topology instances, and manipulate bitmaps.
+.TP
+\fBhwloc\fR \fBbitmap\fR \fI...\fR
+This ensemble provides a set of methods for the manipulation of hwloc bitmaps.
+More details about the individual submethods are available in section
+\fBBitmap API\fR.
+.TP
+\fBhwloc\fR \fBcreate\fR \fIobject\fR \fI...\fR
+This method creates a new topology object whose associated instance command
+has the name \fIobject\fR.
+The creation process can be influenced by a number of options:
+.RS
+.TP
+\fB-ignore_all_keep_structure\fR
+Create a topology which ignores, i.e. excludes all objects which do not provide
+any structure to it. An object does not provide structure if it is the single child
+of its parent, and/or has only a single child of its own.
+.TP
+\fB-ignore_type\fR \fItype\fR
+Create a topology which excludes objects of the specified type.
+Note that the toplevel object of a topology is never ignored, even if it is
+of the specified type. Note further that objects of type "pu" cannot be excluded.
+.RS
+.TP
+\fBsystem\fR
+.TP
+\fBmachine\fR
+.TP
+\fBnode\fR
+.TP
+\fBsocket\fR
+.TP
+\fBcache\fR
+.TP
+\fBcore\fR
+.TP
+\fBpu\fR
+.TP
+\fBgroup\fR
+.TP
+\fBmisc\fR
+.RE
+This list may be incomplete, with newer versions of the underlying hwloc
+library definining more types. The above is based on
+\fIhwloc version 1.2.1.\fR [http://www.open-mpi.org/projects/hwloc/doc/v1.2.1/group__hwlocality__types.php]
+.TP
+\fB-ignore_type_keep_structure\fR
+Similar to option \fB-ignore_type\fR, however the objects of the specified type
+are excluded if and only if they do not provide structure to the topology.
+.TP
+\fB-set_flags\fR \fIflags\fR
+The argument is a list of values.
+The acceptable flags, and their meaning are:
+.RS
+.TP
+\fBthis_system\fR
+Assume that the selected backend provides the topology for the system
+on which we are running. This forces the instance method \fB...\fR to return \fBtrue\fR, i.e. makes hwloc assume that the
+selected backend provides the topology for the system on which we are
+running, even if it is not the OS-specific backend but the XML backend
+for instance. This means making the binding functions actually call the
+OS-specific system calls and really do binding, while the XML backend
+would otherwise provide empty hooks just returning success.
+.sp
+Setting the environment variable \fBHWLOC_THISSYSTEM\fR may also
+result in the same behavior.
+.sp
+This can be used for efficiency reasons to first detect the
+topology once, save it to an XML file, and quickly reload it later
+through the XML backend, but still having binding functions actually
+do bind.
+.TP
+\fBwhole_system\fR
+Detect the whole system, ignore reservations and offline settings.
+Gather all resources, even if some were disabled by the administrator.
+For instance, ignore Linux Cpusets and gather all processors and
+memory nodes, and ignore the fact that some resources may be offline.
+.RE
+.TP
+\fB-set_fsroot\fR \fIpath\fR
+Make \fIpath\fR the filesystem root while retrieving the topology.
+.sp
+On Linux systems, use sysfs and procfs files as if they were
+mounted on the given \fIpath\fR instead of the main file-system root.
+Setting the environment variable \fBHWLOC_FSROOT\fR may also result
+in this behavior. Not using the main file-system root causes the
+instance method \fBlocal\fR to later return \fBfalse\fR.
+.sp
+Note: For convenience, this backend provides empty binding hooks
+which just return success. To have hwloc still actually call
+OS-specific hooks, the flag \fBthis_system\fR has to be set (see
+option \fB-set_flags\fR) to assert that the loaded file is really
+the underlying system.
+.TP
+\fB-set_pid\fR \fIint\fR
+Set the process id from which to view and build the topology.
+.sp
+On some systems, processes may have different views of the
+machine, for instance the set of allowed CPUs. By default, hwloc
+exposes the view from the current process. Using \fB-set_pid\fR
+forces it to expose the topology of the machine from the point of
+view of another process.
+.TP
+\fB-set_synthetic\fR \fIdescription\fR
+Create a synthetic topology from the \fIdescription\fR.
+This should be a space-separated string of numbers describing the
+arity of each level. Each number may be prefixed with a type and
+a colon to enforce the type of a level. If only some level types
+are enforced, hwloc will try to choose the other types according
+to usual topologies. It may fail however and you may have to
+specify more level types manually.
+.TP
+\fB-set_xml\fR \fIpath\fR
+Create the topology not from from the system, but the XML-based
+description found in the file \fIpath\fR.
+.sp
+Setting the environment variable \fBHWLOC_XMLFILE\fR may
+also result in this behavior. This file may have been generated
+earlier by exporting a topology instance as XML.
+.RE
+.TP
+\fBhwloc\fR \fBversion\fR
+This method returns HWloc's API version as its result.
+.PP
+.SH "INSTANCE API"
+After the creation of a topology instance via \fBhwloc create\fR (see section
+\fBClass API\fR) the instance command provides the following API and
+methods:
+.TP
+\fBtopologyCmd\fR \fBconvert\fR ?\fB-strict\fR? \fB-to_cpuset\fR \fIset\fR
+.TP
+\fBtopologyCmd\fR \fBconvert\fR ?\fB-strict\fR? \fB-to_nodeset\fR \fIset\fR
+This method converts from bitmaps representing node sets to cpu sets,
+and vice versa. The returned result is again a bitmap, in the other
+domain.
+.sp
+If the \fB-strict\fR option is specified the conversion will
+punt if the topology describes a non-NUMA system without NUMA nodes,
+and return an empty CPU or node, respectively.
+.sp
+Otherwise, the default, the conversion will treat the system as
+a single memory node and use the following heuristics:
+.RS
+.IP [1]
+If the input set is empty, the result will be emptied as well.
+.IP [2]
+Otherwise the result will be entirely filled.
+.RE
+.TP
+\fBtopologyCmd\fR \fBcpubind get\fR ?options...?
+This method returns the currently set CPU bindings for the current
+process.
+The behaviour can be modified by specifying one or more of the options
+below:
+.RS
+.TP
+\fB-nomembind\fR
+This option is accepted, but ignored. It has no meaning for the
+method in question.
+.TP
+\fB-pid\fR \fIpid\fR
+Return the information for the referenced process instead.
+.TP
+\fB-process\fR
+Return the information for all threads of the (possibly multithreaded)
+process.
+.TP
+\fB-strict\fR
+When specified the system checks whether all threads of the process
+actually have the same binding. By default, the binding of each thread
+will be accumulated, i.e. the union of all bindings returned.
+.sp
+\fINote\fR that this flag is meaningless when retrieving the
+binding of a thread.
+.TP
+\fB-thread\fR
+Return the binding of the current thread of the current process. This
+option cannot be used together with \fB-pid\fR. I.e. when querying
+a different process we cannot query that process' threads in detail.
+.RE
+.TP
+\fBtopologyCmd\fR \fBcpubind last\fR ?options...?
+This method returns the CPU where the current thread or process was
+run last time it executed.  Note that the may be outdated, i.e. not be
+the CPU it is currently running on, as the OS may have shifted it
+around already according to their binding, as it saw fit.
+The behaviour can be modified by specifying one or more of the options
+below:
+.RS
+.TP
+\fB-nomembind\fR
+This option is accepted, but ignored. It has no meaning for the
+method in question.
+.TP
+\fB-pid\fR \fIpid\fR
+Return the information for the referenced process instead.
+.TP
+\fB-process\fR
+Return the information for all threads of the (possibly multithreaded)
+process.
+.TP
+\fB-strict\fR
+This option is accepted, but ignored. It has no meaning for the
+method in question.
+.TP
+\fB-thread\fR
+Return the location of the current thread of the current process. This
+option cannot be used together with \fB-pid\fR. I.e. when querying
+a different process we cannot query that process' threads in detail.
+.RE
+.TP
+\fBtopologyCmd\fR \fBcpubind set\fR ?options...? \fIcpuset\fR
+By default this method binds the current process, assumed to be
+single-threaded, to the specified \fIcpuset\fR. This is the most
+portable way of using this method.
+The behaviour can be modified by specifying one or more of the options
+below:
+.RS
+.TP
+\fB-nomembind\fR
+Instructs the system to not change memory bindings. I.e there are
+operating systems there binding a process/thread to a (set of) CPU(s)
+will also bind its memory to the associated NUMA node, by default. If
+this is a problem for the process then using this flag causes the
+package to avoid the OS functions which would bind memory as well.
+.sp
+Note however that depending on system configuration and OS this
+may fail.
+.TP
+\fB-pid\fR \fIpid\fR
+Bind the referenced process instead.
+.TP
+\fB-process\fR
+Bind all threads of the (possibly multithreaded) process.
+.TP
+\fB-strict\fR
+Request a strict binding. By default, the OS may shift the process
+and/or thread to CPUs it was not strictly bound to, if the designated
+CPUs are busy and others are idle, to ensure progress. A strict
+binding prevents this, i.e. the process or thread will never go
+anywhere but the designated CPUs.
+.sp
+Note such a request may fail, as the OS may not implement this
+functionality, or it may have been be disabled by the system's
+administrator.
+.TP
+\fB-thread\fR
+Bind just the current thread of the current process. This option
+cannot be used together with \fB-pid\fR. I.e. when binding a
+different process we have no control over how that process' threads
+are bound in detail.
+.RE
+.TP
+\fBtopologyCmd\fR \fBcpuset allowed\fR
+.TP
+\fBtopologyCmd\fR \fBcpuset complete\fR
+.TP
+\fBtopologyCmd\fR \fBcpuset online\fR
+.TP
+\fBtopologyCmd\fR \fBcpuset topology\fR
+This method returns a bitmap describing various types of CPU sets,
+i.e. subsets of the whole set of logical processors found in the
+topology.
+.RS
+.TP
+allowed
+All \fIallowed\fR processors.
+.TP
+complete
+All processors.
+.TP
+online
+All \fIonline\fR (aka \fIactive\fR processors.
+.TP
+topology
+All processors of the system.
+.RE
+.TP
+\fBtopologyCmd\fR \fBdepth\fR ?\fB-type\fR \fItype\fR?
+This method returns the depth of the topology as an integer value, or
+the depth at which the elements of the specified \fItype\fR are found.
+An error is thrown if an invalid \fItype\fR is specified. A negative
+value, \fB-1\fR to be precise, is returned if the \fItype\fR is
+valid but the topology does not contain elements of that type.
+.TP
+\fBtopologyCmd\fR \fBdestroy\fR
+This method destroys the topology instance and underlying structures.
+The result of the method is the empty string.
+.TP
+\fBtopologyCmd\fR \fBexport\fR \fIpath\fR
+This method converts the topology into a XML description and stores it
+in the file \fIpath\fR. This description can be loaded into a new
+topology via
+.nf
 
-.BE
-.SH OPTIONS
-.B
-.IP -OPTION
-This option...
+    hwloc create X -set_xml path
 
-.BE
-.SH NOTES
+.fi
+The result of the method is the empty string.
+.TP
+\fBtopologyCmd\fR \fBlocal\fR
+This method checks if the instance is a representation of the local
+system and returns a boolean value, \fBtrue\fR if the test suceeded,
+and \fBfalse\fR otherwise. Related parts in the class API are the
+option \fB-set_flags\fR with flag \fBthis_system\fR, option
+\fB-set_fsroot\fR and option \fB-set_xml\fR.
+.TP
+\fBtopologyCmd\fR \fBmembind get\fR ?options...?
+This method returns a 2-element list containing the currently set
+default NUMA bindings and policies for a process and/or thread, in
+this order. The bindings are represented by a bitmap representing
+either a nodeset (default) or a cpuset.
+Its behaviour can be modified by specifying one or more of the options
+below:
+.RS
+.TP
+\fB-migrate\fR
+.TP
+\fB-nocpubind\fR
+These two options are relevant only for \fBmembind set\fR.
+While this method accepts them, they are ignored.
+.TP
+\fB-cpu\fR
+By default the bitmap returned by the method represents a nodeset.
+When this option is specified a cpuset is returned instead, with the
+method internally converting the nodeset result to it.
+For convenience sake's all descriptions below talk only about
+nodesets, with the conversion implied where needed.
+.TP
+\fB-pid\fR \fIpid\fR
+By default this method queries the current process or its threads.
+When this option is specified the referenced process is queried
+instead, and we lose the ability for a finegrained query of
+threads. I.e. usage of option \fB-thread\fR is forbidden, and
+\fB-process\fR is implied.
+.TP
+\fB-process\fR
+.TP
+\fB-thread\fR
+These two options exclude each other, i.e. when using one use of the
+other is forbidden.
+.sp
+By default, i.e. when neither of the options is present, the
+process is assumed to be single threaded. The package will then use
+either process-based OS functions or thread-based OS functions,
+depending on which are available and fitting. This makes this the most
+portable method.
+.sp
+Passing option \fB-process\fR causes the return of the
+current policies and nodesets for all the threads in the specified
+process (current, or referenced by option \fB-pid\fR).
+The exact nature of the result depends on the presence of option
+\fB-strict\fR, and will be explained there.
+.sp
+Passing option \fB-thread\fR specifies to return the current
+policy and nodeset for the current thread invoking the method, in the
+current process.
+Use of this option is forbidden when option \fB-pid\fR is present.
+.TP
+\fB-strict\fR
+The (non-)presence of this option guides the handling of multiple
+threads.
+In the default case of either a single-threaded process (neither
+\fB-process\fR, nor \fB-thread\fR present) or when querying a
+single thread (via \fB-thread\fR) we have only a single nodeset and
+policy, these are returned, and this option is ignored when specified.
+.sp
+Now when \fB-process\fR or \fB-pid\fR are used we are
+querying (potentially) multiple threads and have to merge the nodesets
+and policies in some way.
+By default that is exactly what happens. The union of all found
+nodesets is computed and returned. For the policies, if all are
+identical this one policy is returned, and otherwise "mixed" is
+returned.
+.sp
+By specifying this option we disable the above merging process
+and replace it with a check. If the nodesets and policies of all the
+queried threads are identical, then this information is returned as
+usual. If there are differences however, then an error is thrown
+instead.
+.RE
+.TP
+\fBtopologyCmd\fR \fBmembind set\fR ?options...? \fInodeset\fR \fIpolicy\fR
+This method sets the default memory binding \fIpolicy\fR and to prefer
+the NUMA node(s) specified by the \fInodeset\fR. This determines which
+NUMA modes to use when allocating memory.
+Its behaviour can be modified by specifying one or more of the options
+below:
+.RS
+.TP
+\fB-migrate\fR
+If specified the package will attempt to migrate existing allocated
+memory to the specified NUMA nodes.
+By default failure to perform the migration is not reported. However
+if the option \fB-strict\fR is specified also, an error will be
+thrown.
+.TP
+\fB-nocpubind\fR
+Specifying this option instructs the package to not change cpu
+bindings. I.e there are operating systems where binding a process
+and/or thread to a (set of) NUMA node(s) will also bind its execution
+to the associated CPUs, by default. If this is a problem for the
+process then using this flag causes the package to avoid the OS
+functions which would bind cpus as well.
+.sp
+Note however that depending on system configuration and OS this
+may fail.
+.TP
+\fB-cpu\fR
+By default the bitmap taken by the method represents a \fInodeset\fR.
+When this option is specified a cpuset is taken instead, with the
+method internally converting it to a nodeset.
+For convenience sake's all descriptions below talk only about
+nodesets, with the conversion implied where needed.
+.TP
+\fB-pid\fR \fIpid\fR
+By default this method operates on the current process or its threads.
+When this option is specified the referenced process is operated on
+instead, and we lose the ability for a finegrained handling of
+threads. I.e. usage of option \fB-thread\fR is forbidden, and
+\fB-process\fR is implied.
+.TP
+\fB-thread\fR
+.TP
+\fB-process\fR
+These two options exclude each other, i.e. when using one use of the
+other is forbidden.
+.sp
+By default, i.e. when neither of the options is present, the
+process is assumed to be single threaded. The package will then use
+either process-based OS functions or thread-based OS functions,
+depending on which are available and fitting. This makes this the most
+portable form.
+.sp
+Passing \fB-process\fR sets the policy for all threads of
+the specified (possibly multithreaded) process.
+.sp
+Passing \fB-thread\fR sets the policy for the current thread
+of the current process.
+.TP
+\fB-strict\fR
+Presence of this option requests a strict binding from the OS. The
+function will fail if the binding can not be guaranteed / completely
+enforced.
+This flag has slightly different meanings depending on the presence of
+the options \fB-pid\fR and \fB-cpu\fR.
+Hwloc's documentation doesn't go into further detail.
+.RE
+The following policies are accepted as legal. Remember however that
+not all systems support all policies, and attempting an unsupported
+policy causes errors to be thrown.
+.RS
+.TP
+\fBbind\fR
+Allocate memory on the specified NUMA nodes.
+.TP
+\fBdefault\fR
+Reset the memory allocation policy to the system default. This is the
+only policy which is fully portable across systems.
+.TP
+\fBfirsttouch\fR
+Allocated memory is not immediately bound to a specific locality. Each
+page in the allocation is individually bound to the local NUMA node of
+the first thread that touches it, at the time of this touch.
+.TP
+\fBinterleave\fR
+Allocate the memory on the specified nodes in an interleaved /
+round-robin manner. The precise layout of the memory across multiple
+NUMA nodes is OS/system specific. Interleaving can be useful when
+threads distributed across the specified NUMA nodes will all be
+accessing the whole memory range concurrently, since the interleave
+will then balance the memory references.
+.TP
+\fBmixed\fR
+This policy is returned when multiple threads or parts of a memory
+area have differing memory binding policies. It is not usable for
+setting a policy.
+.TP
+\fBnexttouch\fR
+For each page bound with this policy, the next time it is touched (and
+next time only), it is moved from its current location to the local
+NUMA node of the thread where the memory reference occurred (if it
+needs to be moved at all).
+.TP
+\fBreplicate\fR
+Replicate memory on the given nodes; reads from this memory will
+attempt to be serviced from the NUMA node local to the reading
+thread. Replicating can be useful when multiple threads from the
+specified NUMA nodes will be sharing the same read-only data.
+.RE
+.TP
+\fBtopologyCmd\fR \fBnodeset allowed\fR
+.TP
+\fBtopologyCmd\fR \fBnodeset complete\fR
+.TP
+\fBtopologyCmd\fR \fBnodeset topology\fR
+This method returns a bitmap describing various types of numa node
+sets, i.e. subsets of the whole set of logical memory found in the
+topology.
+.RS
+.TP
+allowed
+All \fIallowed\fR numa nodes.
+.TP
+complete
+All numa nodes.
+.TP
+topology
+All numa nodes of the system.
+.RE
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fI...\fR
+This method provides an ensemble of sub-commands enabling navigation
+in the tree of elements contained in the topology, relative to the
+element specified by the \fIid\fR. See also method \fBroot\fR.
+Please see section \fBElement Identifiers\fR for details of the
+syntax used here. Errors are thrown for identifiers not following this
+syntax, or refering to elements not existing in the topology.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBarity\fR
+This method returns an integer number, the number of children for the
+element.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBattributes\fR
+This method, and \fBinfo\fR below return similar information, this
+one more human-readable, the other machine-readable, and with a few
+keys excluded. The result here is a string shell variable assignments,
+separated by a single space.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBchildren\fR
+This method returns a list of element identifiers, the children of the
+element. If the element hs no children the result is the empty list.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBcpuset allowed\fR
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBcpuset complete\fR
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBcpuset online\fR
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBcpuset topology\fR
+This method returns a bitmap, one of several CPU sets associated with
+the element.
+.RS
+.TP
+allowed
+All \fIallowed\fR processors.
+.TP
+complete
+All processors.
+.TP
+online
+All \fIonline\fR (aka \fIactive\fR processors.
+.TP
+topology
+All processors of the system.
+.RE
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBdepth\fR
+This method returns the depth the element is at. This is, in essence,
+the first element of its element identifier.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBfirst_child\fR
+This method returns the element identifier of the first, leftmost
+child of the element. An error is thrown if the element has no
+children.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBinfo\fR
+This method, and \fBattributes\fR above return similar information,
+this one machine-readable, the other more human-readable, and with a
+few keys more. The result here is a list of pairs, with each pair
+containing key and vaue, in this order.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBlast_child\fR
+This method returns the element identifier of the last, rightmost
+child of the element. An error is thrown if the element has no
+children.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBlogical_index\fR
+This method returns the index of the element in its layer. This is, in
+essence, the second element of its element identifier.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBname\fR
+This method returns a string, the name of the element.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBnext_cousin\fR
+This method returns the identifier of the right sibling of the
+element, if there is any, or the first child in the next sibling of
+its parent element. In essence it navigates to the right in its layer
+without being bound to the children of the current parent.
+The method throws an error if and only if the element is the last
+element in its layer.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBnext_sibling\fR
+This method returns the identifier of the right sibling of the
+element.  The method throws an error if the element is the last child
+in its parent, i.e. does not have a right sibling.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBnodeset allowed\fR
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBnodeset complete\fR
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBnodeset topology\fR
+This method returns a bitmap, one of several NUMA node sets associated
+with the element.
+.RS
+.TP
+allowed
+All \fIallowed\fR numa nodes.
+.TP
+complete
+All numa nodes.
+.TP
+topology
+All numa nodes of the system.
+.RE
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBparent\fR
+This method returns the identifier of the parent of the element.  The
+method throws an error if the element is the root of the topology.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBprev_cousin\fR
+This method returns the identifier of the left sibling of the element,
+if there is any, or the last child in the previous sibling of its
+parent element. In essence it navigates to the left in its layer
+without being bound to the children of the current parent.
+The method throws an error if and only if the element is the first
+element in its layer.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBprev_sibling\fR
+This method returns the identifier of the left sibling of the element.
+The method throws an error if the element is the first child in its
+parent, i.e. does not have a left sibling.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBsibling_rank\fR
+This method returns an integer number, the index of the element among
+the children of its parent.
+.TP
+\fBtopologyCmd\fR \fBelement\fR \fIid\fR \fBtype\fR
+This method returns a string, the type of the element.
+.TP
+\fBtopologyCmd\fR \fBelement_by\fR \fB-depth\fR \fIdepth\fR \fIindex\fR
+.TP
+\fBtopologyCmd\fR \fBelement_by\fR \fB-type\fR \fItype\fR \fIindex\fR
+This method is a constructor for element identifiers. Either directly
+from \fIdepth\fR and \fIindex\fR, or the depth specified indirectly
+through the element \fItype\fR.
+An error is thrown if the intended element does not exist in the
+topology.
+.TP
+\fBtopologyCmd\fR \fBroot\fR
+This method returns the identifier for the root element of the
+topology tree.
+.TP
+\fBtopologyCmd\fR \fBtype\fR ?\fB-depth\fR \fIdepth\fR?
+This method returns a string, the type of the elements at the
+specified \fIdepth\fR of the topology. An error is thrown if an
+invalid depth is specified, i.e. either a value less than zero, or
+greater than the value returned by
+.nf
 
-.BE
-.SH EXAMPLE
+    topology depth
 
-.BE
-.SH "SEE ALSO"
+.fi
+.TP
+\fBtopologyCmd\fR \fBwidth\fR ?\fB-type\fR \fItype\fR?
+.TP
+\fBtopologyCmd\fR \fBwidth\fR ?\fB-depth\fR \fIdepth\fR?
+This method returns an integer value, the number of elements contained
+in the topology which are of either the specified \fItype\fR, or found
+at the specified \fIdepth\fR.
+.sp
+An error is thrown if an invalid depth is specified, i.e. either
+a value less than zero, or greater than the value returned by
+.nf
 
+    topology depth
+
+.fi
+.sp
+Alternatively, an error is also thrown if an invalid \fItype\fR
+is specified. The value \fB0\fR is returned if the \fItype\fR is
+valid but the topology does not contain elements of that type.
+.PP
+.SH "BITMAP API"
+The methods in this section all deal with hwloc bitmaps, which are
+used to represent sets of nodes, cpus, etc. An important thing to note
+is that such bitmaps can be infinite, in the sense that a finite
+header may be followed by an infinite trailer of 1-bits (with no
+0-bits anymore).
+.TP
+\fBhwloc bitmap\fR \fBempty\fR
+.TP
+\fBhwloc bitmap\fR \fBfull\fR
+These two methods return the empty (No bits set) and full (All bits set,
+infinite) bitmaps, respectively.
+.TP
+\fBhwloc bitmap\fR \fBallbut\fR \fIid\fR
+.TP
+\fBhwloc bitmap\fR \fBonly\fR \fIid\fR
+These two methods return bitmaps with a single bit unset (\fBallbut\fR)
+or set (\fBonly\fR). The result of \fBallbut\fR is an infinite bitmap.
+The methods throw an error if a negative \fIid\fR is specified.
+.TP
+\fBhwloc bitmap\fR \fBfirst\fR \fIbitmap\fR
+This method returns the id of the first set bit found in the \fIbitmap\fR,
+counting up from bit 0. The method will throw an error if the \fIbitmap\fR
+is empty, i.e. has no bit set at all.
+.TP
+\fBhwloc bitmap\fR \fBlast\fR \fIbitmap\fR
+This method returns the id of the last set bit found in the \fIbitmap\fR,
+counting up from bit 0. The method will throw an error if the \fIbitmap\fR
+is either empty, i.e. has no bit set at all, or infinite, i.e. has no
+defined "last" bit.
+.TP
+\fBhwloc bitmap\fR \fBnext\fR \fIbitmap\fR \fIprev\fR
+This method, like \fBfirst\fR, returns the id of the first set bit found
+in the \fIbitmap\fR, however all bits up to and including bit \fIprev\fR are
+ignored. Negative values for \fIprev\fR are allowed.
+.sp
+The method will throw an error if the \fIbitmap\fR is empty, i.e.
+has no bit set at all, or if it is empty after bit \fIprev\fR.
+.sp
+The method \fBfirst\fR is, in essence, the same as \fBnext\fR
+called with "prev == \fB-1\fR", i.e.
+.nf
+
+    [first bitmap] == [next bitmap -1]
+
+.fi
+.TP
+\fBhwloc bitmap\fR \fBfrom_ulong\fR \fImask\fR
+This method takes an unsigned integer and converts it into a bitmap, based on
+the integer's binary representation. The LSB is mapped to bit 0 of the bitmap.
+.TP
+\fBhwloc bitmap\fR \fBto_ulong\fR \fIbitmap\fR
+This method is the complement to \fBfrom_ulong\fR, converting the \fIbitmap\fR
+into an unsigned integer value represented by the bits of the map.
+.TP
+\fBhwloc bitmap\fR \fBis_empty\fR \fIbitmap\fR
+.TP
+\fBhwloc bitmap\fR \fBis_full\fR \fIbitmap\fR
+These two methods test if the specified \fIbitmap\fR is either the empty or the
+full bitmap, i.e. no bits sets vs. all bits set, respectively. The result of the
+methods is a boolean value, \fBtrue\fR if the test succeeds, and \fBfalse\fR
+otherwise.
+.TP
+\fBhwloc bitmap\fR \fBnot\fR \fIbitmap\fR
+This method takes the \fIbitmap\fR, inverts all bits, and returns this as its
+result.
+.TP
+\fBhwloc bitmap\fR \fBsinglify\fR \fIbitmap\fR
+This method is similar to \fBfirst\fR, except that its result is a bitmap,
+not a bit number, and it accepts the empty bitmap. In the resulting bitmap all
+bits but the first set bit of the input are unset. If the input is empty the
+output is simply empty as well.
+.TP
+\fBhwloc bitmap\fR \fBweight\fR \fIbitmap\fR
+This method counts the number of set bits in the specified \fIbitmap\fR and
+returns this as its result. The method will throw an error if the \fIbitmap\fR
+is infinite, i.e. has not a bounded weight.
+.TP
+\fBhwloc bitmap\fR \fBand\fR \fIbitmap1\fR \fIbitmap2\fR
+.TP
+\fBhwloc bitmap\fR \fBandnot\fR \fIbitmap1\fR \fIbitmap2\fR
+.TP
+\fBhwloc bitmap\fR \fBor\fR \fIbitmap1\fR \fIbitmap2\fR
+.TP
+\fBhwloc bitmap\fR \fBxor\fR \fIbitmap1\fR \fIbitmap2\fR
+These four methods perform standard bitwise operations on the two bitmaps,
+returning the operations' result. See the following mapping to C expressions:
+.nf
+
+    and    A B == A & B
+    andnot A B == A & ~B
+    or     A B == A | B
+    xor    A B == A ^ B
+
+.fi
+.TP
+\fBhwloc bitmap\fR \fBis_equal\fR \fIbitmap1\fR \fIbitmap2\fR
+This method tests if the two specified bitmaps are equal in all respects.
+The result of the method is a boolean value, \fBtrue\fR if the bitmaps
+are equal, and \fBfalse\fR otherwise.
+.TP
+\fBhwloc bitmap\fR \fBis_included\fR \fIbitmapsub\fR \fIbitmapsuper\fR
+This method tests if \fIbitmapsub\fR is a subset of \fIbitmapsuper\fR.
+The result of the method is a boolean value, \fBtrue\fR if the bitmap
+is a subset, and \fBfalse\fR otherwise.
+.TP
+\fBhwloc bitmap\fR \fBcompare\fR \fIbitmap1\fR \fIbitmap2\fR
+.TP
+\fBhwloc bitmap\fR \fBcompare_first\fR \fIbitmap1\fR \fIbitmap2\fR
+These two method compare the two bitmaps by comparing the last and first set
+bits respectively. The result of the methods are the difference between the
+ids of these bits. The empty bitmap is treated as if it had bit \fB-1\fR set.
+.TP
+\fBhwloc bitmap\fR \fBintersects\fR \fIbitmap1\fR \fIbitmap2\fR
+This method tests if the two specified bitmaps intersect with each other, i.e if
+the result of \fBand\fR'ing them together is not empty. The result of the method
+is a boolean value, \fBtrue\fR if the bitmaps have a non-empty intersection,
+and \fBfalse\fR otherwise.
+.TP
+\fBhwloc bitmap\fR \fBset\fR \fIbitmap\fR \fIid\fR
+.TP
+\fBhwloc bitmap\fR \fBclear\fR \fIbitmap\fR \fIid\fR
+.TP
+\fBhwloc bitmap\fR \fBis_set\fR \fIbitmap\fR \fIid\fR
+These three methods set, unset, and test the bits in a \fIbitmap\fR. The
+first two methods return the modified bitmap as result, whereas the last
+returns a boolean value, \fBtrue\fR if the bit is set, and \fIfalse\fR
+otherwise. The methods throw an error if a negative \fIid\fR is specified.
+.TP
+\fBhwloc bitmap\fR \fBset_range\fR \fIbitmap\fR \fIbegin\fR \fIend\fR
+.TP
+\fBhwloc bitmap\fR \fBclear_range\fR \fIbitmap\fR \fIbegin\fR \fIend\fR
+These two methods are extensions of the modifiers in the previous group from
+single bits to bit ranges. The range of bits to set or clear is specified by two
+bit ids. The methods return the modified bitmap as their result.
+The methods throw an error if a negative id is specified, for either \fIbegin\fR
+or \fIend\fR. Specifying an \fIend\fR < \fIbegin\fR is acceptable however, this
+specifies an empty range and the method will return the unmodified \fIbitmap\fR.
+.PP
+.SH "ELEMENT IDENTIFIERS"
+As explained in section \fBConcepts\fR in more detail, the
+elements of a topology instance are organized in a combination of tree
+and matrix, with the tree structure providing the information about
+nesting (containment), and the matrix providing direct addressability.
+.PP
+The element identifiers used by the package are based on the
+latter, identifying each element by depth and index in that layer. A
+valid element identifier follows the rules below:
+.IP [1]
+It is a list containing exactly two elements.
+.IP [2]
+Each element is an integer number.
+.IP [3]
+The first element is the depth of the element in the topology,
+counted from \fB0\fR, with \fB0\fR refering to the topmost
+layer, the \fIroot\fR layer, and increasing as we move deeper
+down. The maximum allowed value is one less than the result of
+the instance method \fBdepth\fR (without arguments).
+.IP [4]
+The second element is the index of the element in its layer,
+counted from \fB0\fR, with \fB0\fR refering to the leftmost
+element, and increasing as we move to the right. The maximum
+allowed value is one less than the result of the instance
+method \fBwidth\fR for the specified depth.
+.PP
+.SH REFERENCES
+.IP [1]
+\fIPortable Hardware Locality\fR [http://www.open-mpi.org/projects/hwloc/]
+.PP
+.SH KEYWORDS
+beowulf, binding cpu, binding memory, cache, cpu binding, hardware Locality, hwloc, memory binding, multi-core, numa, parallel, portable hardware locality, process, processing unit, thread
+.SH COPYRIGHT
+.nf
+Copyright (c) 2011 George Andreou, Andreas Kupries
+Copyright (c) 2011 Documentation, Andreas Kupries
+
+.fi

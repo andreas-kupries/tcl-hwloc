@@ -1,5 +1,11 @@
 2011-09-20  Andreas Kupries  <andreask@activestate.com>
 
+	* doc/instance.inc: Completed the documentation of cpubind and
+	  membind. Together with the test suite we are now pretty much
+	  done, except for any fiddling with the API.
+	* doc/tcl-hwloc.n: Regenerated.
+	* doc/tcl-hwloc.nhtml: New file, manpage in HTML.
+
 	* generic/topology.c: Fixed typo in membind argument error
 	  message.
 
