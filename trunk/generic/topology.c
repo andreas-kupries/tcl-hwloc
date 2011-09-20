@@ -265,7 +265,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
     case TOPO_MEMBIND: /* membind ...*/
         {
             if (objc < 3) {
-                Tcl_WrongNumArgs(interp, 2, objv, "membind ...");
+                Tcl_WrongNumArgs(interp, 2, objv, "method ...");
                 return TCL_ERROR;
             }
 
