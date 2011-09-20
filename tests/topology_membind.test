@@ -1,17 +1,183 @@
 # -*- tcl -*-
-puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-load ./libtclhwloc0.1.so
-if [catch {
-hwloc create topo0
-puts "membind:[topo0 membind get]"
-puts "membind -pid 1 :[topo0 membind get -pid 1]"
-puts "membind -pid 1 -type thread :[topo0 membind get -pid 1 -type thread]"
-puts "Setting membind to 0"
-topo0 membind set "0" default
-puts "Setting membind to 1"
-topo0 membind set -pid [pid] "1" default
-topo0 membind set -pid [pid] -type process "1" default
-puts "membind:[topo0 membind get]"
+# # ## ### ##### ######## ############# #####################
+##
+# Test suite for Tcl/Hwloc binding.
+# Topology. Memory bindings, aka NUMA.
 
-} out err] { puts $err }
-topo0 destroy
+# # ## ### ##### ######## ############# #####################
+## Requirements
+
+package require Tcl 8.5
+
+if {[catch {package require tcltest 2}]} {
+    puts stderr "Skipping tests in [info script].  tcltest 2 required."
+    return
+}
+
+# # ## ### ##### ######## ############# #####################
+##
+# Get the functionality under test, directly from the build directory,
+# which is the CWD.
+
+load libtclhwloc0.1.so
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-topology-membind-1.0 "memory binding, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T membind
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T membind method ..."}
+
+test hwloc-topology-membind-1.1 "memory binding, bad method" -setup {
+    hwloc create T
+} -body {
+    T membind X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {bad option "X": must be get or set}
+
+test hwloc-topology-membind-1.2 "memory binding, set, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T membind set
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T membind set ?options? nodeset policy"}
+
+test hwloc-topology-membind-1.3 "memory binding, set, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T membind set -nocpubind
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T membind set ?options? nodeset policy"}
+
+test hwloc-topology-membind-1.4 "memory binding, set, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T membind set -pid
+} -cleanup {
+    T destroy
+} -returnCodes error -result {Missing argument for -pid.}
+
+test hwloc-topology-membind-1.5 "memory binding, set, bad pid" -setup {
+    hwloc create T
+} -body {
+    T membind set -pid foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {expected integer but got "foo"}
+
+test hwloc-topology-membind-1.6 "memory binding, set, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T membind set X Y Z
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T membind set ?options? nodeset policy"}
+
+test hwloc-topology-membind-1.7 "memory binding, set, bad policy" -setup {
+    hwloc create T
+} -body {
+    T membind set X Y
+} -cleanup {
+    T destroy
+} -returnCodes error -result {bad policy "Y": must be bind, default, firsttouch, interleave, mixed, nexttouch, or replicate}
+
+test hwloc-topology-membind-1.8 "memory binding, set, bad bitmap" -setup {
+    hwloc create T
+} -body {
+    T membind set X default
+} -cleanup {
+    T destroy
+} -returnCodes error -result {Expected bitmap but got "X"}
+
+test hwloc-topology-membind-1.9 "memory binding, set, bad option" -setup {
+    hwloc create T
+} -body {
+    T membind set -foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {bad flag "-foo": must be -cpu, -migrate, -nocpubind, -pid, -process, -strict, or -thread}
+
+# - -- --- ----- -------- ------------- ---------------------
+
+test hwloc-topology-membind-2.0 "memory binding, get, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T membind get X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T membind get ?options?"}
+
+test hwloc-topology-membind-2.1 "memory binding, get, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T membind get -nocpubind X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T membind get ?options?"}
+
+test hwloc-topology-membind-2.2 "memory binding, get, wrong#args" -setup {
+    hwloc create T
+} -body {
+    T membind get -pid 2 X
+} -cleanup {
+    T destroy
+} -returnCodes error -result {wrong # args: should be "T membind get ?options?"}
+
+test hwloc-topology-membind-2.3 "memory binding, get, bad pid" -setup {
+    hwloc create T
+} -body {
+    T membind get -pid foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {expected integer but got "foo"}
+
+test hwloc-topology-membind-2.4 "memory binding, get, bad option" -setup {
+    hwloc create T
+} -body {
+    T membind get -foo
+} -cleanup {
+    T destroy
+} -returnCodes error -result {bad flag "-foo": must be -cpu, -migrate, -nocpubind, -pid, -process, -strict, or -thread}
+
+test hwloc-topology-membind-2.5 "memory binding, get, -pid excludes -thread" -setup {
+    hwloc create T
+} -body {
+    T membind get -thread -pid 1
+} -cleanup {
+    T destroy
+} -returnCodes error -result {Illegal use of -thread together with -pid}
+
+test hwloc-topology-membind-2.6 "memory binding, get, -pid ok without -thread" -constraints {
+    nonPortable
+} -setup {
+    hwloc create T
+} -body {
+    T membind get -pid 1
+} -cleanup {
+    T destroy
+} -result {}
+
+test hwloc-topology-membind-2.7 "memory binding, get, -process excludes -thread" -setup {
+    hwloc create T
+} -body {
+    T membind get -process -thread
+} -cleanup {
+    T destroy
+} -returnCodes error -result {Illegal use of -thread together with -process}
+
+# - -- --- ----- -------- ------------- ---------------------
+## The real use of bindings can't really be tested automatically.
+## Synthetic topologies can't be used, and the real topologies of
+## whatever system is running this can't be anticipiated, not truly. 
+
+## The underlying hwloc does interactive testing, i.e. user guided and
+## evaluated.
+
+# # ## ### ##### ######## ############# #####################
+tcltest::cleanupTests

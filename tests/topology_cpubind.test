@@ -145,6 +145,17 @@ test hwloc-topology-cpubind-2.5 "cpu binding, get, -pid excludes -thread" -setup
     T destroy
 } -returnCodes error -result {Illegal use of -thread together with -pid}
 
+test hwloc-topology-cpubind-2.6 "cpu binding, get, -pid ok without -thread" -setup {
+    hwloc create T
+    set X {}
+} -body {
+    T cpubind get -pid [pid]
+    set X
+} -cleanup {
+    T destroy
+    unset X
+} -result {}
+
 # - -- --- ----- -------- ------------- ---------------------
 
 test hwloc-topology-cpubind-3.0 "cpu binding, last, wrong#args" -setup {
@@ -195,32 +206,24 @@ test hwloc-topology-cpubind-3.5 "cpu binding, last, -pid excludes -thread" -setu
     T destroy
 } -returnCodes error -result {Illegal use of -thread together with -pid}
 
+test hwloc-topology-cpubind-3.6 "cpu binding, last, -pid ok without -thread" -setup {
+    hwloc create T
+    set X {}
+} -body {
+    T cpubind last -pid [pid]
+    set X
+} -cleanup {
+    T destroy
+    unset X
+} -result {}
+
 # - -- --- ----- -------- ------------- ---------------------
-## The real use of binding is more difficult to test.
+## The real use of bindings can't really be tested automatically.
+## Synthetic topologies can't be used, and the real topologies of
+## whatever system is running this can't be anticipiated, not truly. 
+
+## The underlying hwloc does interactive testing, i.e. user guided and
+## evaluated.
 
 # # ## ### ##### ######## ############# #####################
 tcltest::cleanupTests
-
-
-
-puts @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-load ./libtclhwloc0.1.so
-hwloc create topo0
-catch {
-    puts "a cpubind:[topo0 cpubind get]"
-    puts "b cpubind -pid 1 :[topo0 cpubind get -pid 1]"
-    puts "c cpubind -pid 1 -thread :[topo0 cpubind get -pid 1 -thread]"
-    puts "d Setting cpubind to 0"
-    topo0 cpubind set "0"
-    puts "e Setting cpubind to 1"
-    topo0 cpubind set -pid [pid] "1"
-    topo0 cpubind set -pid [pid] -process "1"
-    puts "f cpubind:[topo0 cpubind get]"
-
-    puts "g Overloading a single core for 20secs"
-    set running 1
-    after 20000 [list set running 0]
-    while {$running} { incr a ; update }
-} msg
-puts $msg
-topo0 destroy

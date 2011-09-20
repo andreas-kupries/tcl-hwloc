@@ -69,7 +69,7 @@ int parse_cpubind_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *
 	    return TCL_ERROR;
 	}
 
-	if (pid && (flags | HWLOC_CPUBIND_THREAD)) {
+	if (pid && (flags & HWLOC_CPUBIND_THREAD)) {
 	    Tcl_SetResult (interp, "Illegal use of -thread together with -pid", TCL_STATIC);
 	    return TCL_ERROR;
 	}

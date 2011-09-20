@@ -1,3 +1,18 @@
+2011-09-20  Andreas Kupries  <andreask@activestate.com>
+
+	* generic/topology.c: Fixed typo in membind argument error
+	  message.
+
+	* generic/cpubind.c: Fixed bug in -pid/-thread handling.
+	* tests/topology_cpubind.test: Added test for the above.
+
+	* generic/membind.c: Fixed bugs in my work.
+	* tests/topology_membind.test: Created testsuite, analogous to
+	  "topology_cpubind.test".
+
+	* tests/old-bindings.tcl: New file, moved George's old
+	  cpubind/membind test code there.
+
 2011-09-19  Andreas Kupries  <andreask@activestate.com>
 
 	* generic/membind.c: Reworked the 'membind' method to be have

@@ -77,8 +77,19 @@ parse_membind_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	break;
 
     case MEMBIND_GET:
-	if (at != (objc-1)) {
-	    Tcl_WrongNumArgs(interp, 3, objv, NULL);
+	if (at != objc) {
+	    Tcl_WrongNumArgs(interp, 3, objv, "?options?");
+	    return TCL_ERROR;
+	}
+
+	if (pid && (flags & HWLOC_MEMBIND_THREAD)) {
+	    Tcl_SetResult (interp, "Illegal use of -thread together with -pid", TCL_STATIC);
+	    return TCL_ERROR;
+	}
+
+	if ((flags & HWLOC_MEMBIND_THREAD) &&
+	    (flags & HWLOC_MEMBIND_PROCESS)) {
+	    Tcl_SetResult (interp, "Illegal use of -thread together with -process", TCL_STATIC);
 	    return TCL_ERROR;
 	}
 
@@ -97,8 +108,6 @@ parse_membind_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 		res = hwloc_get_membind_nodeset(data->topology, thenodeset, &policy, flags);
 	    }
 	}
-
-	hwloc_bitmap_free(thenodeset);
 
 	if (res == -1) {
 	    hwloc_bitmap_free(thenodeset);
