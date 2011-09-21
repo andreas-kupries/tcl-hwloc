@@ -64,15 +64,18 @@ TEA_SETUP_COMPILER
 # and PKG_TCL_SOURCES.
 #-----------------------------------------------------------------------
 
-HWLOC_CFLAGS=`pkg-config --cflags hwloc`
-HWLOC_LIBS=`pkg-config --libs hwloc`
-
 TEA_ADD_SOURCES([topology.c object.c cpubind.c membind.c bitmap.c hwloc.c misc.c])
 TEA_ADD_HEADERS([generic/topology.h generic/cpubind.h generic/membind.c generic/bitmap.h generic/object.h generic/misc.h])
-TEA_ADD_LIBS([$HWLOC_LIBS])
-TEA_ADD_CFLAGS([$HWLOC_CFLAGS])
+#TEA_ADD_LIBS([])
+#TEA_ADD_CFLAGS([])
 TEA_ADD_STUB_SOURCES([])
 TEA_ADD_TCL_SOURCES([])
+
+#--------------------------------------------------------------------
+# Locate hwloc, require a minimum version.
+#--------------------------------------------------------------------
+
+TCLHWLOC_LOCATE_HWLOC([1.2.1])
 
 #--------------------------------------------------------------------
 # You can add more files to clean if your extension creates any extra
@@ -143,7 +146,6 @@ TEA_ENABLE_SYMBOLS
 #--------------------------------------------------------------------
 
 AC_DEFINE(USE_TCL_STUBS, 1, [Use Tcl stubs])
-#AC_DEFINE(USE_TK_STUBS, 1, [Use Tk stubs])
 
 #--------------------------------------------------------------------
 # This macro generates a line to use when building a library.  It
@@ -162,16 +164,12 @@ TEA_MAKE_LIB
 #--------------------------------------------------------------------
 
 TEA_PROG_TCLSH
-#TEA_PROG_WISH
 
 #--------------------------------------------------------------------
 # Finally, substitute all of the various values into the Makefile.
 # You may alternatively have a special pkgIndex.tcl.in or other files
 # which require substituting th AC variables in.  Include these here.
 #--------------------------------------------------------------------
-
-AC_MSG_RESULT([hwloc cflags ... $HWLOC_CFLAGS]) 
-AC_MSG_RESULT([hwloc ldflags ... $HWLOC_LIBS]) 
 
 AC_OUTPUT([Makefile pkgIndex.tcl])
 
