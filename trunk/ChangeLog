@@ -1,5 +1,18 @@
 2011-09-21  Andreas Kupries  <andreask@activestate.com>
 
+	* configure.in: [Issue 9, 10]: Reworked the code determining the
+	  hwloc flags to accept a --with-hwloc switch for custom location,
+	  also using directories derived from (exec-)prefix as
+	  defaults. Further extended with a check for existence and check
+	  of minimum required version before accepting it and attempting
+	  to get the libs and c-flags.
+
+	* tclhwloc.m4: New file, contains the m4 helper macro actually
+	  implementing all of the above.
+	* aclocal.m4: Added tclhwloc.m4 to sourced files.
+
+	* configure: Regenerated.
+
 	* README: [Issue 11] Updated contents to properly contain the
 	  tcl-hwloc location, build instructions, etc. Removed all
 	  references to the sampleextension.
