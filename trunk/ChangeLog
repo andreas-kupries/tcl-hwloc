@@ -1,3 +1,11 @@
+2011-09-21  Andreas Kupries  <andreask@activestate.com>
+
+	* README: [Issue 11] Updated contents to properly contain the
+	  tcl-hwloc location, build instructions, etc. Removed all
+	  references to the sampleextension.
+	* README.hwloc: Removed file. Folded into the README.
+	* license.terms: Formatted to use shorter line lengths.
+
 2011-09-20  Andreas Kupries  <andreask@activestate.com>
 
 	* doc/instance.inc: Completed the documentation of cpubind and

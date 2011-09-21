@@ -1,27 +1,38 @@
-This is a sample extension showing an implementation of the Tcl Extension
-Architecture (TEA).  Please see the webpage
+Hello.
 
-	http://www.tcl.tk/doc/tea/
+This is "tcl-hwloc", a Tcl package providing a binding to Hwloc, the
+portable hardware locality library. This library provides portable
+abstractions (across OS, versions, architectures, ...) of the
+hierarchical topology of modern architectures, including NUMA memory
+nodes, sockets, shared caches, cores and simultaneous multithreading.
+It also gathers various system attributes such as cache and memory
+information. It primarily aims at helping applications with gathering
+information about modern computing hardware so as to exploit it
+accordingly and efficiently.
 
-for more details on TEA.  You can also read the enclosed "tea.pdf" document
-for instructions on how to adapt this sample extension to your extension.
+"tcl-hwloc"s official source repository resides at
 
-This package is a freely available open source package.  You can do
-virtually anything you like with it, such as modifying it, redistributing
-it, and selling it either in whole or in part.  See the file
-"license.terms" for complete information.
+	http://code.google.com/p/tcl-hwloc/
+
+in case you got the distribution containing this README from somewhere
+else. This is also where to report any issues and feedback you may
+have.
+
+This package is a freely available open source package under the BSD
+license. You can do virtually anything you like with it, such as
+modifying it, redistributing it, and selling it either in whole or in
+part.  See the file "license.terms" for complete information.
 
 CONTENTS
 ========
+
 The following is a short description of the files you will find in
-the sample extension.
+this package:
 
 Makefile.in	Makefile template.  The configure script uses this file to
 		produce the final Makefile.
 
 README		This file
-
-README.hwloc	A description of the extension itself.
 
 aclocal.m4	Generated file.  Do not edit.  Autoconf uses this as input
 		when generating the final configure script.  See "tcl.m4"
@@ -36,14 +47,16 @@ configure.in	Configure script template.  Autoconf uses this file as input
 pkgIndex.tcl.in Package index template.  The configure script will use
 		this file as input to create pkgIndex.tcl.
 
-sample.c	Core Secure Hash Algorithm code.
+generic/*.h	Internal header files.
+generic/*.c	C code, the package's implementation.
 
-sample.h	Header file for functions in the C files.
+doc/tcl-hwloc.man
+doc/*.inc	The reference documentation, in doctools format.
 
-tcl-hwloc.n		Unix nroff man page
-
-tea.pdf		PDF file describing the current implementation of the
-		Tcl Extension Architecture
+doc/tcl-hwloc.html
+doc/tcl-hwloc.n	Generated files. The reference documentation in nroff
+		and HTML. This must be regenerated anytime the doc/*.man
+		and doc/*.inc files change.
 
 tclconfig/	This directory contains various template files that build
 		the configure script.  They should not need modification.
@@ -54,52 +67,107 @@ tclconfig/	This directory contains various template files that build
 	tcl.m4		Collection of Tcl autoconf macros.  Included by
 			aclocal.m4 to define SC_* macros.
 
-UNIX BUILD
-==========
+BUILDING THE PACKAGE
+====================
 
-Building under most UNIX systems is easy, just run the configure script
-and then run make. For more information about the build process, see
-the tcl/unix/README file in the Tcl src dist. The following minimal
-example will install the extension in the /opt/tcl directory.
+Requisites
+----------
 
-	$ cd sampleextension
-	$ ./configure --prefix=/opt/tcl
-	$ make
-	$ make install
+To build this package you have to have hwloc itself installed. 
 
-WINDOWS BUILD
-=============
+Depending on what system you are on the system's vendor may provide
+pre-made binaries for you, either by default, or through the vendors
+package management system.
 
-The recommended method to build extensions under windows is to use the
-Msys + Mingw build process. This provides a Unix-style build while
-generating native Windows binaries. Using the Msys + Mingw build tools
-means that you can use the same configure script as per the Unix build
-to create a Makefile. See the tcl/win/README file for the URL of
-the Msys + Mingw download.
+For example, on most Linux system's you should be able to install it
+commands like
 
-If you have VC++ then you may wish to use the files in the win
-subdirectory and build the extension using just VC++. These files have
-been designed to be as generic as possible but will require some
-additional maintenance by the project developer to synchronise with
-the TEA configure.in and Makefile.in files. Instructions for using the
-VC++ makefile are written in the first part of the Makefile.vc
-file.
+	apt-get install hwloc	(Debian and derived distributions (Ubuntu))
+	yum install hwloc	(RedHat and derived deistributions)
+	yast install hwloc	(SuSe and derived distributions)
+
+etc. In case you wish to build it yourself, hwloc's sources,
+distributions, documentation, etc. reside at
+
+	http://www.open-mpi.org/projects/hwloc/
+
+Even there it is recommended to use a pre-made source distribution, as
+it contains a number of oyther things, like libtool, you would have to
+build yourself should you go an use the source repository directly.
+
+Follow their instructions to build and install the library on your
+system, either in a default location or a custom location of your
+choice.
+
+
+Building The Binding
+--------------------
+
+Building on most systems is easy. Run the configure script first, then make. I.e.
+
+	% configure
+	...
+	% make
+	...
+	% make install
+
+The above assumes that you are building in the source directory itself.
+When building from other directories simply do
+
+	% /path/totclhwloc/configure
+	...
+
+as the first step.
+
+So far the commands above install the package in a default directory
+under /usr/local.
+
+To install it somewhere else specify the --prefix on the command line
+for configure, like so
+
+	% configure --prefix=/path/to/installation/directory
+
+Windows
+-------
+
+The above process works on Windows machines as well, assuming that
+Msys + Mingw are installed. These provide a unix 'bash' and 'make' in
+which the above commands can be run, plus a 'gcc' instalation.
+
+The build can actually use MSVC's cl.exe as well, provided that the
+proper Windows SDK was installed and setup in the environment.
+
+Msys + Mingw can be found at
+
+	http://www.mingw.org/
+
+Cross-building the windows binaries from a unix machine is of course
+possible as well.
+
 
 INSTALLATION
 ============
 
-The installation of a TEA package is structure like so:
+The installation of "tcl-hwloc" is structured like so:
 
-         $exec_prefix
-          /       \
-        lib       bin
-         |         |
-   PACKAGEx.y   (dependent .dll files on Windows)
-         |
-  pkgIndex.tcl (.so|.dll files)
+         $exec_prefix/lib/tclhwlocX.y/
+		\
+		pkgIndex.tcl
+		tclhwloc shared library (.so|.dll|.sl|.dylib)
 
-The main .so|.dll library file gets installed in the versioned PACKAGE
-directory, which is OK on all platforms because it will be directly
-referenced with by 'load' in the pkgIndex.tcl file.  Dependent DLL files on
-Windows must go in the bin directory (or other directory on the user's
-PATH) in order for them to be found.
+The shared library is linked directly against the hwloc shared library
+and assumes that the OS loader will pick it up automatically,
+properly.
+
+Depending on the system you may have to run a command like
+
+	% /sbin/ldconfig
+
+or initialize environment variables like
+
+	LD_LIBRARY_PATH		(Linux)
+	SHLIB_PATH		(HP-UX)
+	LIB_PATH		(AIX? Solaris?)
+	DYLD_LIBRARY_PATH	(OS X)
+
+for the OS loader to be able to properly resolve the dependency.
