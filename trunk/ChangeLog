@@ -1,5 +1,8 @@
 2011-09-21  Andreas Kupries  <andreask@activestate.com>
 
+	* configure.in: Dropped hwloc minimum requirement to 1.2.
+	* configure: Regenerated (autoconf 2.67).
+
 	* configure.in: [Issue 9, 10]: Reworked the code determining the
 	  hwloc flags to accept a --with-hwloc switch for custom location,
 	  also using directories derived from (exec-)prefix as
@@ -11,7 +14,7 @@
 	  implementing all of the above.
 	* aclocal.m4: Added tclhwloc.m4 to sourced files.
 
-	* configure: Regenerated.
+	* configure: Regenerated (autoconf 2.57).
 
 	* README: [Issue 11] Updated contents to properly contain the
 	  tcl-hwloc location, build instructions, etc. Removed all
