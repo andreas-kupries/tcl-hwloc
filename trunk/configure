@@ -4781,7 +4781,7 @@ $as_echo_n "checking for hwloc... " >&6; }
 
 # Check whether --with-hwloc was given.
 if test "${with_hwloc+set}" = set; then :
-  withval=$with_hwloc; with_uc_hwloc=${withval}
+  withval=$with_hwloc;
 fi
 
 
@@ -4791,12 +4791,12 @@ fi
     # have cmdline flags for that. Existing settings of PKG_CONFIG_PATH
     # are preserved and passed.
 
-    if test x"${with_uc_hwloc}" == x ; then
+    if test x"$with_hwloc" == x ; then
         # Use default location, derived from prefix, exec_prefix.
-	PKG_CONFIG_PATH="${prefix}/lib/pkgconfig:${exec_prefix}/lib/pkgconfig:${PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH=$prefix/lib/pkgconfig:$exec_prefix/lib/pkgconfig:$PKG_CONFIG_PATH
     else
         # Use locations derived from --with-hwloc
-	PKG_CONFIG_PATH="${with_uc_hwloc}:${with_uc_hwloc}/pkgconfig:${PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH=$with_hwloc:$with_hwloc/pkgconfig:$with_hwloc/lib/pkgconfig:$PKG_CONFIG_PATH
     fi
     export PKG_CONFIG_PATH
 
@@ -4805,6 +4805,8 @@ fi
     then
 	:
     else
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: not found" >&5
+$as_echo "not found" >&6; }
 	as_fn_error $? "Could not find hwloc. Please use --with-hwloc to provide its location." "$LINENO" 5
     fi
 
@@ -4813,16 +4815,20 @@ fi
     then
 	:
     else
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: too old" >&5
+$as_echo "too old" >&6; }
 	as_fn_error $? "Hwloc version >= 1.2 required, not found. Please use --with-hwloc to provide the location of a proper hwloc." "$LINENO" 5
     fi
 
     HWLOC_CFLAGS=`pkg-config --cflags hwloc`
     HWLOC_LIBS=`pkg-config --libs hwloc`
 
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ok, cflags .... $HWLOC_CFLAGS" >&5
-$as_echo "ok, cflags .... $HWLOC_CFLAGS" >&6; }
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: ........................, ldflags ... $HWLOC_LIBS" >&5
-$as_echo "........................, ldflags ... $HWLOC_LIBS" >&6; }
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result: found" >&5
+$as_echo "found" >&6; }
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result:   - cflags:  $HWLOC_CFLAGS" >&5
+$as_echo "  - cflags:  $HWLOC_CFLAGS" >&6; }
+    { $as_echo "$as_me:${as_lineno-$LINENO}: result:   - ldflags: $HWLOC_LIBS" >&5
+$as_echo "  - ldflags: $HWLOC_LIBS" >&6; }
 
 
     vars="$HWLOC_LIBS"

@@ -33,8 +33,7 @@ AC_DEFUN([TCLHWLOC_LOCATE_HWLOC],[
 
     AC_ARG_WITH([hwloc],
 	AC_HELP_STRING([--with-hwloc],
-		       [Provide non-standard location of hwloc]),
-	[with_uc_hwloc=${withval}])
+		       [Provide non-standard location of hwloc]))
 
     # The search path for hwloc's package configuration, and thus
     # location, is communicated through the environment variable
@@ -42,12 +41,12 @@ AC_DEFUN([TCLHWLOC_LOCATE_HWLOC],[
     # have cmdline flags for that. Existing settings of PKG_CONFIG_PATH
     # are preserved and passed.
 
-    if test x"[$]{with_uc_hwloc}" == x ; then
+    if test x"$with_hwloc" == x ; then
         # Use default location, derived from prefix, exec_prefix.
-	PKG_CONFIG_PATH="[$]{prefix}/lib/pkgconfig:[$]{exec_prefix}/lib/pkgconfig:[$]{PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH=$prefix/lib/pkgconfig:$exec_prefix/lib/pkgconfig:$PKG_CONFIG_PATH
     else
         # Use locations derived from --with-hwloc
-	PKG_CONFIG_PATH="[$]{with_uc_hwloc}:[$]{with_uc_hwloc}/pkgconfig:[$]{PKG_CONFIG_PATH}"
+	PKG_CONFIG_PATH=$with_hwloc:$with_hwloc/pkgconfig:$with_hwloc/lib/pkgconfig:$PKG_CONFIG_PATH
     fi
     export PKG_CONFIG_PATH
 
@@ -56,6 +55,7 @@ AC_DEFUN([TCLHWLOC_LOCATE_HWLOC],[
     then
 	:
     else
+	AC_MSG_RESULT([not found])
 	AC_MSG_ERROR([Could not find hwloc. Please use --with-hwloc to provide its location.])
     fi
 
@@ -64,14 +64,16 @@ AC_DEFUN([TCLHWLOC_LOCATE_HWLOC],[
     then
 	:
     else
+	AC_MSG_RESULT([too old])
 	AC_MSG_ERROR([Hwloc version >= $1 required, not found. Please use --with-hwloc to provide the location of a proper hwloc.])
     fi
 
     HWLOC_CFLAGS=`pkg-config --cflags hwloc`
     HWLOC_LIBS=`pkg-config --libs hwloc`
 
-    AC_MSG_RESULT([ok, cflags .... $HWLOC_CFLAGS]) 
-    AC_MSG_RESULT([........................, ldflags ... $HWLOC_LIBS]) 
+    AC_MSG_RESULT([found])
+    AC_MSG_RESULT([  - cflags:  $HWLOC_CFLAGS]) 
+    AC_MSG_RESULT([  - ldflags: $HWLOC_LIBS]) 
 
     TEA_ADD_LIBS([$HWLOC_LIBS])
     TEA_ADD_CFLAGS([$HWLOC_CFLAGS])
