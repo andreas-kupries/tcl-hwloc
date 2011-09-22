@@ -75,7 +75,7 @@ TEA_ADD_TCL_SOURCES([])
 # Locate hwloc, require a minimum version.
 #--------------------------------------------------------------------
 
-TCLHWLOC_LOCATE_HWLOC([1.2.1])
+TCLHWLOC_LOCATE_HWLOC([1.2])
 
 #--------------------------------------------------------------------
 # You can add more files to clean if your extension creates any extra
