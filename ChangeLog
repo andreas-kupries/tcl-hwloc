@@ -1,3 +1,10 @@
+2011-09-22  Andreas Kupries  <andreask@activestate.com>
+
+	* tclhwloc.m4: Accepted and applied patch by Jeff Squyres
+	  <jsquyres@cisco.com> which tweaks the checks, data, and messages
+	  a bit.
+	* configure: Regenerated (autoconf 2.67).
+
 2011-09-21  Andreas Kupries  <andreask@activestate.com>
 
 	* configure.in: Dropped hwloc minimum requirement to 1.2.
