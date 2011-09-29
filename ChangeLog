@@ -1,3 +1,9 @@
+2011-09-29  Andreas Kupries  <andreask@activestate.com>
+
+	* Makefile.in: Updated target 'dist' to place 'tclhwloc.m4' into
+	  the distribution, and copy the tarball into the current working
+	  directory.
+
 2011-09-22  Andreas Kupries  <andreask@activestate.com>
 
 	* tclhwloc.m4: Accepted and applied patch by Jeff Squyres

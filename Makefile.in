@@ -313,23 +313,20 @@ dist-clean:
 dist: dist-clean
 	mkdir -p $(DIST_DIR)
 	cp -p $(srcdir)/ChangeLog $(srcdir)/README* $(srcdir)/license* \
-		$(srcdir)/aclocal.m4 $(srcdir)/configure $(srcdir)/*.in \
+		$(srcdir)/*.m4 $(srcdir)/configure $(srcdir)/*.in \
 		$(DIST_DIR)/
 	chmod 664 $(DIST_DIR)/Makefile.in $(DIST_DIR)/aclocal.m4
 	chmod 775 $(DIST_DIR)/configure $(DIST_DIR)/configure.in
-
 	for i in $(srcdir)/*.[ch]; do \
 	    if [ -f $$i ]; then \
 		cp -p $$i $(DIST_DIR)/ ; \
 	    fi; \
 	done;
-
 	mkdir $(DIST_DIR)/tclconfig
 	cp $(srcdir)/tclconfig/install-sh $(srcdir)/tclconfig/tcl.m4 \
 		$(DIST_DIR)/tclconfig/
 	chmod 664 $(DIST_DIR)/tclconfig/tcl.m4
 	chmod +x $(DIST_DIR)/tclconfig/install-sh
-
 	list='demos doc generic library mac tests unix win'; \
 	for p in $$list; do \
 	    if test -d $(srcdir)/$$p ; then \
@@ -337,8 +334,8 @@ dist: dist-clean
 		cp -p $(srcdir)/$$p/*.* $(DIST_DIR)/$$p/; \
 	    fi; \
 	done
-
 	(cd $(DIST_ROOT); $(COMPRESS);)
+	mv $(DIST_ROOT)/$(PKG_DIR).tar.gz .
 
 #========================================================================
 # End of user-definable section
