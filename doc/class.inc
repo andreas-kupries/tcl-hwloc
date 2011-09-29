@@ -53,7 +53,7 @@ library definining more types. The above is based on
 Similar to option [option -ignore_type], however the objects of the specified type
 are excluded if and only if they do not provide structure to the topology.
 
-[opt_def -set_flags [arg flags]]
+[opt_def -flags [arg flags]]
 
 The argument is a list of values.
 The acceptable flags, and their meaning are:
@@ -87,7 +87,7 @@ memory nodes, and ignore the fact that some resources may be offline.
 
 [list_end]
 
-[opt_def -set_fsroot [arg path]]
+[opt_def -fsroot [arg path]]
 
 Make [arg path] the filesystem root while retrieving the topology.
 
@@ -100,21 +100,21 @@ instance method [method local] to later return [const false].
 [para] Note: For convenience, this backend provides empty binding hooks
 which just return success. To have hwloc still actually call
 OS-specific hooks, the flag [const this_system] has to be set (see
-option [option -set_flags]) to assert that the loaded file is really
+option [option -flags]) to assert that the loaded file is really
 the underlying system.
 
-[opt_def -set_pid [arg int]]
+[opt_def -pid [arg int]]
 
 Set the process id from which to view and build the topology.
 
 [para] On some systems, processes may have different views of the
 machine, for instance the set of allowed CPUs. By default, hwloc
-exposes the view from the current process. Using [option -set_pid]
+exposes the view from the current process. Using [option -pid]
 forces it to expose the topology of the machine from the point of
 view of another process.
 
 
-[opt_def -set_synthetic [arg description]]
+[opt_def -synthetic [arg description]]
 
 Create a synthetic topology from the [arg description].
 
@@ -125,7 +125,7 @@ are enforced, hwloc will try to choose the other types according
 to usual topologies. It may fail however and you may have to
 specify more level types manually.
 
-[opt_def -set_xml [arg path]]
+[opt_def -xml [arg path]]
 
 Create the topology not from from the system, but the XML-based
 description found in the file [arg path].

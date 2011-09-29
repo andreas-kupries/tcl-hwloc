@@ -24,7 +24,7 @@ load libtclhwloc0.1.so
 # # ## ### ##### ######## ############# #####################
 
 test hwloc-topology-1.0 {wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X
 } -cleanup {
@@ -33,7 +33,7 @@ test hwloc-topology-1.0 {wrong\#args} -setup {
     -result {wrong # args: should be "X option ?arg? ..."}
 
 test hwloc-topology-1.1 {bad method} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X bogus
 } -cleanup {
@@ -63,7 +63,7 @@ test hwloc-topology-1.1 {bad method} -setup {
 ## depth ?-type type?
 
 test hwloc-topology-2.0 {depth, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X depth Z
 } -cleanup {
@@ -72,7 +72,7 @@ test hwloc-topology-2.0 {depth, wrong\#args} -setup {
     -result {wrong # args: should be "X depth ?-type value?"}
 
 test hwloc-topology-2.1 {depth, bad option} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X depth -foo pu
 } -cleanup {
@@ -82,7 +82,7 @@ test hwloc-topology-2.1 {depth, bad option} -setup {
 # TODO: Better message here
 
 test hwloc-topology-2.2 {depth, overall} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X depth
 } -cleanup {
@@ -90,7 +90,7 @@ test hwloc-topology-2.2 {depth, overall} -setup {
 } -result 2
 
 test hwloc-topology-2.3 {depth, specific type} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X depth -type pu
 } -cleanup {
@@ -98,7 +98,7 @@ test hwloc-topology-2.3 {depth, specific type} -setup {
 } -result 1
 
 test hwloc-topology-2.4 {depth, bogus type} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X depth -type bogus
 } -cleanup {
@@ -107,7 +107,7 @@ test hwloc-topology-2.4 {depth, bogus type} -setup {
     -result {unrecognized element type}
 
 test hwloc-topology-2.5 {depth, valid type, not in tree} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X depth -type cache
 } -cleanup {
@@ -118,7 +118,7 @@ test hwloc-topology-2.5 {depth, valid type, not in tree} -setup {
 ## export filename
 
 test hwloc-topology-3.0 {export, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X export
 } -cleanup {
@@ -127,7 +127,7 @@ test hwloc-topology-3.0 {export, wrong\#args} -setup {
     -result {wrong # args: should be "X export filename"}
 
 test hwloc-topology-3.1 {export, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X export A B
 } -cleanup {
@@ -136,7 +136,7 @@ test hwloc-topology-3.1 {export, wrong\#args} -setup {
     -result {wrong # args: should be "X export filename"}
 
 test hwloc-topology-3.2 {export} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
     set path [tcltest::makeFile {} Z]
 } -body {
     X export $path
@@ -151,7 +151,7 @@ test hwloc-topology-3.2 {export} -setup {
 ## local
 
 test hwloc-topology-4.0 {local, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X local Z
 } -cleanup {
@@ -160,7 +160,7 @@ test hwloc-topology-4.0 {local, wrong\#args} -setup {
     -result {wrong # args: should be "X local"}
 
 test hwloc-topology-4.1 {local, yes} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X local
 } -cleanup {
@@ -168,7 +168,7 @@ test hwloc-topology-4.1 {local, yes} -setup {
 } -result 1
 
 test hwloc-topology-4.2 {local, no} -setup {
-    hwloc create X -set_synthetic pu:4
+    hwloc create X -synthetic pu:4
 } -body {
     X local
 } -cleanup {
@@ -179,7 +179,7 @@ test hwloc-topology-4.2 {local, no} -setup {
 ## depth ?-type type?
 
 test hwloc-topology-5.0 {element, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element
 } -cleanup {
@@ -188,7 +188,7 @@ test hwloc-topology-5.0 {element, wrong\#args} -setup {
     -result {wrong # args: should be "X element args..."}
 
 test hwloc-topology-5.1 {element, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element Z
 } -cleanup {
@@ -197,7 +197,7 @@ test hwloc-topology-5.1 {element, wrong\#args} -setup {
     -result {wrong # args: should be "X element args..."}
 
 test hwloc-topology-5.2 {element, bad id} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element Z foo
 } -cleanup {
@@ -206,7 +206,7 @@ test hwloc-topology-5.2 {element, bad id} -setup {
     -result {invalid element id}
 
 test hwloc-topology-5.3 {element, bad id} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element \{ foo
 } -cleanup {
@@ -215,7 +215,7 @@ test hwloc-topology-5.3 {element, bad id} -setup {
     -result {invalid element id}
 
 test hwloc-topology-5.4 {element, bad id} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element {x y} foo
 } -cleanup {
@@ -224,7 +224,7 @@ test hwloc-topology-5.4 {element, bad id} -setup {
     -result {expected integer but got "x"}
 
 test hwloc-topology-5.5 {element, bad id} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element {0 y} foo
 } -cleanup {
@@ -233,7 +233,7 @@ test hwloc-topology-5.5 {element, bad id} -setup {
     -result {expected integer but got "y"}
 
 test hwloc-topology-5.6 {element, out of range} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element {5 5} foo
 } -cleanup {
@@ -242,7 +242,7 @@ test hwloc-topology-5.6 {element, out of range} -setup {
     -result {element does not exist}
 
 test hwloc-topology-5.6 {element, bad method} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element {0 0} foo
 } -cleanup {
@@ -270,7 +270,7 @@ foreach {method rc rr pc pr} {
     type          ok    Machine                           ok    PU
 } {
     test hwloc-topology-5.7.$k "element, $method wrong\#args" -setup {
-	hwloc create X -set_flags this_system -set_synthetic pu:4
+	hwloc create X -flags this_system -synthetic pu:4
     } -body {
 	X element {0 0} $method Z
     } -cleanup {
@@ -279,7 +279,7 @@ foreach {method rc rr pc pr} {
 	-result "wrong # args: should be \"X element {0 0} $method\""
 
     test hwloc-topology-5.8.$k "element, $method, result, root" -setup {
-	hwloc create X -set_flags this_system -set_synthetic pu:4
+	hwloc create X -flags this_system -synthetic pu:4
     } -body {
 	X element {0 0} $method
     } -cleanup {
@@ -287,7 +287,7 @@ foreach {method rc rr pc pr} {
     } -returnCodes $rc -result $rr
 
     test hwloc-topology-5.9.$k "element, $method, result, leaf" -setup {
-	hwloc create X -set_flags this_system -set_synthetic pu:4
+	hwloc create X -flags this_system -synthetic pu:4
     } -body {
 	X element {1 2} $method
     } -cleanup {
@@ -308,7 +308,7 @@ foreach {method obj result} {
     name       {1 0} {}
 } {
     test hwloc-topology-5.10.$k "element, $method, result" -setup {
-	hwloc create X -set_xml $tcltest::testsDirectory/topology1.xml
+	hwloc create X -xml $tcltest::testsDirectory/topology1.xml
     } -body {
 	X element $obj $method
     } -cleanup {
@@ -322,7 +322,7 @@ foreach {method obj result} {
 ## element_by
 
 test hwloc-topology-6.0 {element_by, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by
 } -cleanup {
@@ -331,7 +331,7 @@ test hwloc-topology-6.0 {element_by, wrong\#args} -setup {
     -result {wrong # args: should be "X element_by {-depth value|-type value} index"}
 
 test hwloc-topology-6.1 {element_by, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by A
 } -cleanup {
@@ -340,7 +340,7 @@ test hwloc-topology-6.1 {element_by, wrong\#args} -setup {
     -result {wrong # args: should be "X element_by {-depth value|-type value} index"}
 
 test hwloc-topology-6.2 {element_by, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by A B
 } -cleanup {
@@ -349,7 +349,7 @@ test hwloc-topology-6.2 {element_by, wrong\#args} -setup {
     -result {wrong # args: should be "X element_by {-depth value|-type value} index"}
 
 test hwloc-topology-6.3 {element_by, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by A B C D
 } -cleanup {
@@ -358,7 +358,7 @@ test hwloc-topology-6.3 {element_by, wrong\#args} -setup {
     -result {wrong # args: should be "X element_by {-depth value|-type value} index"}
 
 test hwloc-topology-6.4 {element_by, bad option} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by -foo B C
 } -cleanup {
@@ -368,7 +368,7 @@ test hwloc-topology-6.4 {element_by, bad option} -setup {
 # TODO: should be 'bad option ..., expected one of ...'
 
 test hwloc-topology-6.5 {element_by, bad option argument} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by -depth B C
 } -cleanup {
@@ -377,7 +377,7 @@ test hwloc-topology-6.5 {element_by, bad option argument} -setup {
     -result {expected integer but got "B"}
 
 test hwloc-topology-6.6 {element_by, bad option argument} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by -type B C
 } -cleanup {
@@ -386,7 +386,7 @@ test hwloc-topology-6.6 {element_by, bad option argument} -setup {
     -result {unrecognized element type}
 
 test hwloc-topology-6.7 {element_by, bad index} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by -depth 0 C
 } -cleanup {
@@ -395,7 +395,7 @@ test hwloc-topology-6.7 {element_by, bad index} -setup {
     -result {expected integer but got "C"}
 
 test hwloc-topology-6.8 {element_by, bad index} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by -type PU C
 } -cleanup {
@@ -404,7 +404,7 @@ test hwloc-topology-6.8 {element_by, bad index} -setup {
     -result {expected integer but got "C"}
 
 test hwloc-topology-6.9 {element_by, bad depth} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by -depth -1 0
 } -cleanup {
@@ -413,7 +413,7 @@ test hwloc-topology-6.9 {element_by, bad depth} -setup {
     -result {element does not exist}
 
 test hwloc-topology-6.10 {element_by, out of range} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by -depth 0 1
 } -cleanup {
@@ -422,7 +422,7 @@ test hwloc-topology-6.10 {element_by, out of range} -setup {
     -result {element does not exist}
 
 test hwloc-topology-6.11 {element_by, unused type} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by -type Cache 0
 } -cleanup {
@@ -431,7 +431,7 @@ test hwloc-topology-6.11 {element_by, unused type} -setup {
     -result {element does not exist}
 
 test hwloc-topology-6.12 {element_by, by depth} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by -depth 1 1
 } -cleanup {
@@ -439,7 +439,7 @@ test hwloc-topology-6.12 {element_by, by depth} -setup {
 } -result {1 1}
 
 test hwloc-topology-6.13 {element_by, by type} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by -type PU 2
 } -cleanup {
@@ -450,7 +450,7 @@ test hwloc-topology-6.13 {element_by, by type} -setup {
 ## root
 
 test hwloc-topology-7.0 {root, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X root Z
 } -cleanup {
@@ -459,7 +459,7 @@ test hwloc-topology-7.0 {root, wrong\#args} -setup {
     -result {wrong # args: should be "X root"}
 
 test hwloc-topology-7.1 {root} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X root
 } -cleanup {
@@ -470,7 +470,7 @@ test hwloc-topology-7.1 {root} -setup {
 ## type -depth n
 
 test hwloc-topology-8.0 {type, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X type
 } -cleanup {
@@ -479,7 +479,7 @@ test hwloc-topology-8.0 {type, wrong\#args} -setup {
     -result {wrong # args: should be "X type -depth value"}
 
 test hwloc-topology-8.1 {type, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X type Z
 } -cleanup {
@@ -488,7 +488,7 @@ test hwloc-topology-8.1 {type, wrong\#args} -setup {
     -result {wrong # args: should be "X type -depth value"}
 
 test hwloc-topology-8.2 {type, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X type Z Y X
 } -cleanup {
@@ -497,7 +497,7 @@ test hwloc-topology-8.2 {type, wrong\#args} -setup {
     -result {wrong # args: should be "X type -depth value"}
 
 test hwloc-topology-8.3 {type, bad option} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X type -foo pu
 } -cleanup {
@@ -507,7 +507,7 @@ test hwloc-topology-8.3 {type, bad option} -setup {
 # TODO: Better message here
 
 test hwloc-topology-8.4 {type, bad depth} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X type -depth -1
 } -cleanup {
@@ -516,7 +516,7 @@ test hwloc-topology-8.4 {type, bad depth} -setup {
     -result {depth out of range}
 
 test hwloc-topology-8.5 {type, bad depth} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X type -depth 2
 } -cleanup {
@@ -525,7 +525,7 @@ test hwloc-topology-8.5 {type, bad depth} -setup {
     -result {depth out of range}
 
 test hwloc-topology-8.6 {type} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X type -depth 0
 } -cleanup {
@@ -533,7 +533,7 @@ test hwloc-topology-8.6 {type} -setup {
 } -result Machine
 
 test hwloc-topology-8.7 {type} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X type -depth 1
 } -cleanup {
@@ -545,7 +545,7 @@ test hwloc-topology-8.7 {type} -setup {
 ## width -type type
 
 test hwloc-topology-9.0 {width, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X width
 } -cleanup {
@@ -554,7 +554,7 @@ test hwloc-topology-9.0 {width, wrong\#args} -setup {
     -result {wrong # args: should be "X width {-depth value | -type value}"}
 
 test hwloc-topology-9.1 {width, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X width Z
 } -cleanup {
@@ -563,7 +563,7 @@ test hwloc-topology-9.1 {width, wrong\#args} -setup {
     -result {wrong # args: should be "X width {-depth value | -type value}"}
 
 test hwloc-topology-9.2 {width, wrong\#args} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X width Z Y X
 } -cleanup {
@@ -572,7 +572,7 @@ test hwloc-topology-9.2 {width, wrong\#args} -setup {
     -result {wrong # args: should be "X width {-depth value | -type value}"}
 
 test hwloc-topology-9.3 {width, bad option} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X width -foo pu
 } -cleanup {
@@ -582,7 +582,7 @@ test hwloc-topology-9.3 {width, bad option} -setup {
 # TODO: Better message here
 
 test hwloc-topology-9.4 {width, bad depth} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X width -depth -1
 } -cleanup {
@@ -591,7 +591,7 @@ test hwloc-topology-9.4 {width, bad depth} -setup {
     -result {depth out of range}
 
 test hwloc-topology-9.5 {width, bad depth} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X width -depth 2
 } -cleanup {
@@ -600,7 +600,7 @@ test hwloc-topology-9.5 {width, bad depth} -setup {
     -result {depth out of range}
 
 test hwloc-topology-9.6 {width, bogus type} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X width -type bogus
 } -cleanup {
@@ -609,7 +609,7 @@ test hwloc-topology-9.6 {width, bogus type} -setup {
     -result {unrecognized element type}
 
 test hwloc-topology-9.7 {width, valid type, not in tree} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X width -type cache
 } -cleanup {
@@ -617,7 +617,7 @@ test hwloc-topology-9.7 {width, valid type, not in tree} -setup {
 } -result 0
 
 test hwloc-topology-9.8 {width, specific type} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X depth -type pu
 } -cleanup {
@@ -625,7 +625,7 @@ test hwloc-topology-9.8 {width, specific type} -setup {
 } -result 1
 
 test hwloc-topology-9.9 {width, specific depth} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X width -depth 0
 } -cleanup {
@@ -633,7 +633,7 @@ test hwloc-topology-9.9 {width, specific depth} -setup {
 } -result 1
 
 test hwloc-topology-9.10 {width, specific depth} -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X width -depth 1
 } -cleanup {

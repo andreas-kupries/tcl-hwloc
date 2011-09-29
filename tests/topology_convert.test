@@ -86,7 +86,7 @@ test hwloc-topology-convert-3.1 "node/cpu conversion, bad bitmap" -setup {
 # - -- --- ----- -------- ------------- ---------------------
 
 test hwloc-topology-convert-4.1 "node -> cpu conversion, non-numa, empty" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T convert -to_cpuset {}
 } -cleanup {
@@ -94,7 +94,7 @@ test hwloc-topology-convert-4.1 "node -> cpu conversion, non-numa, empty" -setup
 } -result {}
 
 test hwloc-topology-convert-4.2 "node -> cpu conversion, non-numa, non empty" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T convert -to_cpuset 0
 } -cleanup {
@@ -102,7 +102,7 @@ test hwloc-topology-convert-4.2 "node -> cpu conversion, non-numa, non empty" -s
 } -result 0-
 
 test hwloc-topology-convert-4.3 "node -> cpu conversion, strict, non-numa, empty" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T convert -strict -to_cpuset {}
 } -cleanup {
@@ -110,7 +110,7 @@ test hwloc-topology-convert-4.3 "node -> cpu conversion, strict, non-numa, empty
 } -result {}
 
 test hwloc-topology-convert-4.4 "node -> cpu conversion, strict, non-numa, empty" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T convert -strict -to_cpuset 0
 } -cleanup {
@@ -118,7 +118,7 @@ test hwloc-topology-convert-4.4 "node -> cpu conversion, strict, non-numa, empty
 } -result {}
 
 test hwloc-topology-convert-4.5 "cpu -> node conversion, non-numa, empty" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T convert -to_nodeset {}
 } -cleanup {
@@ -126,7 +126,7 @@ test hwloc-topology-convert-4.5 "cpu -> node conversion, non-numa, empty" -setup
 } -result {}
 
 test hwloc-topology-convert-4.6 "cpu -> node conversion, non-numa, not empty" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T convert -to_nodeset 0
 } -cleanup {
@@ -134,7 +134,7 @@ test hwloc-topology-convert-4.6 "cpu -> node conversion, non-numa, not empty" -s
 } -result 0-
 
 test hwloc-topology-convert-4.7 "cpu -> node conversion, strict, non-numa, empty" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T convert -strict -to_nodeset {}
 } -cleanup {
@@ -142,7 +142,7 @@ test hwloc-topology-convert-4.7 "cpu -> node conversion, strict, non-numa, empty
 } -result {}
 
 test hwloc-topology-convert-4.8 "cpu -> node conversion, strict, non-numa, not empty" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T convert -strict -to_nodeset 0
 } -cleanup {
@@ -154,7 +154,7 @@ test hwloc-topology-convert-4.8 "cpu -> node conversion, strict, non-numa, not e
 # cpu 0 => numa node 0
 
 test hwloc-topology-convert-5.1 "node -> cpu conversion, numa, empty" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T convert -to_cpuset {}
 } -cleanup {
@@ -162,7 +162,7 @@ test hwloc-topology-convert-5.1 "node -> cpu conversion, numa, empty" -setup {
 } -result {}
 
 test hwloc-topology-convert-5.2 "node -> cpu conversion, numa, non empty" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T convert -to_cpuset 0
 } -cleanup {
@@ -170,7 +170,7 @@ test hwloc-topology-convert-5.2 "node -> cpu conversion, numa, non empty" -setup
 } -result 0-3
 
 test hwloc-topology-convert-5.3 "node -> cpu conversion, strict, numa, empty" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T convert -strict -to_cpuset {}
 } -cleanup {
@@ -178,7 +178,7 @@ test hwloc-topology-convert-5.3 "node -> cpu conversion, strict, numa, empty" -s
 } -result {}
 
 test hwloc-topology-convert-5.4 "node -> cpu conversion, strict, numa, empty" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T convert -strict -to_cpuset 0
 } -cleanup {
@@ -186,7 +186,7 @@ test hwloc-topology-convert-5.4 "node -> cpu conversion, strict, numa, empty" -s
 } -result 0-3
 
 test hwloc-topology-convert-5.5 "cpu -> node conversion, numa, empty" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T convert -to_nodeset {}
 } -cleanup {
@@ -194,7 +194,7 @@ test hwloc-topology-convert-5.5 "cpu -> node conversion, numa, empty" -setup {
 } -result {}
 
 test hwloc-topology-convert-5.6 "cpu -> node conversion, numa, not empty" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T convert -to_nodeset 0
 } -cleanup {
@@ -202,7 +202,7 @@ test hwloc-topology-convert-5.6 "cpu -> node conversion, numa, not empty" -setup
 } -result 0
 
 test hwloc-topology-convert-5.7 "cpu -> node conversion, strict, numa, empty" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T convert -strict -to_nodeset {}
 } -cleanup {
@@ -210,7 +210,7 @@ test hwloc-topology-convert-5.7 "cpu -> node conversion, strict, numa, empty" -s
 } -result {}
 
 test hwloc-topology-convert-5.8 "cpu -> node conversion, strict, numa, not empty" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T convert -strict -to_nodeset 0
 } -cleanup {

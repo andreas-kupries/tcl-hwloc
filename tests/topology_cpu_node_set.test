@@ -53,7 +53,7 @@ test hwloc-topology-cpuset-2.0 "cpuset introspection, bad option" -setup {
 # - -- --- ----- -------- ------------- ---------------------
 
 test hwloc-topology-cpuset-3.0 "cpuset introspection, non-numa, allowed" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T cpuset allowed
 } -cleanup {
@@ -61,7 +61,7 @@ test hwloc-topology-cpuset-3.0 "cpuset introspection, non-numa, allowed" -setup 
 } -result 0-3
 
 test hwloc-topology-cpuset-3.1 "cpuset introspection, non-numa, online" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T cpuset online
 } -cleanup {
@@ -69,7 +69,7 @@ test hwloc-topology-cpuset-3.1 "cpuset introspection, non-numa, online" -setup {
 } -result 0-3
 
 test hwloc-topology-cpuset-3.2 "cpuset introspection, non-numa, complete" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T cpuset complete
 } -cleanup {
@@ -77,7 +77,7 @@ test hwloc-topology-cpuset-3.2 "cpuset introspection, non-numa, complete" -setup
 } -result 0-3
 
 test hwloc-topology-cpuset-3.3 "cpuset introspection, non-numa, topology" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T cpuset topology
 } -cleanup {
@@ -85,7 +85,7 @@ test hwloc-topology-cpuset-3.3 "cpuset introspection, non-numa, topology" -setup
 } -result 0-3
 
 test hwloc-topology-cpuset-3.4 "cpuset introspection, numa, allowed" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T cpuset allowed
 } -cleanup {
@@ -93,7 +93,7 @@ test hwloc-topology-cpuset-3.4 "cpuset introspection, numa, allowed" -setup {
 } -result 0-11
 
 test hwloc-topology-cpuset-3.5 "cpuset introspection, numa, online" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T cpuset online
 } -cleanup {
@@ -101,7 +101,7 @@ test hwloc-topology-cpuset-3.5 "cpuset introspection, numa, online" -setup {
 } -result 0-11
 
 test hwloc-topology-cpuset-3.6 "cpuset introspection, numa, complete" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T cpuset complete
 } -cleanup {
@@ -109,7 +109,7 @@ test hwloc-topology-cpuset-3.6 "cpuset introspection, numa, complete" -setup {
 } -result 0-11
 
 test hwloc-topology-cpuset-3.7 "cpuset introspection, numa, topology" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T cpuset topology
 } -cleanup {
@@ -147,7 +147,7 @@ test hwloc-topology-nodeset-2.0 "nodeset introspection, bad option" -setup {
 # - -- --- ----- -------- ------------- ---------------------
 
 test hwloc-topology-nodeset-3.0 "nodeset introspection, non-numa, allowed" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T nodeset allowed
 } -cleanup {
@@ -155,7 +155,7 @@ test hwloc-topology-nodeset-3.0 "nodeset introspection, non-numa, allowed" -setu
 } -result 0-
 
 test hwloc-topology-nodeset-3.1 "nodeset introspection, non-numa, complete" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T nodeset complete
 } -cleanup {
@@ -163,7 +163,7 @@ test hwloc-topology-nodeset-3.1 "nodeset introspection, non-numa, complete" -set
 } -result 0-
 
 test hwloc-topology-nodeset-3.2 "nodeset introspection, non-numa, topology" -setup {
-    hwloc create T -set_synthetic pu:4
+    hwloc create T -synthetic pu:4
 } -body {
     T nodeset topology
 } -cleanup {
@@ -171,7 +171,7 @@ test hwloc-topology-nodeset-3.2 "nodeset introspection, non-numa, topology" -set
 } -result 0-
 
 test hwloc-topology-nodeset-3.3 "nodeset introspection, numa, allowed" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T nodeset allowed
 } -cleanup {
@@ -179,7 +179,7 @@ test hwloc-topology-nodeset-3.3 "nodeset introspection, numa, allowed" -setup {
 } -result 0-2
 
 test hwloc-topology-nodeset-3.4 "nodeset introspection, numa, complete" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T nodeset complete
 } -cleanup {
@@ -187,7 +187,7 @@ test hwloc-topology-nodeset-3.4 "nodeset introspection, numa, complete" -setup {
 } -result 0-2
 
 test hwloc-topology-nodeset-3.5 "nodeset introspection, numa, topology" -setup {
-    hwloc create T -set_synthetic {node:3 pu:4}
+    hwloc create T -synthetic {node:3 pu:4}
 } -body {
     T nodeset topology
 } -cleanup {
@@ -198,7 +198,7 @@ test hwloc-topology-nodeset-3.5 "nodeset introspection, numa, topology" -setup {
 ## Per topology element
 
 test hwloc-topology-cpuset-element-1.0 "element, cpuset wrong\#args" -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element {0 0} cpuset
 } -cleanup {
@@ -207,7 +207,7 @@ test hwloc-topology-cpuset-element-1.0 "element, cpuset wrong\#args" -setup {
     -result "wrong # args: should be \"X element {0 0} cpuset cpuset-type\""
 
 test hwloc-topology-cpuset-element-1.1 "element, cpuset wrong\#args" -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element {0 0} cpuset Y Z
 } -cleanup {
@@ -218,7 +218,7 @@ test hwloc-topology-cpuset-element-1.1 "element, cpuset wrong\#args" -setup {
 # - -- --- ----- -------- ------------- ---------------------
 
 test hwloc-topology-cpuset-element-2.0 "element, cpuset, bad type" -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element {0 0} cpuset foo
 } -cleanup {
@@ -236,7 +236,7 @@ foreach {method} {
     topology
 } {
     test hwloc-topology-cpuset-element-3.0.$k "element, cpuset $method, root, non-numa" -setup {
-	hwloc create X -set_flags this_system -set_synthetic pu:4
+	hwloc create X -flags this_system -synthetic pu:4
     } -body {
 	X element {0 0} cpuset $method
     } -cleanup {
@@ -244,7 +244,7 @@ foreach {method} {
     } -result 0-3
 
     test hwloc-topology-cpuset-element-3.1.$k "element, cpuset $method, leaf, non-numa" -setup {
-	hwloc create X -set_flags this_system -set_synthetic pu:4
+	hwloc create X -flags this_system -synthetic pu:4
     } -body {
 	X element {1 2} cpuset $method
     } -cleanup {
@@ -252,7 +252,7 @@ foreach {method} {
     } -result 2
 
     test hwloc-topology-cpuset-element-3.2.$k "element, cpuset $method, root, numa" -setup {
-	hwloc create X -set_flags this_system -set_synthetic {node:3 pu:4}
+	hwloc create X -flags this_system -synthetic {node:3 pu:4}
     } -body {
 	X element {0 0} cpuset $method
     } -cleanup {
@@ -260,7 +260,7 @@ foreach {method} {
     } -result 0-11
 
     test hwloc-topology-cpuset-element-3.3.$k "element, cpuset $method, leaf, numa" -setup {
-	hwloc create X -set_flags this_system -set_synthetic {node:3 pu:4}
+	hwloc create X -flags this_system -synthetic {node:3 pu:4}
     } -body {
 	X element {1 2} cpuset $method
     } -cleanup {
@@ -273,7 +273,7 @@ foreach {method} {
 # # ## ### ##### ######## ############# #####################
 
 test hwloc-topology-nodeset-element-1.0 "element, nodeset wrong\#args" -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element {0 0} nodeset
 } -cleanup {
@@ -282,7 +282,7 @@ test hwloc-topology-nodeset-element-1.0 "element, nodeset wrong\#args" -setup {
     -result "wrong # args: should be \"X element {0 0} nodeset nodeset-type\""
 
 test hwloc-topology-nodeset-element-1.1 "element, nodeset wrong\#args" -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element {0 0} nodeset Y Z
 } -cleanup {
@@ -293,7 +293,7 @@ test hwloc-topology-nodeset-element-1.1 "element, nodeset wrong\#args" -setup {
 # - -- --- ----- -------- ------------- ---------------------
 
 test hwloc-topology-nodeset-element-2.0 "element, nodeset, bad type" -setup {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element {0 0} nodeset foo
 } -cleanup {
@@ -310,7 +310,7 @@ foreach {method} {
     topology
 } {
     test hwloc-topology-nodeset-element-3.0.$k "element, nodeset $method, root, non-numa" -setup {
-	hwloc create X -set_flags this_system -set_synthetic pu:4
+	hwloc create X -flags this_system -synthetic pu:4
     } -body {
 	X element {0 0} nodeset $method
     } -cleanup {
@@ -318,7 +318,7 @@ foreach {method} {
     } -result 0-
 
     test hwloc-topology-nodeset-element-3.1.$k "element, nodeset $method, leaf, non-numa" -setup {
-	hwloc create X -set_flags this_system -set_synthetic pu:4
+	hwloc create X -flags this_system -synthetic pu:4
     } -body {
 	X element {1 2} nodeset $method
     } -cleanup {
@@ -326,7 +326,7 @@ foreach {method} {
     } -result 0-
 
     test hwloc-topology-nodeset-element-3.2.$k "element, nodeset $method, root, numa" -setup {
-	hwloc create X -set_flags this_system -set_synthetic {node:3 pu:4}
+	hwloc create X -flags this_system -synthetic {node:3 pu:4}
     } -body {
 	X element {0 0} nodeset $method
     } -cleanup {
@@ -334,7 +334,7 @@ foreach {method} {
     } -result 0-2
 
     test hwloc-topology-nodeset-element-3.3.$k "element, nodeset $method, leaf, numa" -setup {
-	hwloc create X -set_flags this_system -set_synthetic {node:3 pu:4}
+	hwloc create X -flags this_system -synthetic {node:3 pu:4}
     } -body {
 	X element {1 2} nodeset $method
     } -cleanup {

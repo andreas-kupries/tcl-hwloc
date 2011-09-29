@@ -187,7 +187,7 @@ in the file [arg path]. This description can be loaded into a new
 topology via
 
 [example {
-    hwloc create X -set_xml path
+    hwloc create X -xml path
 }]
 
 The result of the method is the empty string.
@@ -198,8 +198,8 @@ The result of the method is the empty string.
 This method checks if the instance is a representation of the local
 system and returns a boolean value, [const true] if the test suceeded,
 and [const false] otherwise. Related parts in the class API are the
-option [option -set_flags] with flag [const this_system], option
-[option -set_fsroot] and option [option -set_xml].
+option [option -flags] with flag [const this_system], option
+[option -fsroot] and option [option -xml].
 
 [comment ---------------------------------------------------------------------]
 [call [cmd topologyCmd] [method {membind get}] [opt options...]]
