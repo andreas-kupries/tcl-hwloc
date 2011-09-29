@@ -1,8 +1,18 @@
 2011-09-29  Andreas Kupries  <andreask@activestate.com>
 
-	* Makefile.in: Updated target 'dist' to place 'tclhwloc.m4' into
-	  the distribution, and copy the tarball into the current working
-	  directory.
+	* generic/hwloc.c: [Issue 3]: Changed the -set_xxx options of
+	* tests/create.test: [hwloc create] to -xxx. Updated the test
+	* tests/topology.test: suite and documentation as well.
+	* tests/topology_convert.test:
+	* tests/topology_cpu_node_set.test:
+	* doc/class.inc:
+	* doc/instance.inc:
+
+2011-09-29  Andreas Kupries  <andreask@activestate.com>
+
+	* Makefile.in: [Issue 12] Updated target 'dist' to place
+	  'tclhwloc.m4' into the distribution, and copy the tarball into
+	  the current working directory.
 
 2011-09-22  Andreas Kupries  <andreask@activestate.com>
 

@@ -72,16 +72,16 @@ test hwloc-create-2.3 {proper destruction, instance renaming} -setup {
 test hwloc-create-3.0 {creation, bogus option} -body {
     hwloc create X -foo
 } -returnCodes error \
-    -result {bad option "-foo": must be -ignore_all_keep_structure, -ignore_type, -ignore_type_keep_structure, -set_flags, -set_fsroot, -set_pid, -set_synthetic, or -set_xml}
+    -result {bad option "-foo": must be -ignore_all_keep_structure, -ignore_type, -ignore_type_keep_structure, -flags, -fsroot, -pid, -synthetic, or -xml}
 
 foreach {n option arg} {
     1 -ignore_type                type
     2 -ignore_type_keep_structure type
-    3 -set_flags                  flags
-    4 -set_fsroot                 path
-    5 -set_pid                    pid
-    6 -set_synthetic              description
-    7 -set_xml                    path
+    3 -flags                  flags
+    4 -fsroot                 path
+    5 -pid                    pid
+    6 -synthetic              description
+    7 -xml                    path
 } {
     test hwloc-create-3.$n {creation, option wrong\#args} -body {
 	hwloc create X $option
@@ -153,44 +153,44 @@ test hwloc-create-4.2.2 {creation, ignore type, keep structure} -body {
 # # ## ### ##### ######## ############# #####################
 
 test hwloc-create-4.3.0 {creation, flags, bad flag} -body {
-    hwloc create X -set_flags foo
+    hwloc create X -flags foo
 } -returnCodes error \
     -result {bad flag "foo": must be this_system or whole_system}
 
 test hwloc-create-4.3.1 {creation, flags, no flags} -body {
-    hwloc create X -set_flags {}
+    hwloc create X -flags {}
 } -cleanup {
     X destroy
 } -result ::X
 
 test hwloc-create-4.3.2.0 {creation, flags, this_system effect} -body {
-    hwloc create X -set_flags this_system -set_synthetic pu:4
+    hwloc create X -flags this_system -synthetic pu:4
     X local
 } -cleanup {
     X destroy
 } -result 1
 
 test hwloc-create-4.3.2.1 {creation, flags, this_system effect} -body {
-    hwloc create X -set_flags {} -set_synthetic pu:4
+    hwloc create X -flags {} -synthetic pu:4
     X local
 } -cleanup {
     X destroy
 } -result 0
 
 test hwloc-create-4.3.3 {creation, flags, whole_system} -body {
-    hwloc create X -set_flags whole_system
+    hwloc create X -flags whole_system
 } -cleanup {
     X destroy
 } -result ::X
 
 test hwloc-create-4.3.4 {creation, flags, multiple flags} -body {
-    hwloc create X -set_flags {this_system whole_system}
+    hwloc create X -flags {this_system whole_system}
 } -cleanup {
     X destroy
 } -result ::X
 
 test hwloc-create-4.3.5 {creation, flags, multiple flags, replicated} -body {
-    hwloc create X -set_flags {this_system whole_system this_system}
+    hwloc create X -flags {this_system whole_system this_system}
 } -cleanup {
     X destroy
 } -result ::X
@@ -198,19 +198,19 @@ test hwloc-create-4.3.5 {creation, flags, multiple flags, replicated} -body {
 # # ## ### ##### ######## ############# #####################
 
 test hwloc-create-4.4.0 {creation, fs root, empty path} -body {
-    hwloc create X -set_fsroot {}
+    hwloc create X -fsroot {}
 } -returnCodes error \
     -result {directory doesn't exist or lacks read permission}
 
 test hwloc-create-4.4.1 {creation, fs root, bad path} -body {
-    hwloc create X -set_fsroot /BOGUS
+    hwloc create X -fsroot /BOGUS
 } -returnCodes error \
     -result {directory doesn't exist or lacks read permission}
 
 test hwloc-create-4.4.2 {creation, fs root, empty dir} -setup {
     set path [tcltest::makeDirectory foo/bar]
 } -body {
-    hwloc create X -set_fsroot $path
+    hwloc create X -fsroot $path
 } -cleanup {
     tcltest::removeDirectory foo/bar
     tcltest::removeDirectory foo
@@ -221,7 +221,7 @@ test hwloc-create-4.4.2 {creation, fs root, empty dir} -setup {
 # # ## ### ##### ######## ############# #####################
 
 test hwloc-create-4.5 {creation, pid, self} -body {
-    hwloc create X -set_pid [pid]
+    hwloc create X -pid [pid]
 } -cleanup {
     X destroy
 } -result ::X
@@ -229,18 +229,18 @@ test hwloc-create-4.5 {creation, pid, self} -body {
 # # ## ### ##### ######## ############# #####################
 
 test hwloc-create-4.6.0 {creation, synthetic, nothing}  -body {
-    hwloc create X -set_synthetic {}
+    hwloc create X -synthetic {}
 } -returnCodes error \
     -result {Expected synthetic topology description, got ""}
 
 # TODO: How to disable libhwloc output to stdout ?
 test hwloc-create-4.6.1 {creation, synthetic, bad syntax} -body {
-    hwloc create X -set_synthetic {dsd 24590 dk}
+    hwloc create X -synthetic {dsd 24590 dk}
 } -returnCodes error \
     -result {hwloc_topology_set_synthetic() failed}
 
 test hwloc-create-4.6.2 {creation, synthetic} -body {
-    hwloc create X -set_synthetic pu:4
+    hwloc create X -synthetic pu:4
 } -cleanup {
     X destroy
 } -result ::X
@@ -248,14 +248,14 @@ test hwloc-create-4.6.2 {creation, synthetic} -body {
 # # ## ### ##### ######## ############# #####################
 
 test hwloc-create-4.7.0 {creation, xml, nothing} -body {
-    hwloc create X -set_xml {}
+    hwloc create X -xml {}
 } -returnCodes error -result {file doesn't exist or lacks read permission}
 
 # TODO: How to disable libhwloc output to stdout ?
 test hwloc-create-4.7.1 {creation, xml, bad syntax} -setup {
     set temp [tcltest::makeFile {fjkl;df0954 90245-} badtopo]
 } -body {
-    hwloc create X -set_xml $temp
+    hwloc create X -xml $temp
 } -cleanup {
     tcltest::removeFile badtopo
 } -returnCodes error \
@@ -263,14 +263,14 @@ test hwloc-create-4.7.1 {creation, xml, bad syntax} -setup {
 
 test hwloc-create-4.7.2 {creation, xml, bad path} -setup {
 } -body {
-    hwloc create X -set_xml bogus
+    hwloc create X -xml bogus
 } -returnCodes error \
     -result {file doesn't exist or lacks read permission}
 
 test hwloc-create-4.7.3 {creation, xml} -setup {
     set path $tcltest::testsDirectory/topology1.xml
 } -body {
-    hwloc create X -set_xml $path
+    hwloc create X -xml $path
 } -cleanup {
     unset path
     X destroy

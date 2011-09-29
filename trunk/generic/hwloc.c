@@ -170,16 +170,16 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     static const char* cmds[] = {
         "-ignore_all_keep_structure",  "-ignore_type",
-        "-ignore_type_keep_structure", "-set_flags",
-        "-set_fsroot",                 "-set_pid",
-        "-set_synthetic",              "-set_xml",
+        "-ignore_type_keep_structure", "-flags",
+        "-fsroot",                     "-pid",
+        "-synthetic",                  "-xml",
         NULL
     };
     enum options {
         CREATE_IGNORE_ALL_KEEP_STRUCTURE,   CREATE_IGNORE_TYPE,
-        CREATE_IGNORE_TYPE_KEEP_STRUCTURE,  CREATE_SET_FLAGS,
-        CREATE_SET_FSROOT,                  CREATE_SET_PID,
-        CREATE_SET_SYNTHETIC,               CREATE_SET_XML
+        CREATE_IGNORE_TYPE_KEEP_STRUCTURE,  CREATE_FLAGS,
+        CREATE_FSROOT,                      CREATE_PID,
+        CREATE_SYNTHETIC,                   CREATE_XML
     };
     int index;
 
@@ -259,12 +259,12 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 		objc_curr += 1;
 		break;
 	    }
-	case CREATE_SET_FLAGS: /* -set_flags flags */
+	case CREATE_FLAGS: /* -flags flags */
 	    {
 		int flags = 0;
 
 		if (objc <= (objc_curr+1)) {
-		    Tcl_WrongNumArgs(interp, 3, objv, "-set_flags flags");
+		    Tcl_WrongNumArgs(interp, 3, objv, "-flags flags");
 		    goto on_error;
 		}
 
@@ -280,10 +280,10 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 		objc_curr += 2;
 		break;
 	    }
-	case CREATE_SET_FSROOT: /* -set_fsroot path */
+	case CREATE_FSROOT: /* -fsroot path */
 	    {
 		if (objc <= (objc_curr+1)) {
-		    Tcl_WrongNumArgs(interp, 3, objv, "-set_fsroot path");
+		    Tcl_WrongNumArgs(interp, 3, objv, "-fsroot path");
 		    goto on_error;
 		}
 
@@ -300,12 +300,12 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 		objc_curr += 2;
 		break;
 	    }
-	case CREATE_SET_PID: /* -set_pid pid */
+	case CREATE_PID: /* -pid pid */
 	    {
 		int pid = 0;
 
 		if (objc <= (objc_curr+1)) {
-		    Tcl_WrongNumArgs(interp, 3, objv, "-set_pid pid");
+		    Tcl_WrongNumArgs(interp, 3, objv, "-pid pid");
 		    goto on_error;
 		}
 
@@ -321,12 +321,12 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 		objc_curr += 2;
 		break;
 	    }
-	case CREATE_SET_SYNTHETIC: /* -set_synthetic value */
+	case CREATE_SYNTHETIC: /* -synthetic value */
 	    {
 		const char* synth;
 
 		if (objc <= (objc_curr+1)) {
-		    Tcl_WrongNumArgs(interp, 3, objv, "-set_synthetic description");
+		    Tcl_WrongNumArgs(interp, 3, objv, "-synthetic description");
 		    goto on_error;
 		}
 
@@ -345,10 +345,10 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 		objc_curr += 2;
 		break;
 	    }
-	case CREATE_SET_XML: /* -set_xml value */
+	case CREATE_XML: /* -xml value */
 	    {
 		if (objc <= (objc_curr+1)) {
-		    Tcl_WrongNumArgs(interp, 3, objv, "-set_xml path");
+		    Tcl_WrongNumArgs(interp, 3, objv, "-xml path");
 		    goto on_error;
 		}
 
