@@ -369,8 +369,8 @@ parse_nodeset_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
 static int
 parse_convert_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     static const char* cmds[] = {
-        "-to_cpuset",
-        "-to_nodeset",
+        "2cpuset",
+        "2nodeset",
         NULL
     };
     enum options {
@@ -385,15 +385,20 @@ parse_convert_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
     hwloc_bitmap_t from_set;
     hwloc_bitmap_t to_set;
 
-    if ((objc == 5) && strcmp((const char *) Tcl_GetString(objv[2]), "-strict") == 0) {
-        strict = 1;
-        offset++;
-    } else if (objc != 4) {
-        Tcl_WrongNumArgs(interp, 2, objv, "?-strict? -to_cpuset|-to_nodeset bitmap");
+    if (objc < 4) {
+        Tcl_WrongNumArgs(interp, 2, objv, "option ?-strict? bitmap");
         return TCL_ERROR;
     }
 
-    if (Tcl_GetIndexFromObj(interp, objv[2+offset], cmds, "option", 2, &index) != TCL_OK) {
+    if (Tcl_GetIndexFromObj(interp, objv[2], cmds, "option", 1, &index) != TCL_OK) {
+        return TCL_ERROR;
+    }
+
+    if ((objc == 5) && strcmp((const char *) Tcl_GetString(objv[3]), "-strict") == 0) {
+        strict = 1;
+        offset++;
+    } else if (objc != 4) {
+        Tcl_WrongNumArgs(interp, 2, objv, "option ?-strict? bitmap");
         return TCL_ERROR;
     }
 

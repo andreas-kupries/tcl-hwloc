@@ -6,8 +6,8 @@ methods:
 [list_begin definitions]
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method convert] [opt [option -strict]] [option -to_cpuset]  [arg set]]
-[call [cmd topologyCmd] [method convert] [opt [option -strict]] [option -to_nodeset] [arg set]]
+[call [cmd topologyCmd] [method {convert 2cpuset}]  [opt [option -strict]] [arg set]]
+[call [cmd topologyCmd] [method {convert 2nodeset}] [opt [option -strict]] [arg set]]
 
 This method converts from bitmaps representing node sets to cpu sets,
 and vice versa. The returned result is again a bitmap, in the other
