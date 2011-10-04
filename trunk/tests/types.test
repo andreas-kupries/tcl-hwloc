@@ -1,0 +1,39 @@
+# -*- tcl -*-
+# # ## ### ##### ######## ############# #####################
+##
+# Test suite for Tcl/Hwloc binding.
+# Main API, element type introspection.
+
+# # ## ### ##### ######## ############# #####################
+## Requirements
+
+package require Tcl 8.5
+
+if {[catch {package require tcltest 2}]} {
+    puts stderr "Skipping tests in [info script].  tcltest 2 required."
+    return
+}
+
+# # ## ### ##### ######## ############# #####################
+##
+# Get the functionality under test, directly from the build directory,
+# which is the CWD.
+
+load libtclhwloc0.1.so
+
+# # ## ### ##### ######## ############# #####################
+
+test hwloc-types-1.0 {wrong\#args, too many} -body {
+    hwloc types X
+} -returnCodes error \
+    -result {wrong # args: should be "hwloc types"}
+
+test hwloc-types-2.0 {types result} -body {
+    # NOTE: The result of this method depends on the version of hwloc
+    # the binding is linked against. The test is based on hwloc
+    # version 1.2.1
+    hwloc types
+} -result {system machine numanode socket cache core pu group misc}
+
+# # ## ### ##### ######## ############# #####################
+tcltest::cleanupTests
