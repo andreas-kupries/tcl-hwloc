@@ -1,5 +1,14 @@
 2011-10-04  Andreas Kupries  <andreask@activestate.com>
 
+	* doc/class.inc: [Issue 1]: Added 'hwloc types' method. Returns
+	* generic/hwloc.c: list of valid element types. Reworked internals
+	* generic/object.c: to dynamically generate this information. Used
+	* generic/topology.c: to perform our own string/type conversions
+	* generic/topology.h: with nice error messages. Updated testsuite
+	* tests/create.test: and documentation.
+	* tests/topology.test:
+	* tests/types.test:
+
 	* doc/instance.inc: [Issue 5]: Reworked "topology cpubind|membind".
 	* generic/topology.c: Made the options ignored by sub-methods 'get'
 	* tests/topology_cpubind.test: and 'last' illegal. Updated testsuite

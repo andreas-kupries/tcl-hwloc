@@ -65,10 +65,9 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
                 Tcl_SetObjResult(interp, Tcl_NewIntObj((int) hwloc_topology_get_depth(data->topology)));
 
             } else if (objc == 3) {
-                hwloc_obj_type_t type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[2]));
+                hwloc_obj_type_t type = thwl_get_etype (interp, objv[2], data);
 
                 if (type == -1) {
-                    Tcl_SetResult(interp, "unrecognized element type", TCL_STATIC);
                     return TCL_ERROR;
                 }
 
@@ -88,6 +87,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
             } else {
                 int depth = 0;
                 hwloc_obj_type_t type;
+		Tcl_Obj* res;
 
                 if (Tcl_GetIntFromObj(interp, objv[2], &depth) == TCL_ERROR) 
                     return TCL_ERROR;
@@ -99,8 +99,8 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
 
 		type = hwloc_get_depth_type(data->topology, (unsigned int) depth);
 
-                Tcl_SetObjResult(interp,
-				 Tcl_NewStringObj(hwloc_obj_type_string(type), -1));
+		Tcl_ListObjIndex (interp, data->class->types, type, &res);
+                Tcl_SetObjResult(interp, res);
             }
             break;
         }
@@ -114,7 +114,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
                 return TCL_ERROR;
             }
 
-	    type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[2]));
+	    type = thwl_get_etype (interp, objv[2], data);
 
 	    if ((type == -1) && (Tcl_GetIntFromObj (interp, objv[2], &depth) != TCL_OK)) {
 		Tcl_ResetResult (interp);
@@ -179,8 +179,7 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
                 return TCL_ERROR;
             }
 
-	    type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[2]));
-
+	    type = thwl_get_etype (interp, objv[2], data);
 	    if (type == -1) {
 		if (Tcl_GetIntFromObj (interp, objv[2], &depth) != TCL_OK) {
 		    Tcl_ResetResult (interp);
@@ -310,6 +309,10 @@ TopologyCmd_CleanUp(ClientData clientData) {
     topo_data* data = (struct topo_data *) clientData;
 
     hwloc_topology_destroy (data->topology);
+    if (data->class) {
+	Tcl_Release (data->class);
+    }
+
     ckfree((char *) data);
 }
 
@@ -427,6 +430,18 @@ parse_convert_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONS
     hwloc_bitmap_free (from_set);
 
     return thwl_set_result_bitmap (interp, to_set);
+}
+
+
+hwloc_obj_type_t
+thwl_get_etype (Tcl_Interp* interp, Tcl_Obj* obj, topo_data* topology)
+{
+    int type;
+
+    if (Tcl_GetIndexFromObj(interp, obj, topology->class->typestr, "element type", 0, &type) != TCL_OK) {
+        return -1;
+    }
+    return type;
 }
 
 /* vim: set sts=4 sw=4 tw=80 et ft=c: */
