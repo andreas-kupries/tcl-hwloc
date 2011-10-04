@@ -11,7 +11,9 @@
  * Function Prototypes
  */
 
-static int HwlocCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
+static int  HwlocCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
+static void HwlocCmd_CleanUp (ClientData clientData);
+
 static int parse_create_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]);
 static int parse_set_flags (Tcl_Interp *interp, Tcl_Obj *obj, int *result);
 
@@ -20,22 +22,85 @@ static int parse_set_flags (Tcl_Interp *interp, Tcl_Obj *obj, int *result);
  */
 
 int Tclhwloc_Init(Tcl_Interp *interp) {
+    topo_class* class;
+    int type;
+    Tcl_DString stype;
+
     if (Tcl_InitStubs(interp, "8.5", 0) == NULL) {
         return TCL_ERROR;
     }
 
-    Tcl_CreateObjCommand(interp, "hwloc", HwlocCmd, (ClientData) NULL, NULL);
+    class = (topo_class*) ckalloc (sizeof(topo_class));
+
+    Tcl_DStringInit (&stype);
+
+    class->types = Tcl_NewListObj (0,0);
+    Tcl_IncrRefCount (class->types);
+
+    for (type=0;;type++) {
+	/* Map integer, and check for break */
+	const char* str = hwloc_obj_type_string (type);
+	if (strcmp(str,"Unknown") ==0) break;
+
+	Tcl_DStringAppend (&stype,str,-1);
+	Tcl_UtfToLower (Tcl_DStringValue (&stype));
+
+	Tcl_ListObjAppendElement(interp, class->types,
+				 Tcl_NewStringObj(Tcl_DStringValue (&stype), -1));
+	Tcl_DStringSetLength (&stype,0);
+
+    }
+
+    class->typestr = (char**) ckalloc ((type+1) * sizeof (char*));
+    class->typestr [type] = NULL;
+    for (type=0;;type++) {
+	/* Map integer, and check for break */
+	const char* str = hwloc_obj_type_string (type);
+	if (strcmp(str,"Unknown") ==0) break;
+
+	Tcl_DStringAppend (&stype,str,-1);
+	Tcl_UtfToLower (Tcl_DStringValue (&stype));
+
+	class->typestr[type] = ckalloc (1+Tcl_DStringLength (&stype));
+	strcpy (class->typestr[type],Tcl_DStringValue (&stype));
+	Tcl_DStringSetLength (&stype,0);
+    }
+
+    Tcl_DStringFree (&stype);
+
+    Tcl_CreateObjCommand(interp, "hwloc", HwlocCmd,
+			 (ClientData) class,
+			 HwlocCmd_CleanUp);
 
     Tcl_PkgProvide(interp, "hwloc", "1.0");
     return TCL_OK;
 }
 
+static void ClassFree (char* clientData)
+{
+    int type;
+    topo_class* class = (topo_class*) clientData;
+    Tcl_DecrRefCount (class->types);
+
+    for (type=0; class->typestr[type] != NULL; type++) {
+	ckfree (class->typestr[type]);
+    }
+    ckfree (class->typestr);
+}
+
+static void HwlocCmd_CleanUp (ClientData clientData)
+{
+    Tcl_EventuallyFree (clientData, ClassFree);
+}
+
 static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+    topo_class* class = (topo_class*) clientData;
+
     static const char* cmds[] = {
-        "bitmap", "create", "version", NULL
+        "bitmap", "create", "types", "version", NULL
     };
     enum options {
-        HWLOC_BITMAP, HWLOC_CREATE, HWLOC_VERSION
+        HWLOC_BITMAP, HWLOC_CREATE, HWLOC_TYPES, HWLOC_VERSION
     };
     int index;
 
@@ -50,15 +115,23 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 
     switch (index) {
     case HWLOC_VERSION:
-        {
-            if (objc > 2) {
-                Tcl_WrongNumArgs(interp, 2, objv, NULL);
-                return TCL_ERROR;
-            }
+	if (objc > 2) {
+	    Tcl_WrongNumArgs(interp, 2, objv, NULL);
+	    return TCL_ERROR;
+	}
             
-            Tcl_SetObjResult(interp, Tcl_NewIntObj ((int) hwloc_get_api_version()));
-            break;
-        }
+	Tcl_SetObjResult(interp, Tcl_NewIntObj ((int) hwloc_get_api_version()));
+	break;
+
+    case HWLOC_TYPES:
+	if (objc > 2) {
+	    Tcl_WrongNumArgs(interp, 2, objv, NULL);
+	    return TCL_ERROR;
+	}
+
+	Tcl_SetObjResult (interp, class->types);
+	break;
+
     case HWLOC_CREATE:
         {
             topo_data* data;
@@ -72,6 +145,7 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
             }
             
 	    data = (topo_data *) ckalloc(sizeof(topo_data));
+	    data->class  = class;
 
             if (hwloc_topology_init(&data->topology) == -1) {
 		Tcl_SetResult(interp, "failed to initialize topology", TCL_STATIC);
@@ -122,6 +196,8 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 	    }
 	    Tcl_ResetResult (interp);
 
+	    Tcl_Preserve (data->class);
+
 	    if (Tcl_GetCommandInfo (interp,
 				    Tcl_GetString (fqn),
 				    &ci)) {
@@ -150,6 +226,7 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 	    Tcl_DecrRefCount (fqn);
             break;
         }
+
     case HWLOC_BITMAP:
 	{
             if (objc < 3) {
@@ -205,14 +282,8 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 		    goto on_error;
 		}
 
-		type = hwloc_obj_type_of_string(Tcl_GetString(objv[objc_curr+1]));
-
+		type = thwl_get_etype (interp, objv[objc_curr+1], data);
 		if (type == -1) {
-		    /* TODO: mention the bogus type, mention the expected types
-		     * TODO: Expected types can be computed once, saved static
-		     * TODO: (client data)
-		     */
-		    Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
 		    goto on_error;
 		}
 
@@ -234,9 +305,8 @@ static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_
 		    goto on_error;
 		}
 
-		type = hwloc_obj_type_of_string(Tcl_GetString(objv[objc_curr+1]));
+		type = thwl_get_etype (interp, objv[objc_curr+1], data);
 		if (type == -1) {
-		    Tcl_SetResult(interp, "unrecognized object type", TCL_STATIC);
 		    goto on_error;
 		}
 

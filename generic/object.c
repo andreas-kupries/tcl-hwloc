@@ -33,6 +33,7 @@ parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 
     int index;
     Tcl_Obj* lv [2];
+    Tcl_Obj* res;
 
     if (Tcl_GetIndexFromObj(interp, objv[3], cmds, "option", 2, &index) != TCL_OK) {
         return TCL_ERROR;
@@ -92,7 +93,8 @@ parse_object_args (topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	obj = obj->last_child;
 	goto return_obj;
     case ELEM_TYPE:
-	Tcl_SetObjResult(interp, Tcl_NewStringObj(hwloc_obj_type_string(obj->type), -1));
+	Tcl_ListObjIndex (interp, data->class->types, obj->type, &res);
+	Tcl_SetObjResult(interp, res);
 	break;
     case ELEM_NAME:
 	Tcl_SetObjResult(interp, Tcl_NewStringObj (obj->name, -1));

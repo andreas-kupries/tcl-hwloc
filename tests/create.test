@@ -102,7 +102,7 @@ test hwloc-create-4.0 {creation, ignore all, keep structure } -body {
 test hwloc-create-4.1.0 {creation, ignore type, bogus type} -body {
     hwloc create X -ignore_type bogus
 } -returnCodes error \
-    -result {unrecognized object type}
+    -result {bad element type "bogus": must be system, machine, numanode, socket, cache, core, pu, group, or misc}
 
 test hwloc-create-4.1.1 {creation, ignore type, can't ignore PU, error} -body {
     hwloc create X -ignore_type pu

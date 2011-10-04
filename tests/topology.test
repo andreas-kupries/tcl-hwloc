@@ -96,7 +96,7 @@ test hwloc-topology-2.4 {depth, bogus type} -setup {
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {unrecognized element type}
+    -result {bad element type "bogus": must be system, machine, numanode, socket, cache, core, pu, group, or misc}
 
 test hwloc-topology-2.5 {depth, valid type, not in tree} -setup {
     hwloc create X -flags this_system -synthetic pu:4
@@ -259,7 +259,7 @@ foreach {method rc rr pc pr} {
     prev_cousin   error {requested element does not exist} ok    {1 1}
     prev_sibling  error {requested element does not exist} ok    {1 1}
     sibling_rank  ok    0                                 ok    2
-    type          ok    Machine                           ok    PU
+    type          ok    machine                           ok    pu
 } {
     test hwloc-topology-5.7.$k "element, $method wrong\#args" -setup {
 	hwloc create X -flags this_system -synthetic pu:4
@@ -366,7 +366,7 @@ test hwloc-topology-6.7 {element_by, bad index} -setup {
 test hwloc-topology-6.8 {element_by, bad index} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by PU C
+    X element_by pu C
 } -cleanup {
     X destroy
 } -returnCodes error \
@@ -381,7 +381,7 @@ test hwloc-topology-6.9 {element_by, bad depth, below min} -setup {
 } -returnCodes error \
     -result {depth out of range}
 
-test hwloc-topology-6.13 {element_by, bad depth, above max} -setup {
+test hwloc-topology-6.14 {element_by, bad depth, above max} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X element_by 5 0
@@ -402,7 +402,7 @@ test hwloc-topology-6.10 {element_by, out of range} -setup {
 test hwloc-topology-6.11 {element_by, unused type} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by Cache 0
+    X element_by cache 0
 } -cleanup {
     X destroy
 } -returnCodes error \
@@ -419,7 +419,7 @@ test hwloc-topology-6.12 {element_by, by depth} -setup {
 test hwloc-topology-6.13 {element_by, by type} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by PU 2
+    X element_by pu 2
 } -cleanup {
     X destroy
 } -result {1 2}
@@ -500,7 +500,7 @@ test hwloc-topology-8.6 {type} -setup {
     X type 0
 } -cleanup {
     X destroy
-} -result Machine
+} -result machine
 
 test hwloc-topology-8.7 {type} -setup {
     hwloc create X -flags this_system -synthetic pu:4
@@ -508,7 +508,7 @@ test hwloc-topology-8.7 {type} -setup {
     X type 1
 } -cleanup {
     X destroy
-} -result PU
+} -result pu
 
 # - -- --- ----- -------- ------------- ---------------------
 ## width -depth n

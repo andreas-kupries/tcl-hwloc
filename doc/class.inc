@@ -20,38 +20,31 @@ The creation process can be influenced by a number of options:
 [list_begin options]
 [opt_def -ignore_all_keep_structure]
 
-Create a topology which ignores, i.e. excludes all objects which do not provide
-any structure to it. An object does not provide structure if it is the single child
-of its parent, and/or has only a single child of its own.
+Create a topology which ignores, i.e. excludes, all elements which do
+not provide any structure to it. An element does not provide structure
+if it is the single child of its parent, and/or has only a single
+child of its own.
 
 [opt_def -ignore_type [arg type]]
 
-Create a topology which excludes objects of the specified type.
-Note that the toplevel object of a topology is never ignored, even if it is
-of the specified type. Note further that objects of type "pu" cannot be excluded.
+Create a topology which excludes elements of the specified type.  Note
+that the toplevel element of a topology is never ignored, even if it
+is of the specified type. Note further that elements of type "pu"
+cannot be excluded.
 
-[list_begin definitions]
-[def [const system]]
-[def [const machine]]
-[def [const node]]
-[def [const socket]]
-[def [const cache]]
-[def [const core]]
-[def [const pu]]
-[def [const group]]
-[def [const misc]]
-[list_end]
-
-This list may be incomplete, with newer versions of the underlying hwloc
-library definining more types. The above is based on 
+The list of valid element types can be retrieved via [cmd {hwloc types}]. The exact
+list depends on the version of Hwloc the binding is linked against (at runtime). See
 
 [uri http://www.open-mpi.org/projects/hwloc/doc/v1.2.1/group__hwlocality__types.php \
-     {hwloc version 1.2.1.}]
+     {Hwloc's documentation}]
+
+for the list of types handled by a specific version.
 
 [opt_def -ignore_type_keep_structure]
 
-Similar to option [option -ignore_type], however the objects of the specified type
-are excluded if and only if they do not provide structure to the topology.
+Similar to option [option -ignore_type], however the elements of the
+specified type are excluded if and only if they do not provide
+structure to the topology.
 
 [opt_def -flags [arg flags]]
 
@@ -135,6 +128,11 @@ also result in this behavior. This file may have been generated
 earlier by exporting a topology instance as XML.
 
 [list_end]
+
+[call [cmd hwloc] [method types]]
+
+This method returns a list containing the names of all valid element
+types.
 
 [call [cmd hwloc] [method version]]
 
