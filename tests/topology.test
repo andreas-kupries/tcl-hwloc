@@ -535,40 +535,32 @@ test hwloc-topology-9.0 {width, wrong\#args} -setup {
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {wrong # args: should be "X width {-depth value | -type value}"}
+    -result {wrong # args: should be "X width depth|type"}
 
 test hwloc-topology-9.1 {width, wrong\#args} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X width Z
+    X width Z Y
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {wrong # args: should be "X width {-depth value | -type value}"}
+    -result {wrong # args: should be "X width depth|type"}
 
-test hwloc-topology-9.2 {width, wrong\#args} -setup {
+# 9.2 dropped after syntax change
+
+test hwloc-topology-9.3 {width, bad argument} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X width Z Y X
+    X width foo
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {wrong # args: should be "X width {-depth value | -type value}"}
-
-test hwloc-topology-9.3 {width, bad option} -setup {
-    hwloc create X -flags this_system -synthetic pu:4
-} -body {
-    X width -foo pu
-} -cleanup {
-    X destroy
-} -returnCodes error \
-    -result {wrong # args: should be "X width {-depth value | -type value}"}
-# TODO: Better message here
+    -result {expected integer or element type but got "foo"}
 
 test hwloc-topology-9.4 {width, bad depth} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X width -depth -1
+    X width -1
 } -cleanup {
     X destroy
 } -returnCodes error \
@@ -577,25 +569,18 @@ test hwloc-topology-9.4 {width, bad depth} -setup {
 test hwloc-topology-9.5 {width, bad depth} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X width -depth 2
+    X width 2
 } -cleanup {
     X destroy
 } -returnCodes error \
     -result {depth out of range}
 
-test hwloc-topology-9.6 {width, bogus type} -setup {
-    hwloc create X -flags this_system -synthetic pu:4
-} -body {
-    X width -type bogus
-} -cleanup {
-    X destroy
-} -returnCodes error \
-    -result {unrecognized element type}
+# 9.6 dropped after syntax change
 
 test hwloc-topology-9.7 {width, valid type, not in tree} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X width -type cache
+    X width cache
 } -cleanup {
     X destroy
 } -result 0
@@ -603,7 +588,7 @@ test hwloc-topology-9.7 {width, valid type, not in tree} -setup {
 test hwloc-topology-9.8 {width, specific type} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X width -type pu
+    X width pu
 } -cleanup {
     X destroy
 } -result 4
@@ -611,7 +596,7 @@ test hwloc-topology-9.8 {width, specific type} -setup {
 test hwloc-topology-9.9 {width, specific depth} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X width -depth 0
+    X width 0
 } -cleanup {
     X destroy
 } -result 1
@@ -619,7 +604,7 @@ test hwloc-topology-9.9 {width, specific depth} -setup {
 test hwloc-topology-9.10 {width, specific depth} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X width -depth 1
+    X width 1
 } -cleanup {
     X destroy
 } -result 4

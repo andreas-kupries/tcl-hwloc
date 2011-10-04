@@ -617,12 +617,12 @@ greater than the value returned by
 }]
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method width] [opt "[option -type] [arg type]"]]
-[call [cmd topologyCmd] [method width] [opt "[option -depth] [arg depth]"]]
+[call [cmd topologyCmd] [method width] [arg type]]
+[call [cmd topologyCmd] [method width] [arg depth]]
 
 This method returns an integer value, the number of elements contained
-in the topology which are of either the specified [arg type], or found
-at the specified [arg depth].
+in the topology which are of either the named [arg type], or found at
+the specified [arg depth].
 
 [para] An error is thrown if an invalid depth is specified, i.e. either
 a value less than zero, or greater than the value returned by
