@@ -1,5 +1,10 @@
 2011-10-04  Andreas Kupries  <andreask@activestate.com>
 
+	* doc/instance.inc: [Issue 5]: Reworked "topology width",
+	* generic/topology.c: dropped the redundant options, auto-detect
+	* tests/create.test: argument-type. Updated testsuite and documentation.
+	* tests/topology.test:
+
 	* doc/instance.inc: [Issue 5]: Reworked "topology depth|type",
 	* generic/topology.c: dropped the redundant options. Updated
 	* tests/create.test: testsuite and documentation.

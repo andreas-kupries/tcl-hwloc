@@ -104,33 +104,35 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
             }
             break;
         }
-    case TOPO_WIDTH: /* width {-depth depth | -type type} */
+    case TOPO_WIDTH: /* width depth|type */
         {
-            if ((objc == 4) && strcmp((const char *) Tcl_GetString(objv[2]), "-depth") == 0) {
-                int depth = 0;
+	    int              depth;
+	    hwloc_obj_type_t type;
 
-                if (Tcl_GetIntFromObj(interp, objv[3], &depth) == TCL_ERROR) {
-                    return TCL_ERROR;
-		}
+	    if (objc != 3) {
+                Tcl_WrongNumArgs(interp, 2, objv, "depth|type");
+                return TCL_ERROR;
+            }
+
+	    type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[2]));
+
+	    if ((type == -1) && (Tcl_GetIntFromObj (interp, objv[2], &depth) != TCL_OK)) {
+		Tcl_ResetResult (interp);
+		Tcl_AppendResult(interp, "expected integer or element type but got \"",
+				 Tcl_GetString(objv[2]),
+				 "\"", NULL);
+		return TCL_ERROR;
+	    }
+
+	    if (type == -1) {
                 if ((depth < 0) || (depth >= (int) hwloc_topology_get_depth(data->topology))) {
                     Tcl_SetResult(interp, "depth out of range", TCL_STATIC);
                     return TCL_ERROR;
                 }
 
                 Tcl_SetObjResult(interp, Tcl_NewIntObj((int) hwloc_get_nbobjs_by_depth(data->topology, (unsigned int) depth)));
-
-            } else if ((objc == 4) && strcmp((const char *) Tcl_GetString(objv[2]), "-type") == 0) {
-                hwloc_obj_type_t type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[3]));
-
-                if (type == -1) {
-                    Tcl_SetResult(interp, "unrecognized element type", TCL_STATIC);
-                    return TCL_ERROR;
-                }
-
-                Tcl_SetObjResult(interp, Tcl_NewIntObj((int) hwloc_get_nbobjs_by_type(data->topology, type)));
             } else {
-                Tcl_WrongNumArgs(interp, 2, objv, "{-depth value | -type value}");
-                return TCL_ERROR;
+                Tcl_SetObjResult(interp, Tcl_NewIntObj((int) hwloc_get_nbobjs_by_type(data->topology, type)));
             }
             break;
         }
