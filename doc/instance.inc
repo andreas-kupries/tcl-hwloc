@@ -164,7 +164,7 @@ topology.
 [list_end]
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method depth] [opt "[option -type] [arg type]"]]
+[call [cmd topologyCmd] [method depth] [opt [arg type]]]
 
 This method returns the depth of the topology as an integer value, or
 the depth at which the elements of the specified [arg type] are found.
@@ -605,7 +605,7 @@ This method returns the identifier for the root element of the
 topology tree.
 
 [comment ---------------------------------------------------------------------]
-[call [cmd topologyCmd] [method type] [opt "[option -depth] [arg depth]"]]
+[call [cmd topologyCmd] [method type] [arg depth]]
 
 This method returns a string, the type of the elements at the
 specified [arg depth] of the topology. An error is thrown if an

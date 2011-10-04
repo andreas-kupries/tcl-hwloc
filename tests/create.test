@@ -111,7 +111,7 @@ test hwloc-create-4.1.1 {creation, ignore type, can't ignore PU, error} -body {
 
 test hwloc-create-4.1.2 {creation, ignore type, can't ignore root type, no error} -setup {
     hwloc create Z
-    set rtype [Z type -depth 0]
+    set rtype [Z type 0]
     Z destroy
 } -body {
     hwloc create X -ignore_type $rtype
@@ -135,7 +135,7 @@ test hwloc-create-4.2.0 {creation, ignore type, keep structure, can't ignore PU,
 
 test hwloc-create-4.2.1 {creation, ignore type, keep structure, can't ignore root type, no error} -setup {
     hwloc create Z
-    set rtype [Z type -depth 0]
+    set rtype [Z type 0]
     Z destroy
 } -body {
     hwloc create X -ignore_type_keep_structure $rtype
