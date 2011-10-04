@@ -59,13 +59,13 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
             hwloc_topology_export_xml(data->topology, (const char *) Tcl_GetString(objv[2]));
             break;
         }
-    case TOPO_DEPTH: /* depth ?-type type? */
+    case TOPO_DEPTH: /* depth ?type? */
         {
             if (objc == 2) {
                 Tcl_SetObjResult(interp, Tcl_NewIntObj((int) hwloc_topology_get_depth(data->topology)));
 
-            } else if ((objc == 4) && strcmp((const char *) Tcl_GetString(objv[2]), "-type") == 0) {
-                hwloc_obj_type_t type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[3]));
+            } else if (objc == 3) {
+                hwloc_obj_type_t type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[2]));
 
                 if (type == -1) {
                     Tcl_SetResult(interp, "unrecognized element type", TCL_STATIC);
@@ -75,22 +75,21 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
                 Tcl_SetObjResult(interp,
 				 Tcl_NewIntObj((int) hwloc_get_type_depth(data->topology, type)));
             } else {
-                Tcl_WrongNumArgs(interp, 2, objv, "?-type value?");
+                Tcl_WrongNumArgs(interp, 2, objv, "?type?");
                 return TCL_ERROR;
             }
             break;
         }
-    case TOPO_TYPE: /* type -depth depth */
+    case TOPO_TYPE: /* type depth */
         {
-            if ((objc != 4) ||
-		strcmp((const char *) Tcl_GetString(objv[2]), "-depth")) {
-                Tcl_WrongNumArgs(interp, 2, objv, "-depth value");
+            if (objc != 3) {
+                Tcl_WrongNumArgs(interp, 2, objv, "depth");
                 return TCL_ERROR;
             } else {
                 int depth = 0;
                 hwloc_obj_type_t type;
 
-                if (Tcl_GetIntFromObj(interp, objv[3], &depth) == TCL_ERROR) 
+                if (Tcl_GetIntFromObj(interp, objv[2], &depth) == TCL_ERROR) 
                     return TCL_ERROR;
 
                 if (depth < 0 || depth >= (int) hwloc_topology_get_depth(data->topology)) {

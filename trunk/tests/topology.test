@@ -60,26 +60,18 @@ test hwloc-topology-1.1 {bad method} -setup {
 ## width	/9
 
 # - -- --- ----- -------- ------------- ---------------------
-## depth ?-type type?
+## depth ?type?
 
 test hwloc-topology-2.0 {depth, wrong\#args} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X depth Z
+    X depth Z Y
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {wrong # args: should be "X depth ?-type value?"}
+    -result {wrong # args: should be "X depth ?type?"}
 
-test hwloc-topology-2.1 {depth, bad option} -setup {
-    hwloc create X -flags this_system -synthetic pu:4
-} -body {
-    X depth -foo pu
-} -cleanup {
-    X destroy
-} -returnCodes error \
-    -result {wrong # args: should be "X depth ?-type value?"}
-# TODO: Better message here
+# 2.1 dropped after syntax change
 
 test hwloc-topology-2.2 {depth, overall} -setup {
     hwloc create X -flags this_system -synthetic pu:4
@@ -92,7 +84,7 @@ test hwloc-topology-2.2 {depth, overall} -setup {
 test hwloc-topology-2.3 {depth, specific type} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X depth -type pu
+    X depth pu
 } -cleanup {
     X destroy
 } -result 1
@@ -100,7 +92,7 @@ test hwloc-topology-2.3 {depth, specific type} -setup {
 test hwloc-topology-2.4 {depth, bogus type} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X depth -type bogus
+    X depth bogus
 } -cleanup {
     X destroy
 } -returnCodes error \
@@ -109,7 +101,7 @@ test hwloc-topology-2.4 {depth, bogus type} -setup {
 test hwloc-topology-2.5 {depth, valid type, not in tree} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X depth -type cache
+    X depth cache
 } -cleanup {
     X destroy
 } -result -1
@@ -467,7 +459,7 @@ test hwloc-topology-7.1 {root} -setup {
 } -result {0 0}
 
 # - -- --- ----- -------- ------------- ---------------------
-## type -depth n
+## type n
 
 test hwloc-topology-8.0 {type, wrong\#args} -setup {
     hwloc create X -flags this_system -synthetic pu:4
@@ -476,49 +468,41 @@ test hwloc-topology-8.0 {type, wrong\#args} -setup {
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {wrong # args: should be "X type -depth value"}
+    -result {wrong # args: should be "X type depth"}
 
-test hwloc-topology-8.1 {type, wrong\#args} -setup {
+# 8.1 dropped after syntax change.
+
+test hwloc-topology-8.2 {type, wrong\#args} -setup {
+    hwloc create X -flags this_system -synthetic pu:4
+} -body {
+    X type Z Y
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {wrong # args: should be "X type depth"}
+
+test hwloc-topology-8.3 {type, bad depth, not integer} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
     X type Z
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {wrong # args: should be "X type -depth value"}
+    -result {expected integer but got "Z"}
 
-test hwloc-topology-8.2 {type, wrong\#args} -setup {
+test hwloc-topology-8.4 {type, bad depth, below min} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X type Z Y X
-} -cleanup {
-    X destroy
-} -returnCodes error \
-    -result {wrong # args: should be "X type -depth value"}
-
-test hwloc-topology-8.3 {type, bad option} -setup {
-    hwloc create X -flags this_system -synthetic pu:4
-} -body {
-    X type -foo pu
-} -cleanup {
-    X destroy
-} -returnCodes error \
-    -result {wrong # args: should be "X type -depth value"}
-# TODO: Better message here
-
-test hwloc-topology-8.4 {type, bad depth} -setup {
-    hwloc create X -flags this_system -synthetic pu:4
-} -body {
-    X type -depth -1
+    X type -1
 } -cleanup {
     X destroy
 } -returnCodes error \
     -result {depth out of range}
 
-test hwloc-topology-8.5 {type, bad depth} -setup {
+test hwloc-topology-8.5 {type, bad depth, above max} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X type -depth 2
+    X type 2
 } -cleanup {
     X destroy
 } -returnCodes error \
@@ -527,7 +511,7 @@ test hwloc-topology-8.5 {type, bad depth} -setup {
 test hwloc-topology-8.6 {type} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X type -depth 0
+    X type 0
 } -cleanup {
     X destroy
 } -result Machine
@@ -535,7 +519,7 @@ test hwloc-topology-8.6 {type} -setup {
 test hwloc-topology-8.7 {type} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X type -depth 1
+    X type 1
 } -cleanup {
     X destroy
 } -result PU
@@ -619,10 +603,10 @@ test hwloc-topology-9.7 {width, valid type, not in tree} -setup {
 test hwloc-topology-9.8 {width, specific type} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X depth -type pu
+    X width -type pu
 } -cleanup {
     X destroy
-} -result 1
+} -result 4
 
 test hwloc-topology-9.9 {width, specific depth} -setup {
     hwloc create X -flags this_system -synthetic pu:4
