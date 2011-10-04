@@ -7,9 +7,10 @@
 #include "membind.h"
 #include "bitmap.h"
 
-static int      parse_options (Tcl_Interp* interp, int objc, Tcl_Obj* CONST objv[], int* pid, int* cpu, int* flags);
-static int      obj2policy    (Tcl_Interp *interp, hwloc_membind_policy_t *policy, Tcl_Obj *obj);
-static Tcl_Obj* policy2obj    (Tcl_Interp *interp, hwloc_membind_policy_t policy);
+static int      parse_set_options (Tcl_Interp* interp, int objc, Tcl_Obj* CONST objv[], int* pid, int* cpu, int* flags);
+static int      parse_options     (Tcl_Interp* interp, int objc, Tcl_Obj* CONST objv[], int* pid, int* cpu, int* flags);
+static int      obj2policy        (Tcl_Interp *interp, hwloc_membind_policy_t *policy, Tcl_Obj *obj);
+static Tcl_Obj* policy2obj        (Tcl_Interp *interp, hwloc_membind_policy_t policy);
 
 /*
  * topology membind get ?-type flags? ?-cpuset? ?-pid pid?
@@ -36,13 +37,13 @@ parse_membind_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
     if (Tcl_GetIndexFromObj(interp, objv[2], cmds, "option", 2, &index) != TCL_OK)
         return TCL_ERROR;
 
-    at = parse_options (interp, objc, objv, &pid, &cpu, &flags);
-    if (at < 0) {
-	return TCL_ERROR;
-    }
-
     switch (index) {
     case MEMBIND_SET:
+	at = parse_set_options (interp, objc, objv, &pid, &cpu, &flags);
+	if (at < 0) {
+	    return TCL_ERROR;
+	}
+
 	if (at != (objc-2)) {
 	    Tcl_WrongNumArgs(interp, 3, objv, "?options? nodeset policy");
 	    return TCL_ERROR;
@@ -77,6 +78,11 @@ parse_membind_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 	break;
 
     case MEMBIND_GET:
+	at = parse_options (interp, objc, objv, &pid, &cpu, &flags);
+	if (at < 0) {
+	    return TCL_ERROR;
+	}
+
 	if (at != objc) {
 	    Tcl_WrongNumArgs(interp, 3, objv, "?options?");
 	    return TCL_ERROR;
@@ -140,7 +146,7 @@ parse_membind_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST
 }
 
 static int
-parse_options (Tcl_Interp* interp, int objc, Tcl_Obj* CONST objv[], int* pid, int* cpu, int* flags)
+parse_set_options (Tcl_Interp* interp, int objc, Tcl_Obj* CONST objv[], int* pid, int* cpu, int* flags)
 {
     static const char* options[] = {
 	"-cpu",     "-migrate", "-nocpubind", "-pid",
@@ -148,13 +154,76 @@ parse_options (Tcl_Interp* interp, int objc, Tcl_Obj* CONST objv[], int* pid, in
         NULL
     };
     enum options {
-        MEMBIND_CPU,     MEMBIND_MIGRATE, MEMBIND_NOCPUBIND, MEMBIND_PID,
-	MEMBIND_PROCESS, MEMBIND_STRICT,  MEMBIND_THREAD
+        MEMBIND_SET_CPU,     MEMBIND_SET_MIGRATE, MEMBIND_SET_NOCPUBIND, MEMBIND_SET_PID,
+	MEMBIND_SET_PROCESS, MEMBIND_SET_STRICT,  MEMBIND_SET_THREAD
     };
     static int map [] = {
 	0,
 	HWLOC_MEMBIND_MIGRATE,
 	HWLOC_MEMBIND_NOCPUBIND,
+	0,
+	HWLOC_MEMBIND_PROCESS,
+	HWLOC_MEMBIND_STRICT,
+	HWLOC_MEMBIND_THREAD
+    };
+
+    int index, at;
+
+    *pid   = 0;
+    *flags = 0;
+    *cpu = 0;
+
+    /* topo/0 membind/1 method/2 ... => at = 3 */
+    for (at = 3; at < objc; at++) {
+        if (Tcl_GetIndexFromObj(interp, objv[at], options, "flag", 0, &index) != TCL_OK) {
+	    if(Tcl_GetString (objv[at])[0] == '-') {
+		return -1;
+	    }
+	    return at;
+	}
+
+	if (index == MEMBIND_SET_CPU) {
+	    *cpu = 1;
+	    continue;
+	}
+
+	if (index != MEMBIND_SET_PID) {
+	    *flags |= map [index];
+	    continue;
+	}
+
+	/*
+	 * -pid has an argument. Check for and process it.
+	 */
+
+	at ++;
+	if (at >= objc) {
+	    Tcl_SetResult (interp, "Missing argument for -pid.", TCL_STATIC);
+	    return -1;
+	}
+
+        if (Tcl_GetIntFromObj(interp, objv[at], pid) == TCL_ERROR) {
+            return -1;
+	}
+    }
+
+    return at;
+}
+
+static int
+parse_options (Tcl_Interp* interp, int objc, Tcl_Obj* CONST objv[], int* pid, int* cpu, int* flags)
+{
+    static const char* options[] = {
+	"-cpu",     "-pid",
+	"-process", "-strict",  "-thread",
+        NULL
+    };
+    enum options {
+        MEMBIND_CPU,     MEMBIND_PID,
+	MEMBIND_PROCESS, MEMBIND_STRICT,  MEMBIND_THREAD
+    };
+    static int map [] = {
+	0,
 	0,
 	HWLOC_MEMBIND_PROCESS,
 	HWLOC_MEMBIND_STRICT,

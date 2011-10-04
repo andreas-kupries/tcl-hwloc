@@ -35,11 +35,6 @@ The behaviour can be modified by specifying one or more of the options
 below:
 
 [list_begin options]
-[opt_def -nomembind]
-
-This option is accepted, but ignored. It has no meaning for the
-method in question.
-
 [opt_def -pid [arg pid]]
 Return the information for the referenced process instead.
 
@@ -74,22 +69,12 @@ The behaviour can be modified by specifying one or more of the options
 below:
 
 [list_begin options]
-[opt_def -nomembind]
-
-This option is accepted, but ignored. It has no meaning for the
-method in question.
-
 [opt_def -pid [arg pid]]
 Return the information for the referenced process instead.
 
 [opt_def -process]
 Return the information for all threads of the (possibly multithreaded)
 process.
-
-[opt_def -strict]
-
-This option is accepted, but ignored. It has no meaning for the
-method in question.
 
 [opt_def -thread]
 
@@ -213,14 +198,6 @@ Its behaviour can be modified by specifying one or more of the options
 below:
 
 [list_begin options]
-[opt_def -migrate]
-[opt_def -nocpubind]
-
-These two options are relevant only for [method {membind set}].
-While this method accepts them, they are ignored.
-
-[comment {--- TODO --- Rework the implementation to not accept them}]
-
 [opt_def -cpu]
 
 By default the bitmap returned by the method represents a nodeset.
