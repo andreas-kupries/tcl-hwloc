@@ -320,7 +320,7 @@ test hwloc-topology-6.0 {element_by, wrong\#args} -setup {
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {wrong # args: should be "X element_by {-depth value|-type value} index"}
+    -result {wrong # args: should be "X element_by depth|type index"}
 
 test hwloc-topology-6.1 {element_by, wrong\#args} -setup {
     hwloc create X -flags this_system -synthetic pu:4
@@ -329,58 +329,35 @@ test hwloc-topology-6.1 {element_by, wrong\#args} -setup {
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {wrong # args: should be "X element_by {-depth value|-type value} index"}
+    -result {wrong # args: should be "X element_by depth|type index"}
 
-test hwloc-topology-6.2 {element_by, wrong\#args} -setup {
-    hwloc create X -flags this_system -synthetic pu:4
-} -body {
-    X element_by A B
-} -cleanup {
-    X destroy
-} -returnCodes error \
-    -result {wrong # args: should be "X element_by {-depth value|-type value} index"}
+# 6.2 dropped after syntax change
 
 test hwloc-topology-6.3 {element_by, wrong\#args} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by A B C D
+    X element_by A B C
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {wrong # args: should be "X element_by {-depth value|-type value} index"}
+    -result {wrong # args: should be "X element_by depth|type index"}
 
-test hwloc-topology-6.4 {element_by, bad option} -setup {
+# 6.4 dropped after syntax change
+# 6.5 dropped after syntax change
+
+test hwloc-topology-6.6 {element_by, bad level argument} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by -foo B C
+    X element_by B C
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {must specify -depth or -type}
-# TODO: should be 'bad option ..., expected one of ...'
-
-test hwloc-topology-6.5 {element_by, bad option argument} -setup {
-    hwloc create X -flags this_system -synthetic pu:4
-} -body {
-    X element_by -depth B C
-} -cleanup {
-    X destroy
-} -returnCodes error \
-    -result {expected integer but got "B"}
-
-test hwloc-topology-6.6 {element_by, bad option argument} -setup {
-    hwloc create X -flags this_system -synthetic pu:4
-} -body {
-    X element_by -type B C
-} -cleanup {
-    X destroy
-} -returnCodes error \
-    -result {unrecognized element type}
+    -result {expected integer or element type but got "B"}
 
 test hwloc-topology-6.7 {element_by, bad index} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by -depth 0 C
+    X element_by 0 C
 } -cleanup {
     X destroy
 } -returnCodes error \
@@ -389,25 +366,34 @@ test hwloc-topology-6.7 {element_by, bad index} -setup {
 test hwloc-topology-6.8 {element_by, bad index} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by -type PU C
+    X element_by PU C
 } -cleanup {
     X destroy
 } -returnCodes error \
     -result {expected integer but got "C"}
 
-test hwloc-topology-6.9 {element_by, bad depth} -setup {
+test hwloc-topology-6.9 {element_by, bad depth, below min} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by -depth -1 0
+    X element_by -1 0
 } -cleanup {
     X destroy
 } -returnCodes error \
-    -result {element does not exist}
+    -result {depth out of range}
+
+test hwloc-topology-6.13 {element_by, bad depth, above max} -setup {
+    hwloc create X -flags this_system -synthetic pu:4
+} -body {
+    X element_by 5 0
+} -cleanup {
+    X destroy
+} -returnCodes error \
+    -result {depth out of range}
 
 test hwloc-topology-6.10 {element_by, out of range} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by -depth 0 1
+    X element_by 0 1
 } -cleanup {
     X destroy
 } -returnCodes error \
@@ -416,7 +402,7 @@ test hwloc-topology-6.10 {element_by, out of range} -setup {
 test hwloc-topology-6.11 {element_by, unused type} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by -type Cache 0
+    X element_by Cache 0
 } -cleanup {
     X destroy
 } -returnCodes error \
@@ -425,7 +411,7 @@ test hwloc-topology-6.11 {element_by, unused type} -setup {
 test hwloc-topology-6.12 {element_by, by depth} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by -depth 1 1
+    X element_by 1 1
 } -cleanup {
     X destroy
 } -result {1 1}
@@ -433,7 +419,7 @@ test hwloc-topology-6.12 {element_by, by depth} -setup {
 test hwloc-topology-6.13 {element_by, by type} -setup {
     hwloc create X -flags this_system -synthetic pu:4
 } -body {
-    X element_by -type PU 2
+    X element_by PU 2
 } -cleanup {
     X destroy
 } -result {1 2}

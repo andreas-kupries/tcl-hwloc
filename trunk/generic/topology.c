@@ -170,48 +170,45 @@ int TopologyCmd (ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *C
             hwloc_obj_t obj = NULL;
 	    Tcl_Obj* lv [2];
 
-            if (objc != 5) {
-                Tcl_WrongNumArgs(interp, 2, objv, "{-depth value|-type value} index");
+	    hwloc_obj_type_t type;
+	    int depth = 0;
+	    int idx = 0;
+
+            if (objc != 4) {
+                Tcl_WrongNumArgs(interp, 2, objv, "depth|type index");
                 return TCL_ERROR;
             }
 
-            if (strcmp((const char *) Tcl_GetString(objv[2]), "-depth") == 0) {
-                int depth = 0;
-                int idx = 0;
+	    type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[2]));
 
-                if (Tcl_GetIntFromObj(interp, objv[3], &depth) == TCL_ERROR) {
-                    return TCL_ERROR;
+	    if (type == -1) {
+		if (Tcl_GetIntFromObj (interp, objv[2], &depth) != TCL_OK) {
+		    Tcl_ResetResult (interp);
+		    Tcl_AppendResult(interp, "expected integer or element type but got \"",
+				     Tcl_GetString(objv[2]),
+				     "\"", NULL);
+		    return TCL_ERROR;
 		}
-                if (Tcl_GetIntFromObj(interp, objv[4], &idx) == TCL_ERROR) {
+                if ((depth < 0) || (depth >= (int) hwloc_topology_get_depth(data->topology))) {
+                    Tcl_SetResult(interp, "depth out of range", TCL_STATIC);
                     return TCL_ERROR;
-		}
+                }
+	    }
 
+	    if (Tcl_GetIntFromObj(interp, objv[3], &idx) == TCL_ERROR) {
+		return TCL_ERROR;
+	    }
+
+	    if (type == -1) {
                 obj = hwloc_get_obj_by_depth (data->topology, (unsigned) depth, (unsigned) idx);
-                if (obj == NULL) {
-                    Tcl_SetResult(interp, "element does not exist", TCL_STATIC);
-                    return TCL_ERROR;
-                }
-            } else if (strcmp((const char *) Tcl_GetString(objv[2]), "-type") == 0) {
-                int idx = 0;
-                hwloc_obj_type_t type = hwloc_obj_type_of_string((const char *) Tcl_GetString(objv[3]));
-
-                if (type == -1) {
-                    Tcl_SetResult(interp, "unrecognized element type", TCL_STATIC);
-                    return TCL_ERROR;
-                }
-                if (Tcl_GetIntFromObj(interp, objv[4], &idx) == TCL_ERROR) {
-                    return TCL_ERROR;
-		}
-
-                obj = hwloc_get_obj_by_type(data->topology, type, (unsigned) idx);
-                if (obj == NULL) {
-                    Tcl_SetResult(interp, "element does not exist", TCL_STATIC);
-                    return TCL_ERROR;
-                }
             } else {
-                Tcl_SetResult(interp, "must specify -depth or -type", TCL_STATIC);
-                return TCL_ERROR;
+                obj = hwloc_get_obj_by_type(data->topology, type, (unsigned) idx);
             }
+
+	    if (obj == NULL) {
+		Tcl_SetResult(interp, "element does not exist", TCL_STATIC);
+		return TCL_ERROR;
+	    }
 
 	    lv [0] = Tcl_NewIntObj((int) obj->depth);
 	    lv [1] = Tcl_NewIntObj((int) obj->logical_index);
