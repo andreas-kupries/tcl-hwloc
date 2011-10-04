@@ -116,7 +116,7 @@ test hwloc-topology-membind-2.0 "memory binding, get, wrong#args" -setup {
 test hwloc-topology-membind-2.1 "memory binding, get, wrong#args" -setup {
     hwloc create T
 } -body {
-    T membind get -nocpubind X
+    T membind get -process X
 } -cleanup {
     T destroy
 } -returnCodes error -result {wrong # args: should be "T membind get ?options?"}
@@ -143,7 +143,7 @@ test hwloc-topology-membind-2.4 "memory binding, get, bad option" -setup {
     T membind get -foo
 } -cleanup {
     T destroy
-} -returnCodes error -result {bad flag "-foo": must be -cpu, -migrate, -nocpubind, -pid, -process, -strict, or -thread}
+} -returnCodes error -result {bad flag "-foo": must be -cpu, -pid, -process, -strict, or -thread}
 
 test hwloc-topology-membind-2.5 "memory binding, get, -pid excludes -thread" -setup {
     hwloc create T

@@ -108,7 +108,7 @@ test hwloc-topology-cpubind-2.0 "cpu binding, get, wrong#args" -setup {
 test hwloc-topology-cpubind-2.1 "cpu binding, get, wrong#args" -setup {
     hwloc create T
 } -body {
-    T cpubind get -nomembind X
+    T cpubind get -process X
 } -cleanup {
     T destroy
 } -returnCodes error -result {wrong # args: should be "T cpubind get ?options?"}
@@ -135,7 +135,7 @@ test hwloc-topology-cpubind-2.4 "cpu binding, get, bad option" -setup {
     T cpubind get -foo
 } -cleanup {
     T destroy
-} -returnCodes error -result {bad flag "-foo": must be -nomembind, -pid, -process, -strict, or -thread}
+} -returnCodes error -result {bad flag "-foo": must be -pid, -process, -strict, or -thread}
 
 test hwloc-topology-cpubind-2.5 "cpu binding, get, -pid excludes -thread" -setup {
     hwloc create T
@@ -169,7 +169,7 @@ test hwloc-topology-cpubind-3.0 "cpu binding, last, wrong#args" -setup {
 test hwloc-topology-cpubind-3.1 "cpu binding, last, wrong#args" -setup {
     hwloc create T
 } -body {
-    T cpubind last -nomembind X
+    T cpubind last -process X
 } -cleanup {
     T destroy
 } -returnCodes error -result {wrong # args: should be "T cpubind last ?options?"}
@@ -196,7 +196,7 @@ test hwloc-topology-cpubind-3.4 "cpu binding, last, bad option" -setup {
     T cpubind last -foo
 } -cleanup {
     T destroy
-} -returnCodes error -result {bad flag "-foo": must be -nomembind, -pid, -process, -strict, or -thread}
+} -returnCodes error -result {bad flag "-foo": must be -pid, -process, or -thread}
 
 test hwloc-topology-cpubind-3.5 "cpu binding, last, -pid excludes -thread" -setup {
     hwloc create T

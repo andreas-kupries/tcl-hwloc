@@ -1,9 +1,13 @@
 2011-10-04  Andreas Kupries  <andreask@activestate.com>
 
+	* doc/instance.inc: [Issue 5]: Reworked "topology cpubind|membind".
+	* generic/topology.c: Made the options ignored by sub-methods 'get'
+	* tests/topology_cpubind.test: and 'last' illegal. Updated testsuite
+	* tests/topology_membind.test: and documentation.
+
 	* doc/instance.inc: [Issue 5]: Reworked "topology element_by",
 	* generic/topology.c: dropped the redundant options, auto-detect
-	* tests/create.test: argument-type. Updated testsuite and documentation.
-	* tests/topology.test:
+	* tests/topology.test: argument-type. Updated testsuite and documentation.
 
 	* doc/instance.inc: [Issue 5]: Reworked "topology width",
 	* generic/topology.c: dropped the redundant options, auto-detect
