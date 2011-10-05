@@ -21,7 +21,8 @@ static int parse_set_flags (Tcl_Interp *interp, Tcl_Obj *obj, int *result);
  * Function Bodies
  */
 
-int Tclhwloc_Init(Tcl_Interp *interp) {
+int
+Tclhwloc_Init(Tcl_Interp *interp) {
     topo_class* class;
     int type;
     Tcl_DString stype;
@@ -76,7 +77,8 @@ int Tclhwloc_Init(Tcl_Interp *interp) {
     return TCL_OK;
 }
 
-static void ClassFree (char* clientData)
+static void
+ClassFree (char* clientData)
 {
     int type;
     topo_class* class = (topo_class*) clientData;
@@ -85,15 +87,17 @@ static void ClassFree (char* clientData)
     for (type=0; class->typestr[type] != NULL; type++) {
 	ckfree (class->typestr[type]);
     }
-    ckfree (class->typestr);
+    ckfree ((char*) class->typestr);
 }
 
-static void HwlocCmd_CleanUp (ClientData clientData)
+static void
+HwlocCmd_CleanUp (ClientData clientData)
 {
     Tcl_EventuallyFree (clientData, ClassFree);
 }
 
-static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+static int
+HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     topo_class* class = (topo_class*) clientData;
 
     static const char* cmds[] = {
@@ -244,7 +248,8 @@ static int HwlocCmd(ClientData clientData, Tcl_Interp *interp, int objc, Tcl_Obj
 }
 
 /* Already have processed the 3 first arguments */
-static int parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
+static int
+parse_create_args(topo_data* data, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[]) {
     static const char* cmds[] = {
         "-ignore_all_keep_structure",  "-ignore_type",
         "-ignore_type_keep_structure", "-flags",

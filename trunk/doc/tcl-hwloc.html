@@ -92,14 +92,14 @@
     }
 --></style>
 </head>
-<! -- Generated from file 'doc/tcl-hwloc.man' by tcllib/doctools with format 'html'
+<! -- Generated from file 'tcl-hwloc.man' by tcllib/doctools with format 'html'
    -->
 <! -- Copyright &copy; 2011 George Andreou, Andreas Kupries   -- Copyright &copy; 2011 Documentation, Andreas Kupries
    -->
 <! -- CVS: $Id$ tcl-hwloc.n
    -->
 <body><div class="doctools">
-<h1 class="title">tcl-hwloc(n) 0.1 tcl-hwloc &quot;Tcl Hwloc&quot;</h1>
+<h1 class="title">tcl-hwloc(n) 0.2 tcl-hwloc &quot;Tcl Hwloc&quot;</h1>
 <div id="name" class="section"><h2><a name="name">Name</a></h2>
 <p>tcl-hwloc - Tcl Hwloc Binding</p>
 </div>
@@ -122,88 +122,89 @@
 <div class="synopsis">
 <ul class="requirements">
 <li>package require <b class="pkgname">Tcl 8.5</b></li>
-<li>package require <b class="pkgname">tclhwloc <span class="opt">?0.1?</span></b></li>
+<li>package require <b class="pkgname">tclhwloc <span class="opt">?0.2?</span></b></li>
 </ul>
 <ul class="syntax">
 <li><a href="#1"><b class="cmd">hwloc</b> <b class="method">bitmap</b> <i class="arg">...</i></a></li>
 <li><a href="#2"><b class="cmd">hwloc</b> <b class="method">create</b> <i class="arg">object</i> <i class="arg">...</i></a></li>
-<li><a href="#3"><b class="cmd">hwloc</b> <b class="method">version</b></a></li>
-<li><a href="#4"><b class="cmd">topologyCmd</b> <b class="method">convert</b> <span class="opt">?<b class="option">-strict</b>?</span> <b class="option">-to_cpuset</b> <i class="arg">set</i></a></li>
-<li><a href="#5"><b class="cmd">topologyCmd</b> <b class="method">convert</b> <span class="opt">?<b class="option">-strict</b>?</span> <b class="option">-to_nodeset</b> <i class="arg">set</i></a></li>
-<li><a href="#6"><b class="cmd">topologyCmd</b> <b class="method">cpubind get</b> <span class="opt">?options...?</span></a></li>
-<li><a href="#7"><b class="cmd">topologyCmd</b> <b class="method">cpubind last</b> <span class="opt">?options...?</span></a></li>
-<li><a href="#8"><b class="cmd">topologyCmd</b> <b class="method">cpubind set</b> <span class="opt">?options...?</span> <i class="arg">cpuset</i></a></li>
-<li><a href="#9"><b class="cmd">topologyCmd</b> <b class="method">cpuset allowed</b></a></li>
-<li><a href="#10"><b class="cmd">topologyCmd</b> <b class="method">cpuset complete</b></a></li>
-<li><a href="#11"><b class="cmd">topologyCmd</b> <b class="method">cpuset online</b></a></li>
-<li><a href="#12"><b class="cmd">topologyCmd</b> <b class="method">cpuset topology</b></a></li>
-<li><a href="#13"><b class="cmd">topologyCmd</b> <b class="method">depth</b> <span class="opt">?<b class="option">-type</b> <i class="arg">type</i>?</span></a></li>
-<li><a href="#14"><b class="cmd">topologyCmd</b> <b class="method">destroy</b></a></li>
-<li><a href="#15"><b class="cmd">topologyCmd</b> <b class="method">export</b> <i class="arg">path</i></a></li>
-<li><a href="#16"><b class="cmd">topologyCmd</b> <b class="method">local</b></a></li>
-<li><a href="#17"><b class="cmd">topologyCmd</b> <b class="method">membind get</b> <span class="opt">?options...?</span></a></li>
-<li><a href="#18"><b class="cmd">topologyCmd</b> <b class="method">membind set</b> <span class="opt">?options...?</span> <i class="arg">nodeset</i> <i class="arg">policy</i></a></li>
-<li><a href="#19"><b class="cmd">topologyCmd</b> <b class="method">nodeset allowed</b></a></li>
-<li><a href="#20"><b class="cmd">topologyCmd</b> <b class="method">nodeset complete</b></a></li>
-<li><a href="#21"><b class="cmd">topologyCmd</b> <b class="method">nodeset topology</b></a></li>
-<li><a href="#22"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <i class="arg">...</i></a></li>
-<li><a href="#23"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">arity</b></a></li>
-<li><a href="#24"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">attributes</b></a></li>
-<li><a href="#25"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">children</b></a></li>
-<li><a href="#26"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset allowed</b></a></li>
-<li><a href="#27"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset complete</b></a></li>
-<li><a href="#28"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset online</b></a></li>
-<li><a href="#29"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset topology</b></a></li>
-<li><a href="#30"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">depth</b></a></li>
-<li><a href="#31"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">first_child</b></a></li>
-<li><a href="#32"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">info</b></a></li>
-<li><a href="#33"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">last_child</b></a></li>
-<li><a href="#34"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">logical_index</b></a></li>
-<li><a href="#35"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">name</b></a></li>
-<li><a href="#36"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">next_cousin</b></a></li>
-<li><a href="#37"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">next_sibling</b></a></li>
-<li><a href="#38"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset allowed</b></a></li>
-<li><a href="#39"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset complete</b></a></li>
-<li><a href="#40"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset topology</b></a></li>
-<li><a href="#41"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">parent</b></a></li>
-<li><a href="#42"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">prev_cousin</b></a></li>
-<li><a href="#43"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">prev_sibling</b></a></li>
-<li><a href="#44"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">sibling_rank</b></a></li>
-<li><a href="#45"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">type</b></a></li>
-<li><a href="#46"><b class="cmd">topologyCmd</b> <b class="method">element_by</b> <b class="option">-depth</b> <i class="arg">depth</i> <i class="arg">index</i></a></li>
-<li><a href="#47"><b class="cmd">topologyCmd</b> <b class="method">element_by</b> <b class="option">-type</b> <i class="arg">type</i> <i class="arg">index</i></a></li>
-<li><a href="#48"><b class="cmd">topologyCmd</b> <b class="method">root</b></a></li>
-<li><a href="#49"><b class="cmd">topologyCmd</b> <b class="method">type</b> <span class="opt">?<b class="option">-depth</b> <i class="arg">depth</i>?</span></a></li>
-<li><a href="#50"><b class="cmd">topologyCmd</b> <b class="method">width</b> <span class="opt">?<b class="option">-type</b> <i class="arg">type</i>?</span></a></li>
-<li><a href="#51"><b class="cmd">topologyCmd</b> <b class="method">width</b> <span class="opt">?<b class="option">-depth</b> <i class="arg">depth</i>?</span></a></li>
-<li><a href="#52"><b class="cmd">hwloc bitmap</b> <b class="method">empty</b></a></li>
-<li><a href="#53"><b class="cmd">hwloc bitmap</b> <b class="method">full</b></a></li>
-<li><a href="#54"><b class="cmd">hwloc bitmap</b> <b class="method">allbut</b> <i class="arg">id</i></a></li>
-<li><a href="#55"><b class="cmd">hwloc bitmap</b> <b class="method">only</b> <i class="arg">id</i></a></li>
-<li><a href="#56"><b class="cmd">hwloc bitmap</b> <b class="method">first</b> <i class="arg">bitmap</i></a></li>
-<li><a href="#57"><b class="cmd">hwloc bitmap</b> <b class="method">last</b> <i class="arg">bitmap</i></a></li>
-<li><a href="#58"><b class="cmd">hwloc bitmap</b> <b class="method">next</b> <i class="arg">bitmap</i> <i class="arg">prev</i></a></li>
-<li><a href="#59"><b class="cmd">hwloc bitmap</b> <b class="method">from_ulong</b> <i class="arg">mask</i></a></li>
-<li><a href="#60"><b class="cmd">hwloc bitmap</b> <b class="method">to_ulong</b> <i class="arg">bitmap</i></a></li>
-<li><a href="#61"><b class="cmd">hwloc bitmap</b> <b class="method">is_empty</b> <i class="arg">bitmap</i></a></li>
-<li><a href="#62"><b class="cmd">hwloc bitmap</b> <b class="method">is_full</b> <i class="arg">bitmap</i></a></li>
-<li><a href="#63"><b class="cmd">hwloc bitmap</b> <b class="method">not</b> <i class="arg">bitmap</i></a></li>
-<li><a href="#64"><b class="cmd">hwloc bitmap</b> <b class="method">singlify</b> <i class="arg">bitmap</i></a></li>
-<li><a href="#65"><b class="cmd">hwloc bitmap</b> <b class="method">weight</b> <i class="arg">bitmap</i></a></li>
-<li><a href="#66"><b class="cmd">hwloc bitmap</b> <b class="method">and</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
-<li><a href="#67"><b class="cmd">hwloc bitmap</b> <b class="method">andnot</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
-<li><a href="#68"><b class="cmd">hwloc bitmap</b> <b class="method">or</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
-<li><a href="#69"><b class="cmd">hwloc bitmap</b> <b class="method">xor</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
-<li><a href="#70"><b class="cmd">hwloc bitmap</b> <b class="method">is_equal</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
-<li><a href="#71"><b class="cmd">hwloc bitmap</b> <b class="method">is_included</b> <i class="arg">bitmapsub</i> <i class="arg">bitmapsuper</i></a></li>
-<li><a href="#72"><b class="cmd">hwloc bitmap</b> <b class="method">compare</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
-<li><a href="#73"><b class="cmd">hwloc bitmap</b> <b class="method">compare_first</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
-<li><a href="#74"><b class="cmd">hwloc bitmap</b> <b class="method">intersects</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
-<li><a href="#75"><b class="cmd">hwloc bitmap</b> <b class="method">set</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></li>
-<li><a href="#76"><b class="cmd">hwloc bitmap</b> <b class="method">clear</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></li>
-<li><a href="#77"><b class="cmd">hwloc bitmap</b> <b class="method">is_set</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></li>
-<li><a href="#78"><b class="cmd">hwloc bitmap</b> <b class="method">set_range</b> <i class="arg">bitmap</i> <i class="arg">begin</i> <i class="arg">end</i></a></li>
-<li><a href="#79"><b class="cmd">hwloc bitmap</b> <b class="method">clear_range</b> <i class="arg">bitmap</i> <i class="arg">begin</i> <i class="arg">end</i></a></li>
+<li><a href="#3"><b class="cmd">hwloc</b> <b class="method">types</b></a></li>
+<li><a href="#4"><b class="cmd">hwloc</b> <b class="method">version</b></a></li>
+<li><a href="#5"><b class="cmd">topologyCmd</b> <b class="method">convert 2cpuset</b> <span class="opt">?<b class="option">-strict</b>?</span> <i class="arg">set</i></a></li>
+<li><a href="#6"><b class="cmd">topologyCmd</b> <b class="method">convert 2nodeset</b> <span class="opt">?<b class="option">-strict</b>?</span> <i class="arg">set</i></a></li>
+<li><a href="#7"><b class="cmd">topologyCmd</b> <b class="method">cpubind get</b> <span class="opt">?options...?</span></a></li>
+<li><a href="#8"><b class="cmd">topologyCmd</b> <b class="method">cpubind last</b> <span class="opt">?options...?</span></a></li>
+<li><a href="#9"><b class="cmd">topologyCmd</b> <b class="method">cpubind set</b> <span class="opt">?options...?</span> <i class="arg">cpuset</i></a></li>
+<li><a href="#10"><b class="cmd">topologyCmd</b> <b class="method">cpuset allowed</b></a></li>
+<li><a href="#11"><b class="cmd">topologyCmd</b> <b class="method">cpuset complete</b></a></li>
+<li><a href="#12"><b class="cmd">topologyCmd</b> <b class="method">cpuset online</b></a></li>
+<li><a href="#13"><b class="cmd">topologyCmd</b> <b class="method">cpuset topology</b></a></li>
+<li><a href="#14"><b class="cmd">topologyCmd</b> <b class="method">depth</b> <span class="opt">?<i class="arg">type</i>?</span></a></li>
+<li><a href="#15"><b class="cmd">topologyCmd</b> <b class="method">destroy</b></a></li>
+<li><a href="#16"><b class="cmd">topologyCmd</b> <b class="method">export</b> <i class="arg">path</i></a></li>
+<li><a href="#17"><b class="cmd">topologyCmd</b> <b class="method">local</b></a></li>
+<li><a href="#18"><b class="cmd">topologyCmd</b> <b class="method">membind get</b> <span class="opt">?options...?</span></a></li>
+<li><a href="#19"><b class="cmd">topologyCmd</b> <b class="method">membind set</b> <span class="opt">?options...?</span> <i class="arg">nodeset</i> <i class="arg">policy</i></a></li>
+<li><a href="#20"><b class="cmd">topologyCmd</b> <b class="method">nodeset allowed</b></a></li>
+<li><a href="#21"><b class="cmd">topologyCmd</b> <b class="method">nodeset complete</b></a></li>
+<li><a href="#22"><b class="cmd">topologyCmd</b> <b class="method">nodeset topology</b></a></li>
+<li><a href="#23"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <i class="arg">...</i></a></li>
+<li><a href="#24"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">arity</b></a></li>
+<li><a href="#25"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">attributes</b></a></li>
+<li><a href="#26"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">children</b></a></li>
+<li><a href="#27"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset allowed</b></a></li>
+<li><a href="#28"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset complete</b></a></li>
+<li><a href="#29"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset online</b></a></li>
+<li><a href="#30"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset topology</b></a></li>
+<li><a href="#31"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">depth</b></a></li>
+<li><a href="#32"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">first_child</b></a></li>
+<li><a href="#33"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">info</b></a></li>
+<li><a href="#34"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">last_child</b></a></li>
+<li><a href="#35"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">logical_index</b></a></li>
+<li><a href="#36"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">name</b></a></li>
+<li><a href="#37"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">next_cousin</b></a></li>
+<li><a href="#38"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">next_sibling</b></a></li>
+<li><a href="#39"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset allowed</b></a></li>
+<li><a href="#40"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset complete</b></a></li>
+<li><a href="#41"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset topology</b></a></li>
+<li><a href="#42"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">parent</b></a></li>
+<li><a href="#43"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">prev_cousin</b></a></li>
+<li><a href="#44"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">prev_sibling</b></a></li>
+<li><a href="#45"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">sibling_rank</b></a></li>
+<li><a href="#46"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">type</b></a></li>
+<li><a href="#47"><b class="cmd">topologyCmd</b> <b class="method">element_by</b> <b class="option">-depth</b> <i class="arg">depth</i> <i class="arg">index</i></a></li>
+<li><a href="#48"><b class="cmd">topologyCmd</b> <b class="method">element_by</b> <b class="option">-type</b> <i class="arg">type</i> <i class="arg">index</i></a></li>
+<li><a href="#49"><b class="cmd">topologyCmd</b> <b class="method">root</b></a></li>
+<li><a href="#50"><b class="cmd">topologyCmd</b> <b class="method">type</b> <i class="arg">depth</i></a></li>
+<li><a href="#51"><b class="cmd">topologyCmd</b> <b class="method">width</b> <i class="arg">type</i></a></li>
+<li><a href="#52"><b class="cmd">topologyCmd</b> <b class="method">width</b> <i class="arg">depth</i></a></li>
+<li><a href="#53"><b class="cmd">hwloc bitmap</b> <b class="method">empty</b></a></li>
+<li><a href="#54"><b class="cmd">hwloc bitmap</b> <b class="method">full</b></a></li>
+<li><a href="#55"><b class="cmd">hwloc bitmap</b> <b class="method">allbut</b> <i class="arg">id</i></a></li>
+<li><a href="#56"><b class="cmd">hwloc bitmap</b> <b class="method">only</b> <i class="arg">id</i></a></li>
+<li><a href="#57"><b class="cmd">hwloc bitmap</b> <b class="method">first</b> <i class="arg">bitmap</i></a></li>
+<li><a href="#58"><b class="cmd">hwloc bitmap</b> <b class="method">last</b> <i class="arg">bitmap</i></a></li>
+<li><a href="#59"><b class="cmd">hwloc bitmap</b> <b class="method">next</b> <i class="arg">bitmap</i> <i class="arg">prev</i></a></li>
+<li><a href="#60"><b class="cmd">hwloc bitmap</b> <b class="method">from_ulong</b> <i class="arg">mask</i></a></li>
+<li><a href="#61"><b class="cmd">hwloc bitmap</b> <b class="method">to_ulong</b> <i class="arg">bitmap</i></a></li>
+<li><a href="#62"><b class="cmd">hwloc bitmap</b> <b class="method">is_empty</b> <i class="arg">bitmap</i></a></li>
+<li><a href="#63"><b class="cmd">hwloc bitmap</b> <b class="method">is_full</b> <i class="arg">bitmap</i></a></li>
+<li><a href="#64"><b class="cmd">hwloc bitmap</b> <b class="method">not</b> <i class="arg">bitmap</i></a></li>
+<li><a href="#65"><b class="cmd">hwloc bitmap</b> <b class="method">singlify</b> <i class="arg">bitmap</i></a></li>
+<li><a href="#66"><b class="cmd">hwloc bitmap</b> <b class="method">weight</b> <i class="arg">bitmap</i></a></li>
+<li><a href="#67"><b class="cmd">hwloc bitmap</b> <b class="method">and</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
+<li><a href="#68"><b class="cmd">hwloc bitmap</b> <b class="method">andnot</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
+<li><a href="#69"><b class="cmd">hwloc bitmap</b> <b class="method">or</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
+<li><a href="#70"><b class="cmd">hwloc bitmap</b> <b class="method">xor</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
+<li><a href="#71"><b class="cmd">hwloc bitmap</b> <b class="method">is_equal</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
+<li><a href="#72"><b class="cmd">hwloc bitmap</b> <b class="method">is_included</b> <i class="arg">bitmapsub</i> <i class="arg">bitmapsuper</i></a></li>
+<li><a href="#73"><b class="cmd">hwloc bitmap</b> <b class="method">compare</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
+<li><a href="#74"><b class="cmd">hwloc bitmap</b> <b class="method">compare_first</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
+<li><a href="#75"><b class="cmd">hwloc bitmap</b> <b class="method">intersects</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></li>
+<li><a href="#76"><b class="cmd">hwloc bitmap</b> <b class="method">set</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></li>
+<li><a href="#77"><b class="cmd">hwloc bitmap</b> <b class="method">clear</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></li>
+<li><a href="#78"><b class="cmd">hwloc bitmap</b> <b class="method">is_set</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></li>
+<li><a href="#79"><b class="cmd">hwloc bitmap</b> <b class="method">set_range</b> <i class="arg">bitmap</i> <i class="arg">begin</i> <i class="arg">end</i></a></li>
+<li><a href="#80"><b class="cmd">hwloc bitmap</b> <b class="method">clear_range</b> <i class="arg">bitmap</i> <i class="arg">begin</i> <i class="arg">end</i></a></li>
 </ul>
 </div>
 </div>
@@ -264,40 +265,24 @@ has the name <i class="arg">object</i>.
 The creation process can be influenced by a number of options:</p>
 <dl class="options">
 <dt><b class="option">-ignore_all_keep_structure</b></dt>
-<dd><p>Create a topology which ignores, i.e. excludes all objects which do not provide
-any structure to it. An object does not provide structure if it is the single child
-of its parent, and/or has only a single child of its own.</p></dd>
+<dd><p>Create a topology which ignores, i.e. excludes, all elements which do
+not provide any structure to it. An element does not provide structure
+if it is the single child of its parent, and/or has only a single
+child of its own.</p></dd>
 <dt><b class="option">-ignore_type</b> <i class="arg">type</i></dt>
-<dd><p>Create a topology which excludes objects of the specified type.
-Note that the toplevel object of a topology is never ignored, even if it is
-of the specified type. Note further that objects of type &quot;pu&quot; cannot be excluded.</p>
-<dl class="definitions">
-<dt><b class="const">system</b></dt>
-<dd></dd>
-<dt><b class="const">machine</b></dt>
-<dd></dd>
-<dt><b class="const">node</b></dt>
-<dd></dd>
-<dt><b class="const">socket</b></dt>
-<dd></dd>
-<dt><b class="const">cache</b></dt>
-<dd></dd>
-<dt><b class="const">core</b></dt>
-<dd></dd>
-<dt><b class="const">pu</b></dt>
-<dd></dd>
-<dt><b class="const">group</b></dt>
-<dd></dd>
-<dt><b class="const">misc</b></dt>
-<dd></dd>
-</dl>
-<p>This list may be incomplete, with newer versions of the underlying hwloc
-library definining more types. The above is based on 
-<a href="http://www.open-mpi.org/projects/hwloc/doc/v1.2.1/group__hwlocality__types.php">hwloc version 1.2.1.</a></p></dd>
+<dd><p>Create a topology which excludes elements of the specified type.  Note
+that the toplevel element of a topology is never ignored, even if it
+is of the specified type. Note further that elements of type &quot;pu&quot;
+cannot be excluded.
+The list of valid element types can be retrieved via <b class="cmd">hwloc types</b>. The exact
+list depends on the version of Hwloc the binding is linked against (at runtime). See
+<a href="http://www.open-mpi.org/projects/hwloc/doc/v1.2.1/group__hwlocality__types.php">Hwloc's documentation</a>
+for the list of types handled by a specific version.</p></dd>
 <dt><b class="option">-ignore_type_keep_structure</b></dt>
-<dd><p>Similar to option <b class="option">-ignore_type</b>, however the objects of the specified type
-are excluded if and only if they do not provide structure to the topology.</p></dd>
-<dt><b class="option">-set_flags</b> <i class="arg">flags</i></dt>
+<dd><p>Similar to option <b class="option">-ignore_type</b>, however the elements of the
+specified type are excluded if and only if they do not provide
+structure to the topology.</p></dd>
+<dt><b class="option">-flags</b> <i class="arg">flags</i></dt>
 <dd><p>The argument is a list of values.
 The acceptable flags, and their meaning are:</p>
 <dl class="definitions">
@@ -322,7 +307,7 @@ Gather all resources, even if some were disabled by the administrator.
 For instance, ignore Linux Cpusets and gather all processors and
 memory nodes, and ignore the fact that some resources may be offline.</p></dd>
 </dl></dd>
-<dt><b class="option">-set_fsroot</b> <i class="arg">path</i></dt>
+<dt><b class="option">-fsroot</b> <i class="arg">path</i></dt>
 <dd><p>Make <i class="arg">path</i> the filesystem root while retrieving the topology.</p>
 <p>On Linux systems, use sysfs and procfs files as if they were
 mounted on the given <i class="arg">path</i> instead of the main file-system root.
@@ -332,16 +317,16 @@ instance method <b class="method">local</b> to later return <b class="const">fal
 <p>Note: For convenience, this backend provides empty binding hooks
 which just return success. To have hwloc still actually call
 OS-specific hooks, the flag <b class="const">this_system</b> has to be set (see
-option <b class="option">-set_flags</b>) to assert that the loaded file is really
+option <b class="option">-flags</b>) to assert that the loaded file is really
 the underlying system.</p></dd>
-<dt><b class="option">-set_pid</b> <i class="arg">int</i></dt>
+<dt><b class="option">-pid</b> <i class="arg">int</i></dt>
 <dd><p>Set the process id from which to view and build the topology.</p>
 <p>On some systems, processes may have different views of the
 machine, for instance the set of allowed CPUs. By default, hwloc
-exposes the view from the current process. Using <b class="option">-set_pid</b>
+exposes the view from the current process. Using <b class="option">-pid</b>
 forces it to expose the topology of the machine from the point of
 view of another process.</p></dd>
-<dt><b class="option">-set_synthetic</b> <i class="arg">description</i></dt>
+<dt><b class="option">-synthetic</b> <i class="arg">description</i></dt>
 <dd><p>Create a synthetic topology from the <i class="arg">description</i>.
 This should be a space-separated string of numbers describing the
 arity of each level. Each number may be prefixed with a type and
@@ -349,14 +334,17 @@ a colon to enforce the type of a level. If only some level types
 are enforced, hwloc will try to choose the other types according
 to usual topologies. It may fail however and you may have to
 specify more level types manually.</p></dd>
-<dt><b class="option">-set_xml</b> <i class="arg">path</i></dt>
+<dt><b class="option">-xml</b> <i class="arg">path</i></dt>
 <dd><p>Create the topology not from from the system, but the XML-based
 description found in the file <i class="arg">path</i>.</p>
 <p>Setting the environment variable <b class="variable">HWLOC_XMLFILE</b> may
 also result in this behavior. This file may have been generated
 earlier by exporting a topology instance as XML.</p></dd>
 </dl></dd>
-<dt><a name="3"><b class="cmd">hwloc</b> <b class="method">version</b></a></dt>
+<dt><a name="3"><b class="cmd">hwloc</b> <b class="method">types</b></a></dt>
+<dd><p>This method returns a list containing the names of all valid element
+types.</p></dd>
+<dt><a name="4"><b class="cmd">hwloc</b> <b class="method">version</b></a></dt>
 <dd><p>This method returns HWloc's API version as its result.</p></dd>
 </dl>
 </div>
@@ -365,9 +353,9 @@ earlier by exporting a topology instance as XML.</p></dd>
 <span class="sectref"><a href="#section3">Class API</a></span>) the instance command provides the following API and
 methods:</p>
 <dl class="definitions">
-<dt><a name="4"><b class="cmd">topologyCmd</b> <b class="method">convert</b> <span class="opt">?<b class="option">-strict</b>?</span> <b class="option">-to_cpuset</b> <i class="arg">set</i></a></dt>
+<dt><a name="5"><b class="cmd">topologyCmd</b> <b class="method">convert 2cpuset</b> <span class="opt">?<b class="option">-strict</b>?</span> <i class="arg">set</i></a></dt>
 <dd></dd>
-<dt><a name="5"><b class="cmd">topologyCmd</b> <b class="method">convert</b> <span class="opt">?<b class="option">-strict</b>?</span> <b class="option">-to_nodeset</b> <i class="arg">set</i></a></dt>
+<dt><a name="6"><b class="cmd">topologyCmd</b> <b class="method">convert 2nodeset</b> <span class="opt">?<b class="option">-strict</b>?</span> <i class="arg">set</i></a></dt>
 <dd><p>This method converts from bitmaps representing node sets to cpu sets,
 and vice versa. The returned result is again a bitmap, in the other
 domain.</p>
@@ -380,15 +368,12 @@ a single memory node and use the following heuristics:</p>
 <li><p>If the input set is empty, the result will be emptied as well.</p></li>
 <li><p>Otherwise the result will be entirely filled.</p></li>
 </ol></dd>
-<dt><a name="6"><b class="cmd">topologyCmd</b> <b class="method">cpubind get</b> <span class="opt">?options...?</span></a></dt>
+<dt><a name="7"><b class="cmd">topologyCmd</b> <b class="method">cpubind get</b> <span class="opt">?options...?</span></a></dt>
 <dd><p>This method returns the currently set CPU bindings for the current
 process.
 The behaviour can be modified by specifying one or more of the options
 below:</p>
 <dl class="options">
-<dt><b class="option">-nomembind</b></dt>
-<dd><p>This option is accepted, but ignored. It has no meaning for the
-method in question.</p></dd>
 <dt><b class="option">-pid</b> <i class="arg">pid</i></dt>
 <dd><p>Return the information for the referenced process instead.</p></dd>
 <dt><b class="option">-process</b></dt>
@@ -405,7 +390,7 @@ binding of a thread.</p></dd>
 option cannot be used together with <b class="option">-pid</b>. I.e. when querying
 a different process we cannot query that process' threads in detail.</p></dd>
 </dl></dd>
-<dt><a name="7"><b class="cmd">topologyCmd</b> <b class="method">cpubind last</b> <span class="opt">?options...?</span></a></dt>
+<dt><a name="8"><b class="cmd">topologyCmd</b> <b class="method">cpubind last</b> <span class="opt">?options...?</span></a></dt>
 <dd><p>This method returns the CPU where the current thread or process was
 run last time it executed.  Note that the may be outdated, i.e. not be
 the CPU it is currently running on, as the OS may have shifted it
@@ -413,23 +398,17 @@ around already according to their binding, as it saw fit.
 The behaviour can be modified by specifying one or more of the options
 below:</p>
 <dl class="options">
-<dt><b class="option">-nomembind</b></dt>
-<dd><p>This option is accepted, but ignored. It has no meaning for the
-method in question.</p></dd>
 <dt><b class="option">-pid</b> <i class="arg">pid</i></dt>
 <dd><p>Return the information for the referenced process instead.</p></dd>
 <dt><b class="option">-process</b></dt>
 <dd><p>Return the information for all threads of the (possibly multithreaded)
 process.</p></dd>
-<dt><b class="option">-strict</b></dt>
-<dd><p>This option is accepted, but ignored. It has no meaning for the
-method in question.</p></dd>
 <dt><b class="option">-thread</b></dt>
 <dd><p>Return the location of the current thread of the current process. This
 option cannot be used together with <b class="option">-pid</b>. I.e. when querying
 a different process we cannot query that process' threads in detail.</p></dd>
 </dl></dd>
-<dt><a name="8"><b class="cmd">topologyCmd</b> <b class="method">cpubind set</b> <span class="opt">?options...?</span> <i class="arg">cpuset</i></a></dt>
+<dt><a name="9"><b class="cmd">topologyCmd</b> <b class="method">cpubind set</b> <span class="opt">?options...?</span> <i class="arg">cpuset</i></a></dt>
 <dd><p>By default this method binds the current process, assumed to be
 single-threaded, to the specified <i class="arg">cpuset</i>. This is the most
 portable way of using this method.
@@ -463,13 +442,13 @@ cannot be used together with <b class="option">-pid</b>. I.e. when binding a
 different process we have no control over how that process' threads
 are bound in detail.</p></dd>
 </dl></dd>
-<dt><a name="9"><b class="cmd">topologyCmd</b> <b class="method">cpuset allowed</b></a></dt>
+<dt><a name="10"><b class="cmd">topologyCmd</b> <b class="method">cpuset allowed</b></a></dt>
 <dd></dd>
-<dt><a name="10"><b class="cmd">topologyCmd</b> <b class="method">cpuset complete</b></a></dt>
+<dt><a name="11"><b class="cmd">topologyCmd</b> <b class="method">cpuset complete</b></a></dt>
 <dd></dd>
-<dt><a name="11"><b class="cmd">topologyCmd</b> <b class="method">cpuset online</b></a></dt>
+<dt><a name="12"><b class="cmd">topologyCmd</b> <b class="method">cpuset online</b></a></dt>
 <dd></dd>
-<dt><a name="12"><b class="cmd">topologyCmd</b> <b class="method">cpuset topology</b></a></dt>
+<dt><a name="13"><b class="cmd">topologyCmd</b> <b class="method">cpuset topology</b></a></dt>
 <dd><p>This method returns a bitmap describing various types of CPU sets,
 i.e. subsets of the whole set of logical processors found in the
 topology.</p>
@@ -483,30 +462,30 @@ topology.</p>
 <dt>topology</dt>
 <dd><p>All processors of the system.</p></dd>
 </dl></dd>
-<dt><a name="13"><b class="cmd">topologyCmd</b> <b class="method">depth</b> <span class="opt">?<b class="option">-type</b> <i class="arg">type</i>?</span></a></dt>
+<dt><a name="14"><b class="cmd">topologyCmd</b> <b class="method">depth</b> <span class="opt">?<i class="arg">type</i>?</span></a></dt>
 <dd><p>This method returns the depth of the topology as an integer value, or
 the depth at which the elements of the specified <i class="arg">type</i> are found.
 An error is thrown if an invalid <i class="arg">type</i> is specified. A negative
 value, <b class="const">-1</b> to be precise, is returned if the <i class="arg">type</i> is
 valid but the topology does not contain elements of that type.</p></dd>
-<dt><a name="14"><b class="cmd">topologyCmd</b> <b class="method">destroy</b></a></dt>
+<dt><a name="15"><b class="cmd">topologyCmd</b> <b class="method">destroy</b></a></dt>
 <dd><p>This method destroys the topology instance and underlying structures.
 The result of the method is the empty string.</p></dd>
-<dt><a name="15"><b class="cmd">topologyCmd</b> <b class="method">export</b> <i class="arg">path</i></a></dt>
+<dt><a name="16"><b class="cmd">topologyCmd</b> <b class="method">export</b> <i class="arg">path</i></a></dt>
 <dd><p>This method converts the topology into a XML description and stores it
 in the file <i class="arg">path</i>. This description can be loaded into a new
 topology via</p>
 <pre class="example">
-    hwloc create X -set_xml path
+    hwloc create X -xml path
 </pre>
 <p>The result of the method is the empty string.</p></dd>
-<dt><a name="16"><b class="cmd">topologyCmd</b> <b class="method">local</b></a></dt>
+<dt><a name="17"><b class="cmd">topologyCmd</b> <b class="method">local</b></a></dt>
 <dd><p>This method checks if the instance is a representation of the local
 system and returns a boolean value, <b class="const">true</b> if the test suceeded,
 and <b class="const">false</b> otherwise. Related parts in the class API are the
-option <b class="option">-set_flags</b> with flag <b class="const">this_system</b>, option
-<b class="option">-set_fsroot</b> and option <b class="option">-set_xml</b>.</p></dd>
-<dt><a name="17"><b class="cmd">topologyCmd</b> <b class="method">membind get</b> <span class="opt">?options...?</span></a></dt>
+option <b class="option">-flags</b> with flag <b class="const">this_system</b>, option
+<b class="option">-fsroot</b> and option <b class="option">-xml</b>.</p></dd>
+<dt><a name="18"><b class="cmd">topologyCmd</b> <b class="method">membind get</b> <span class="opt">?options...?</span></a></dt>
 <dd><p>This method returns a 2-element list containing the currently set
 default NUMA bindings and policies for a process and/or thread, in
 this order. The bindings are represented by a bitmap representing
@@ -514,11 +493,6 @@ either a nodeset (default) or a cpuset.
 Its behaviour can be modified by specifying one or more of the options
 below:</p>
 <dl class="options">
-<dt><b class="option">-migrate</b></dt>
-<dd></dd>
-<dt><b class="option">-nocpubind</b></dt>
-<dd><p>These two options are relevant only for <b class="method">membind set</b>.
-While this method accepts them, they are ignored.</p></dd>
 <dt><b class="option">-cpu</b></dt>
 <dd><p>By default the bitmap returned by the method represents a nodeset.
 When this option is specified a cpuset is returned instead, with the
@@ -570,7 +544,7 @@ queried threads are identical, then this information is returned as
 usual. If there are differences however, then an error is thrown
 instead.</p></dd>
 </dl></dd>
-<dt><a name="18"><b class="cmd">topologyCmd</b> <b class="method">membind set</b> <span class="opt">?options...?</span> <i class="arg">nodeset</i> <i class="arg">policy</i></a></dt>
+<dt><a name="19"><b class="cmd">topologyCmd</b> <b class="method">membind set</b> <span class="opt">?options...?</span> <i class="arg">nodeset</i> <i class="arg">policy</i></a></dt>
 <dd><p>This method sets the default memory binding <i class="arg">policy</i> and to prefer
 the NUMA node(s) specified by the <i class="arg">nodeset</i>. This determines which
 NUMA modes to use when allocating memory.
@@ -661,11 +635,11 @@ attempt to be serviced from the NUMA node local to the reading
 thread. Replicating can be useful when multiple threads from the
 specified NUMA nodes will be sharing the same read-only data.</p></dd>
 </dl></dd>
-<dt><a name="19"><b class="cmd">topologyCmd</b> <b class="method">nodeset allowed</b></a></dt>
+<dt><a name="20"><b class="cmd">topologyCmd</b> <b class="method">nodeset allowed</b></a></dt>
 <dd></dd>
-<dt><a name="20"><b class="cmd">topologyCmd</b> <b class="method">nodeset complete</b></a></dt>
+<dt><a name="21"><b class="cmd">topologyCmd</b> <b class="method">nodeset complete</b></a></dt>
 <dd></dd>
-<dt><a name="21"><b class="cmd">topologyCmd</b> <b class="method">nodeset topology</b></a></dt>
+<dt><a name="22"><b class="cmd">topologyCmd</b> <b class="method">nodeset topology</b></a></dt>
 <dd><p>This method returns a bitmap describing various types of numa node
 sets, i.e. subsets of the whole set of logical memory found in the
 topology.</p>
@@ -677,31 +651,31 @@ topology.</p>
 <dt>topology</dt>
 <dd><p>All numa nodes of the system.</p></dd>
 </dl></dd>
-<dt><a name="22"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <i class="arg">...</i></a></dt>
+<dt><a name="23"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <i class="arg">...</i></a></dt>
 <dd><p>This method provides an ensemble of sub-commands enabling navigation
 in the tree of elements contained in the topology, relative to the
 element specified by the <i class="arg">id</i>. See also method <b class="method">root</b>.
 Please see section <span class="sectref"><a href="#section6">Element Identifiers</a></span> for details of the
 syntax used here. Errors are thrown for identifiers not following this
 syntax, or refering to elements not existing in the topology.</p></dd>
-<dt><a name="23"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">arity</b></a></dt>
+<dt><a name="24"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">arity</b></a></dt>
 <dd><p>This method returns an integer number, the number of children for the
 element.</p></dd>
-<dt><a name="24"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">attributes</b></a></dt>
+<dt><a name="25"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">attributes</b></a></dt>
 <dd><p>This method, and <b class="method">info</b> below return similar information, this
 one more human-readable, the other machine-readable, and with a few
 keys excluded. The result here is a string shell variable assignments,
 separated by a single space.</p></dd>
-<dt><a name="25"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">children</b></a></dt>
+<dt><a name="26"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">children</b></a></dt>
 <dd><p>This method returns a list of element identifiers, the children of the
 element. If the element hs no children the result is the empty list.</p></dd>
-<dt><a name="26"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset allowed</b></a></dt>
+<dt><a name="27"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset allowed</b></a></dt>
 <dd></dd>
-<dt><a name="27"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset complete</b></a></dt>
+<dt><a name="28"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset complete</b></a></dt>
 <dd></dd>
-<dt><a name="28"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset online</b></a></dt>
+<dt><a name="29"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset online</b></a></dt>
 <dd></dd>
-<dt><a name="29"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset topology</b></a></dt>
+<dt><a name="30"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">cpuset topology</b></a></dt>
 <dd><p>This method returns a bitmap, one of several CPU sets associated with
 the element.</p>
 <dl class="definitions">
@@ -714,43 +688,43 @@ the element.</p>
 <dt>topology</dt>
 <dd><p>All processors of the system.</p></dd>
 </dl></dd>
-<dt><a name="30"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">depth</b></a></dt>
+<dt><a name="31"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">depth</b></a></dt>
 <dd><p>This method returns the depth the element is at. This is, in essence,
 the first element of its element identifier.</p></dd>
-<dt><a name="31"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">first_child</b></a></dt>
+<dt><a name="32"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">first_child</b></a></dt>
 <dd><p>This method returns the element identifier of the first, leftmost
 child of the element. An error is thrown if the element has no
 children.</p></dd>
-<dt><a name="32"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">info</b></a></dt>
+<dt><a name="33"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">info</b></a></dt>
 <dd><p>This method, and <b class="method">attributes</b> above return similar information,
 this one machine-readable, the other more human-readable, and with a
 few keys more. The result here is a list of pairs, with each pair
 containing key and vaue, in this order.</p></dd>
-<dt><a name="33"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">last_child</b></a></dt>
+<dt><a name="34"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">last_child</b></a></dt>
 <dd><p>This method returns the element identifier of the last, rightmost
 child of the element. An error is thrown if the element has no
 children.</p></dd>
-<dt><a name="34"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">logical_index</b></a></dt>
+<dt><a name="35"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">logical_index</b></a></dt>
 <dd><p>This method returns the index of the element in its layer. This is, in
 essence, the second element of its element identifier.</p></dd>
-<dt><a name="35"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">name</b></a></dt>
+<dt><a name="36"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">name</b></a></dt>
 <dd><p>This method returns a string, the name of the element.</p></dd>
-<dt><a name="36"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">next_cousin</b></a></dt>
+<dt><a name="37"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">next_cousin</b></a></dt>
 <dd><p>This method returns the identifier of the right sibling of the
 element, if there is any, or the first child in the next sibling of
 its parent element. In essence it navigates to the right in its layer
 without being bound to the children of the current parent.
 The method throws an error if and only if the element is the last
 element in its layer.</p></dd>
-<dt><a name="37"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">next_sibling</b></a></dt>
+<dt><a name="38"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">next_sibling</b></a></dt>
 <dd><p>This method returns the identifier of the right sibling of the
 element.  The method throws an error if the element is the last child
 in its parent, i.e. does not have a right sibling.</p></dd>
-<dt><a name="38"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset allowed</b></a></dt>
+<dt><a name="39"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset allowed</b></a></dt>
 <dd></dd>
-<dt><a name="39"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset complete</b></a></dt>
+<dt><a name="40"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset complete</b></a></dt>
 <dd></dd>
-<dt><a name="40"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset topology</b></a></dt>
+<dt><a name="41"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">nodeset topology</b></a></dt>
 <dd><p>This method returns a bitmap, one of several NUMA node sets associated
 with the element.</p>
 <dl class="definitions">
@@ -761,37 +735,37 @@ with the element.</p>
 <dt>topology</dt>
 <dd><p>All numa nodes of the system.</p></dd>
 </dl></dd>
-<dt><a name="41"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">parent</b></a></dt>
+<dt><a name="42"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">parent</b></a></dt>
 <dd><p>This method returns the identifier of the parent of the element.  The
 method throws an error if the element is the root of the topology.</p></dd>
-<dt><a name="42"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">prev_cousin</b></a></dt>
+<dt><a name="43"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">prev_cousin</b></a></dt>
 <dd><p>This method returns the identifier of the left sibling of the element,
 if there is any, or the last child in the previous sibling of its
 parent element. In essence it navigates to the left in its layer
 without being bound to the children of the current parent.
 The method throws an error if and only if the element is the first
 element in its layer.</p></dd>
-<dt><a name="43"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">prev_sibling</b></a></dt>
+<dt><a name="44"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">prev_sibling</b></a></dt>
 <dd><p>This method returns the identifier of the left sibling of the element.
 The method throws an error if the element is the first child in its
 parent, i.e. does not have a left sibling.</p></dd>
-<dt><a name="44"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">sibling_rank</b></a></dt>
+<dt><a name="45"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">sibling_rank</b></a></dt>
 <dd><p>This method returns an integer number, the index of the element among
 the children of its parent.</p></dd>
-<dt><a name="45"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">type</b></a></dt>
+<dt><a name="46"><b class="cmd">topologyCmd</b> <b class="method">element</b> <i class="arg">id</i> <b class="method">type</b></a></dt>
 <dd><p>This method returns a string, the type of the element.</p></dd>
-<dt><a name="46"><b class="cmd">topologyCmd</b> <b class="method">element_by</b> <b class="option">-depth</b> <i class="arg">depth</i> <i class="arg">index</i></a></dt>
+<dt><a name="47"><b class="cmd">topologyCmd</b> <b class="method">element_by</b> <b class="option">-depth</b> <i class="arg">depth</i> <i class="arg">index</i></a></dt>
 <dd></dd>
-<dt><a name="47"><b class="cmd">topologyCmd</b> <b class="method">element_by</b> <b class="option">-type</b> <i class="arg">type</i> <i class="arg">index</i></a></dt>
+<dt><a name="48"><b class="cmd">topologyCmd</b> <b class="method">element_by</b> <b class="option">-type</b> <i class="arg">type</i> <i class="arg">index</i></a></dt>
 <dd><p>This method is a constructor for element identifiers. Either directly
 from <i class="arg">depth</i> and <i class="arg">index</i>, or the depth specified indirectly
 through the element <i class="arg">type</i>.
 An error is thrown if the intended element does not exist in the
 topology.</p></dd>
-<dt><a name="48"><b class="cmd">topologyCmd</b> <b class="method">root</b></a></dt>
+<dt><a name="49"><b class="cmd">topologyCmd</b> <b class="method">root</b></a></dt>
 <dd><p>This method returns the identifier for the root element of the
 topology tree.</p></dd>
-<dt><a name="49"><b class="cmd">topologyCmd</b> <b class="method">type</b> <span class="opt">?<b class="option">-depth</b> <i class="arg">depth</i>?</span></a></dt>
+<dt><a name="50"><b class="cmd">topologyCmd</b> <b class="method">type</b> <i class="arg">depth</i></a></dt>
 <dd><p>This method returns a string, the type of the elements at the
 specified <i class="arg">depth</i> of the topology. An error is thrown if an
 invalid depth is specified, i.e. either a value less than zero, or
@@ -800,12 +774,12 @@ greater than the value returned by</p>
     topology depth
 </pre>
 </dd>
-<dt><a name="50"><b class="cmd">topologyCmd</b> <b class="method">width</b> <span class="opt">?<b class="option">-type</b> <i class="arg">type</i>?</span></a></dt>
+<dt><a name="51"><b class="cmd">topologyCmd</b> <b class="method">width</b> <i class="arg">type</i></a></dt>
 <dd></dd>
-<dt><a name="51"><b class="cmd">topologyCmd</b> <b class="method">width</b> <span class="opt">?<b class="option">-depth</b> <i class="arg">depth</i>?</span></a></dt>
+<dt><a name="52"><b class="cmd">topologyCmd</b> <b class="method">width</b> <i class="arg">depth</i></a></dt>
 <dd><p>This method returns an integer value, the number of elements contained
-in the topology which are of either the specified <i class="arg">type</i>, or found
-at the specified <i class="arg">depth</i>.</p>
+in the topology which are of either the named <i class="arg">type</i>, or found at
+the specified <i class="arg">depth</i>.</p>
 <p>An error is thrown if an invalid depth is specified, i.e. either
 a value less than zero, or greater than the value returned by</p>
 <pre class="example">
@@ -823,27 +797,27 @@ is that such bitmaps can be infinite, in the sense that a finite
 header may be followed by an infinite trailer of 1-bits (with no
 0-bits anymore).</p>
 <dl class="definitions">
-<dt><a name="52"><b class="cmd">hwloc bitmap</b> <b class="method">empty</b></a></dt>
+<dt><a name="53"><b class="cmd">hwloc bitmap</b> <b class="method">empty</b></a></dt>
 <dd></dd>
-<dt><a name="53"><b class="cmd">hwloc bitmap</b> <b class="method">full</b></a></dt>
+<dt><a name="54"><b class="cmd">hwloc bitmap</b> <b class="method">full</b></a></dt>
 <dd><p>These two methods return the empty (No bits set) and full (All bits set,
 infinite) bitmaps, respectively.</p></dd>
-<dt><a name="54"><b class="cmd">hwloc bitmap</b> <b class="method">allbut</b> <i class="arg">id</i></a></dt>
+<dt><a name="55"><b class="cmd">hwloc bitmap</b> <b class="method">allbut</b> <i class="arg">id</i></a></dt>
 <dd></dd>
-<dt><a name="55"><b class="cmd">hwloc bitmap</b> <b class="method">only</b> <i class="arg">id</i></a></dt>
+<dt><a name="56"><b class="cmd">hwloc bitmap</b> <b class="method">only</b> <i class="arg">id</i></a></dt>
 <dd><p>These two methods return bitmaps with a single bit unset (<b class="method">allbut</b>)
 or set (<b class="method">only</b>). The result of <b class="method">allbut</b> is an infinite bitmap.
 The methods throw an error if a negative <i class="arg">id</i> is specified.</p></dd>
-<dt><a name="56"><b class="cmd">hwloc bitmap</b> <b class="method">first</b> <i class="arg">bitmap</i></a></dt>
+<dt><a name="57"><b class="cmd">hwloc bitmap</b> <b class="method">first</b> <i class="arg">bitmap</i></a></dt>
 <dd><p>This method returns the id of the first set bit found in the <i class="arg">bitmap</i>,
 counting up from bit 0. The method will throw an error if the <i class="arg">bitmap</i>
 is empty, i.e. has no bit set at all.</p></dd>
-<dt><a name="57"><b class="cmd">hwloc bitmap</b> <b class="method">last</b> <i class="arg">bitmap</i></a></dt>
+<dt><a name="58"><b class="cmd">hwloc bitmap</b> <b class="method">last</b> <i class="arg">bitmap</i></a></dt>
 <dd><p>This method returns the id of the last set bit found in the <i class="arg">bitmap</i>,
 counting up from bit 0. The method will throw an error if the <i class="arg">bitmap</i>
 is either empty, i.e. has no bit set at all, or infinite, i.e. has no
 defined &quot;last&quot; bit.</p></dd>
-<dt><a name="58"><b class="cmd">hwloc bitmap</b> <b class="method">next</b> <i class="arg">bitmap</i> <i class="arg">prev</i></a></dt>
+<dt><a name="59"><b class="cmd">hwloc bitmap</b> <b class="method">next</b> <i class="arg">bitmap</i> <i class="arg">prev</i></a></dt>
 <dd><p>This method, like <b class="method">first</b>, returns the id of the first set bit found
 in the <i class="arg">bitmap</i>, however all bits up to and including bit <i class="arg">prev</i> are
 ignored. Negative values for <i class="arg">prev</i> are allowed.</p>
@@ -855,38 +829,38 @@ called with &quot;prev == <b class="const">-1</b>&quot;, i.e.</p>
     [first bitmap] == [next bitmap -1]
 </pre>
 </dd>
-<dt><a name="59"><b class="cmd">hwloc bitmap</b> <b class="method">from_ulong</b> <i class="arg">mask</i></a></dt>
+<dt><a name="60"><b class="cmd">hwloc bitmap</b> <b class="method">from_ulong</b> <i class="arg">mask</i></a></dt>
 <dd><p>This method takes an unsigned integer and converts it into a bitmap, based on
 the integer's binary representation. The LSB is mapped to bit 0 of the bitmap.</p></dd>
-<dt><a name="60"><b class="cmd">hwloc bitmap</b> <b class="method">to_ulong</b> <i class="arg">bitmap</i></a></dt>
+<dt><a name="61"><b class="cmd">hwloc bitmap</b> <b class="method">to_ulong</b> <i class="arg">bitmap</i></a></dt>
 <dd><p>This method is the complement to <b class="method">from_ulong</b>, converting the <i class="arg">bitmap</i>
 into an unsigned integer value represented by the bits of the map.</p></dd>
-<dt><a name="61"><b class="cmd">hwloc bitmap</b> <b class="method">is_empty</b> <i class="arg">bitmap</i></a></dt>
+<dt><a name="62"><b class="cmd">hwloc bitmap</b> <b class="method">is_empty</b> <i class="arg">bitmap</i></a></dt>
 <dd></dd>
-<dt><a name="62"><b class="cmd">hwloc bitmap</b> <b class="method">is_full</b> <i class="arg">bitmap</i></a></dt>
+<dt><a name="63"><b class="cmd">hwloc bitmap</b> <b class="method">is_full</b> <i class="arg">bitmap</i></a></dt>
 <dd><p>These two methods test if the specified <i class="arg">bitmap</i> is either the empty or the
 full bitmap, i.e. no bits sets vs. all bits set, respectively. The result of the
 methods is a boolean value, <b class="const">true</b> if the test succeeds, and <b class="const">false</b>
 otherwise.</p></dd>
-<dt><a name="63"><b class="cmd">hwloc bitmap</b> <b class="method">not</b> <i class="arg">bitmap</i></a></dt>
+<dt><a name="64"><b class="cmd">hwloc bitmap</b> <b class="method">not</b> <i class="arg">bitmap</i></a></dt>
 <dd><p>This method takes the <i class="arg">bitmap</i>, inverts all bits, and returns this as its
 result.</p></dd>
-<dt><a name="64"><b class="cmd">hwloc bitmap</b> <b class="method">singlify</b> <i class="arg">bitmap</i></a></dt>
+<dt><a name="65"><b class="cmd">hwloc bitmap</b> <b class="method">singlify</b> <i class="arg">bitmap</i></a></dt>
 <dd><p>This method is similar to <b class="method">first</b>, except that its result is a bitmap,
 not a bit number, and it accepts the empty bitmap. In the resulting bitmap all
 bits but the first set bit of the input are unset. If the input is empty the
 output is simply empty as well.</p></dd>
-<dt><a name="65"><b class="cmd">hwloc bitmap</b> <b class="method">weight</b> <i class="arg">bitmap</i></a></dt>
+<dt><a name="66"><b class="cmd">hwloc bitmap</b> <b class="method">weight</b> <i class="arg">bitmap</i></a></dt>
 <dd><p>This method counts the number of set bits in the specified <i class="arg">bitmap</i> and
 returns this as its result. The method will throw an error if the <i class="arg">bitmap</i>
 is infinite, i.e. has not a bounded weight.</p></dd>
-<dt><a name="66"><b class="cmd">hwloc bitmap</b> <b class="method">and</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
+<dt><a name="67"><b class="cmd">hwloc bitmap</b> <b class="method">and</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
 <dd></dd>
-<dt><a name="67"><b class="cmd">hwloc bitmap</b> <b class="method">andnot</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
+<dt><a name="68"><b class="cmd">hwloc bitmap</b> <b class="method">andnot</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
 <dd></dd>
-<dt><a name="68"><b class="cmd">hwloc bitmap</b> <b class="method">or</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
+<dt><a name="69"><b class="cmd">hwloc bitmap</b> <b class="method">or</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
 <dd></dd>
-<dt><a name="69"><b class="cmd">hwloc bitmap</b> <b class="method">xor</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
+<dt><a name="70"><b class="cmd">hwloc bitmap</b> <b class="method">xor</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
 <dd><p>These four methods perform standard bitwise operations on the two bitmaps,
 returning the operations' result. See the following mapping to C expressions:</p>
 <pre class="example">
@@ -896,37 +870,37 @@ returning the operations' result. See the following mapping to C expressions:</p
     xor    A B == A ^ B
 </pre>
 </dd>
-<dt><a name="70"><b class="cmd">hwloc bitmap</b> <b class="method">is_equal</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
+<dt><a name="71"><b class="cmd">hwloc bitmap</b> <b class="method">is_equal</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
 <dd><p>This method tests if the two specified bitmaps are equal in all respects.
 The result of the method is a boolean value, <b class="const">true</b> if the bitmaps
 are equal, and <b class="const">false</b> otherwise.</p></dd>
-<dt><a name="71"><b class="cmd">hwloc bitmap</b> <b class="method">is_included</b> <i class="arg">bitmapsub</i> <i class="arg">bitmapsuper</i></a></dt>
+<dt><a name="72"><b class="cmd">hwloc bitmap</b> <b class="method">is_included</b> <i class="arg">bitmapsub</i> <i class="arg">bitmapsuper</i></a></dt>
 <dd><p>This method tests if <i class="arg">bitmapsub</i> is a subset of <i class="arg">bitmapsuper</i>.
 The result of the method is a boolean value, <b class="const">true</b> if the bitmap
 is a subset, and <b class="const">false</b> otherwise.</p></dd>
-<dt><a name="72"><b class="cmd">hwloc bitmap</b> <b class="method">compare</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
+<dt><a name="73"><b class="cmd">hwloc bitmap</b> <b class="method">compare</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
 <dd></dd>
-<dt><a name="73"><b class="cmd">hwloc bitmap</b> <b class="method">compare_first</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
+<dt><a name="74"><b class="cmd">hwloc bitmap</b> <b class="method">compare_first</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
 <dd><p>These two method compare the two bitmaps by comparing the last and first set
 bits respectively. The result of the methods are the difference between the
 ids of these bits. The empty bitmap is treated as if it had bit <b class="const">-1</b> set.</p></dd>
-<dt><a name="74"><b class="cmd">hwloc bitmap</b> <b class="method">intersects</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
+<dt><a name="75"><b class="cmd">hwloc bitmap</b> <b class="method">intersects</b> <i class="arg">bitmap1</i> <i class="arg">bitmap2</i></a></dt>
 <dd><p>This method tests if the two specified bitmaps intersect with each other, i.e if
 the result of <b class="method">and</b>'ing them together is not empty. The result of the method
 is a boolean value, <b class="const">true</b> if the bitmaps have a non-empty intersection,
 and <b class="const">false</b> otherwise.</p></dd>
-<dt><a name="75"><b class="cmd">hwloc bitmap</b> <b class="method">set</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></dt>
+<dt><a name="76"><b class="cmd">hwloc bitmap</b> <b class="method">set</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></dt>
 <dd></dd>
-<dt><a name="76"><b class="cmd">hwloc bitmap</b> <b class="method">clear</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></dt>
+<dt><a name="77"><b class="cmd">hwloc bitmap</b> <b class="method">clear</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></dt>
 <dd></dd>
-<dt><a name="77"><b class="cmd">hwloc bitmap</b> <b class="method">is_set</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></dt>
+<dt><a name="78"><b class="cmd">hwloc bitmap</b> <b class="method">is_set</b> <i class="arg">bitmap</i> <i class="arg">id</i></a></dt>
 <dd><p>These three methods set, unset, and test the bits in a <i class="arg">bitmap</i>. The
 first two methods return the modified bitmap as result, whereas the last
 returns a boolean value, <b class="const">true</b> if the bit is set, and <i class="arg">false</i>
 otherwise. The methods throw an error if a negative <i class="arg">id</i> is specified.</p></dd>
-<dt><a name="78"><b class="cmd">hwloc bitmap</b> <b class="method">set_range</b> <i class="arg">bitmap</i> <i class="arg">begin</i> <i class="arg">end</i></a></dt>
+<dt><a name="79"><b class="cmd">hwloc bitmap</b> <b class="method">set_range</b> <i class="arg">bitmap</i> <i class="arg">begin</i> <i class="arg">end</i></a></dt>
 <dd></dd>
-<dt><a name="79"><b class="cmd">hwloc bitmap</b> <b class="method">clear_range</b> <i class="arg">bitmap</i> <i class="arg">begin</i> <i class="arg">end</i></a></dt>
+<dt><a name="80"><b class="cmd">hwloc bitmap</b> <b class="method">clear_range</b> <i class="arg">bitmap</i> <i class="arg">begin</i> <i class="arg">end</i></a></dt>
 <dd><p>These two methods are extensions of the modifiers in the previous group from
 single bits to bit ranges. The range of bits to set or clear is specified by two
 bit ids. The methods return the modified bitmap as their result.
