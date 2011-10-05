@@ -15,13 +15,6 @@ if {[catch {package require tcltest 2}]} {
 }
 
 # # ## ### ##### ######## ############# #####################
-##
-# Get the functionality under test, directly from the build directory,
-# which is the CWD.
-
-load libtclhwloc0.1.so
-
-# # ## ### ##### ######## ############# #####################
 
 test hwloc-topology-1.0 {wrong\#args} -setup {
     hwloc create X -flags this_system -synthetic pu:4

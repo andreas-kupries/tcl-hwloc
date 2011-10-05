@@ -1,5 +1,17 @@
 2011-10-04  Andreas Kupries  <andreask@activestate.com>
 
+	* Makefile.in: Modified the testsuite to accept the name of
+	* tests/all.tcl: the shared library to test from the Makefile,
+	* tests/bitmap.test: instead of having the name hardwired into
+	* tests/create.test: the various files.
+	* tests/topology.test:
+	* tests/topology_convert.test:
+	* tests/topology_cpu_node_set.test:
+	* tests/topology_cpubind.test:
+	* tests/topology_membind.test:
+	* tests/types.test:
+	* tests/version.test:
+
 	* doc/class.inc: [Issue 1]: Added 'hwloc types' method. Returns
 	* generic/hwloc.c: list of valid element types. Reworked internals
 	* generic/object.c: to dynamically generate this information. Used

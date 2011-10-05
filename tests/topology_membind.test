@@ -15,13 +15,6 @@ if {[catch {package require tcltest 2}]} {
 }
 
 # # ## ### ##### ######## ############# #####################
-##
-# Get the functionality under test, directly from the build directory,
-# which is the CWD.
-
-load libtclhwloc0.1.so
-
-# # ## ### ##### ######## ############# #####################
 
 test hwloc-topology-membind-1.0 "memory binding, wrong#args" -setup {
     hwloc create T

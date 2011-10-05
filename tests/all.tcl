@@ -9,6 +9,9 @@
 # 
 # RCS: @(#) $Id: all.tcl,v 1.4 2004/07/04 22:04:20 patthoyts Exp $
 
+set shlib [lindex $argv end]
+set argv  [lrange $argv 0 end-1]
+
 if {[lsearch [namespace children] ::tcltest] == -1} {
     package require tcltest
     namespace import ::tcltest::*
@@ -49,6 +52,16 @@ if {[llength $::tcltest::matchFiles] > 0} {
 
 set timeCmd {clock format [clock seconds]}
 puts $chan "Tests began at [eval $timeCmd]"
+
+# # ## ### ##### ######## ############# #####################
+##
+# Get the functionality under test, directly from the build directory,
+# which is the CWD. The 'test' target provides with the name of the
+# shared library to use, as script argument.
+
+load $shlib
+
+# # ## ### ##### ######## ############# #####################
 
 # source each of the specified tests
 foreach file [lsort [::tcltest::getMatchingFiles]] {

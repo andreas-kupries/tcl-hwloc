@@ -15,13 +15,6 @@ if {[catch {package require tcltest 2}]} {
 }
 
 # # ## ### ##### ######## ############# #####################
-##
-# Get the functionality under test, directly from the build directory,
-# which is the CWD.
-
-load libtclhwloc0.1.so
-
-# # ## ### ##### ######## ############# #####################
 ## Per-topology information
 
 test hwloc-topology-cpuset-1.0 "cpuset introspection, wrong#args" -setup {
