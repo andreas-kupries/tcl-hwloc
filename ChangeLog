@@ -1,5 +1,11 @@
 2011-10-04  Andreas Kupries  <andreask@activestate.com>
 
+	* configure.in: Bumped version to 0.2.
+	* configure: Regenerated (autoconf 2.67).
+	* doc/tcl-hwloc.man: Bumped version to 0.2.
+	* doc/tcl-hwloc.html: Regenerated.
+	* doc/tcl-hwloc.n: Ditto.
+
 	* Makefile.in: Modified the testsuite to accept the name of
 	* tests/all.tcl: the shared library to test from the Makefile,
 	* tests/bitmap.test: instead of having the name hardwired into

@@ -1,5 +1,5 @@
 '\"
-'\" Generated from file 'doc/tcl-hwloc.man' by tcllib/doctools with format 'nroff'
+'\" Generated from file 'tcl-hwloc.man' by tcllib/doctools with format 'nroff'
 '\" Copyright (c) 2011 George Andreou, Andreas Kupries
 '\" Copyright (c) 2011 Documentation, Andreas Kupries
 '\"
@@ -239,24 +239,26 @@ Database Class:	\\fB\\$3\\fR
 .de UL
 \\$1\l'|0\(ul'\\$2
 ..
-.TH "tcl-hwloc" n 0.1 tcl-hwloc "Tcl Hwloc"
+.TH "tcl-hwloc" n 0.2 tcl-hwloc "Tcl Hwloc"
 .BS
 .SH NAME
 tcl-hwloc \- Tcl Hwloc Binding
 .SH SYNOPSIS
 package require \fBTcl  8.5\fR
 .sp
-package require \fBtclhwloc  ?0.1?\fR
+package require \fBtclhwloc  ?0.2?\fR
 .sp
 \fBhwloc\fR \fBbitmap\fR \fI...\fR
 .sp
 \fBhwloc\fR \fBcreate\fR \fIobject\fR \fI...\fR
 .sp
+\fBhwloc\fR \fBtypes\fR
+.sp
 \fBhwloc\fR \fBversion\fR
 .sp
-\fBtopologyCmd\fR \fBconvert\fR ?\fB-strict\fR? \fB-to_cpuset\fR \fIset\fR
+\fBtopologyCmd\fR \fBconvert 2cpuset\fR ?\fB-strict\fR? \fIset\fR
 .sp
-\fBtopologyCmd\fR \fBconvert\fR ?\fB-strict\fR? \fB-to_nodeset\fR \fIset\fR
+\fBtopologyCmd\fR \fBconvert 2nodeset\fR ?\fB-strict\fR? \fIset\fR
 .sp
 \fBtopologyCmd\fR \fBcpubind get\fR ?options...?
 .sp
@@ -272,7 +274,7 @@ package require \fBtclhwloc  ?0.1?\fR
 .sp
 \fBtopologyCmd\fR \fBcpuset topology\fR
 .sp
-\fBtopologyCmd\fR \fBdepth\fR ?\fB-type\fR \fItype\fR?
+\fBtopologyCmd\fR \fBdepth\fR ?\fItype\fR?
 .sp
 \fBtopologyCmd\fR \fBdestroy\fR
 .sp
@@ -344,11 +346,11 @@ package require \fBtclhwloc  ?0.1?\fR
 .sp
 \fBtopologyCmd\fR \fBroot\fR
 .sp
-\fBtopologyCmd\fR \fBtype\fR ?\fB-depth\fR \fIdepth\fR?
+\fBtopologyCmd\fR \fBtype\fR \fIdepth\fR
 .sp
-\fBtopologyCmd\fR \fBwidth\fR ?\fB-type\fR \fItype\fR?
+\fBtopologyCmd\fR \fBwidth\fR \fItype\fR
 .sp
-\fBtopologyCmd\fR \fBwidth\fR ?\fB-depth\fR \fIdepth\fR?
+\fBtopologyCmd\fR \fBwidth\fR \fIdepth\fR
 .sp
 \fBhwloc bitmap\fR \fBempty\fR
 .sp
@@ -469,43 +471,27 @@ The creation process can be influenced by a number of options:
 .RS
 .TP
 \fB-ignore_all_keep_structure\fR
-Create a topology which ignores, i.e. excludes all objects which do not provide
-any structure to it. An object does not provide structure if it is the single child
-of its parent, and/or has only a single child of its own.
+Create a topology which ignores, i.e. excludes, all elements which do
+not provide any structure to it. An element does not provide structure
+if it is the single child of its parent, and/or has only a single
+child of its own.
 .TP
 \fB-ignore_type\fR \fItype\fR
-Create a topology which excludes objects of the specified type.
-Note that the toplevel object of a topology is never ignored, even if it is
-of the specified type. Note further that objects of type "pu" cannot be excluded.
-.RS
-.TP
-\fBsystem\fR
-.TP
-\fBmachine\fR
-.TP
-\fBnode\fR
-.TP
-\fBsocket\fR
-.TP
-\fBcache\fR
-.TP
-\fBcore\fR
-.TP
-\fBpu\fR
-.TP
-\fBgroup\fR
-.TP
-\fBmisc\fR
-.RE
-This list may be incomplete, with newer versions of the underlying hwloc
-library definining more types. The above is based on
-\fIhwloc version 1.2.1.\fR [http://www.open-mpi.org/projects/hwloc/doc/v1.2.1/group__hwlocality__types.php]
+Create a topology which excludes elements of the specified type.  Note
+that the toplevel element of a topology is never ignored, even if it
+is of the specified type. Note further that elements of type "pu"
+cannot be excluded.
+The list of valid element types can be retrieved via \fBhwloc types\fR. The exact
+list depends on the version of Hwloc the binding is linked against (at runtime). See
+\fIHwloc's documentation\fR [http://www.open-mpi.org/projects/hwloc/doc/v1.2.1/group__hwlocality__types.php]
+for the list of types handled by a specific version.
 .TP
 \fB-ignore_type_keep_structure\fR
-Similar to option \fB-ignore_type\fR, however the objects of the specified type
-are excluded if and only if they do not provide structure to the topology.
+Similar to option \fB-ignore_type\fR, however the elements of the
+specified type are excluded if and only if they do not provide
+structure to the topology.
 .TP
-\fB-set_flags\fR \fIflags\fR
+\fB-flags\fR \fIflags\fR
 The argument is a list of values.
 The acceptable flags, and their meaning are:
 .RS
@@ -534,7 +520,7 @@ For instance, ignore Linux Cpusets and gather all processors and
 memory nodes, and ignore the fact that some resources may be offline.
 .RE
 .TP
-\fB-set_fsroot\fR \fIpath\fR
+\fB-fsroot\fR \fIpath\fR
 Make \fIpath\fR the filesystem root while retrieving the topology.
 .sp
 On Linux systems, use sysfs and procfs files as if they were
@@ -546,19 +532,19 @@ instance method \fBlocal\fR to later return \fBfalse\fR.
 Note: For convenience, this backend provides empty binding hooks
 which just return success. To have hwloc still actually call
 OS-specific hooks, the flag \fBthis_system\fR has to be set (see
-option \fB-set_flags\fR) to assert that the loaded file is really
+option \fB-flags\fR) to assert that the loaded file is really
 the underlying system.
 .TP
-\fB-set_pid\fR \fIint\fR
+\fB-pid\fR \fIint\fR
 Set the process id from which to view and build the topology.
 .sp
 On some systems, processes may have different views of the
 machine, for instance the set of allowed CPUs. By default, hwloc
-exposes the view from the current process. Using \fB-set_pid\fR
+exposes the view from the current process. Using \fB-pid\fR
 forces it to expose the topology of the machine from the point of
 view of another process.
 .TP
-\fB-set_synthetic\fR \fIdescription\fR
+\fB-synthetic\fR \fIdescription\fR
 Create a synthetic topology from the \fIdescription\fR.
 This should be a space-separated string of numbers describing the
 arity of each level. Each number may be prefixed with a type and
@@ -567,7 +553,7 @@ are enforced, hwloc will try to choose the other types according
 to usual topologies. It may fail however and you may have to
 specify more level types manually.
 .TP
-\fB-set_xml\fR \fIpath\fR
+\fB-xml\fR \fIpath\fR
 Create the topology not from from the system, but the XML-based
 description found in the file \fIpath\fR.
 .sp
@@ -575,6 +561,10 @@ Setting the environment variable \fBHWLOC_XMLFILE\fR may
 also result in this behavior. This file may have been generated
 earlier by exporting a topology instance as XML.
 .RE
+.TP
+\fBhwloc\fR \fBtypes\fR
+This method returns a list containing the names of all valid element
+types.
 .TP
 \fBhwloc\fR \fBversion\fR
 This method returns HWloc's API version as its result.
@@ -584,9 +574,9 @@ After the creation of a topology instance via \fBhwloc create\fR (see section
 \fBClass API\fR) the instance command provides the following API and
 methods:
 .TP
-\fBtopologyCmd\fR \fBconvert\fR ?\fB-strict\fR? \fB-to_cpuset\fR \fIset\fR
+\fBtopologyCmd\fR \fBconvert 2cpuset\fR ?\fB-strict\fR? \fIset\fR
 .TP
-\fBtopologyCmd\fR \fBconvert\fR ?\fB-strict\fR? \fB-to_nodeset\fR \fIset\fR
+\fBtopologyCmd\fR \fBconvert 2nodeset\fR ?\fB-strict\fR? \fIset\fR
 This method converts from bitmaps representing node sets to cpu sets,
 and vice versa. The returned result is again a bitmap, in the other
 domain.
@@ -610,10 +600,6 @@ process.
 The behaviour can be modified by specifying one or more of the options
 below:
 .RS
-.TP
-\fB-nomembind\fR
-This option is accepted, but ignored. It has no meaning for the
-method in question.
 .TP
 \fB-pid\fR \fIpid\fR
 Return the information for the referenced process instead.
@@ -645,20 +631,12 @@ The behaviour can be modified by specifying one or more of the options
 below:
 .RS
 .TP
-\fB-nomembind\fR
-This option is accepted, but ignored. It has no meaning for the
-method in question.
-.TP
 \fB-pid\fR \fIpid\fR
 Return the information for the referenced process instead.
 .TP
 \fB-process\fR
 Return the information for all threads of the (possibly multithreaded)
 process.
-.TP
-\fB-strict\fR
-This option is accepted, but ignored. It has no meaning for the
-method in question.
 .TP
 \fB-thread\fR
 Return the location of the current thread of the current process. This
@@ -733,7 +711,7 @@ topology
 All processors of the system.
 .RE
 .TP
-\fBtopologyCmd\fR \fBdepth\fR ?\fB-type\fR \fItype\fR?
+\fBtopologyCmd\fR \fBdepth\fR ?\fItype\fR?
 This method returns the depth of the topology as an integer value, or
 the depth at which the elements of the specified \fItype\fR are found.
 An error is thrown if an invalid \fItype\fR is specified. A negative
@@ -748,19 +726,21 @@ The result of the method is the empty string.
 This method converts the topology into a XML description and stores it
 in the file \fIpath\fR. This description can be loaded into a new
 topology via
-.nf
+.CS
 
-    hwloc create X -set_xml path
 
-.fi
+    hwloc create X -xml path
+
+.CE
+.IP
 The result of the method is the empty string.
 .TP
 \fBtopologyCmd\fR \fBlocal\fR
 This method checks if the instance is a representation of the local
 system and returns a boolean value, \fBtrue\fR if the test suceeded,
 and \fBfalse\fR otherwise. Related parts in the class API are the
-option \fB-set_flags\fR with flag \fBthis_system\fR, option
-\fB-set_fsroot\fR and option \fB-set_xml\fR.
+option \fB-flags\fR with flag \fBthis_system\fR, option
+\fB-fsroot\fR and option \fB-xml\fR.
 .TP
 \fBtopologyCmd\fR \fBmembind get\fR ?options...?
 This method returns a 2-element list containing the currently set
@@ -770,12 +750,6 @@ either a nodeset (default) or a cpuset.
 Its behaviour can be modified by specifying one or more of the options
 below:
 .RS
-.TP
-\fB-migrate\fR
-.TP
-\fB-nocpubind\fR
-These two options are relevant only for \fBmembind set\fR.
-While this method accepts them, they are ignored.
 .TP
 \fB-cpu\fR
 By default the bitmap returned by the method represents a nodeset.
@@ -903,6 +877,7 @@ This flag has slightly different meanings depending on the presence of
 the options \fB-pid\fR and \fB-cpu\fR.
 Hwloc's documentation doesn't go into further detail.
 .RE
+.IP
 The following policies are accepted as legal. Remember however that
 not all systems support all policies, and attempting an unsupported
 policy causes errors to be thrown.
@@ -1108,31 +1083,33 @@ topology.
 This method returns the identifier for the root element of the
 topology tree.
 .TP
-\fBtopologyCmd\fR \fBtype\fR ?\fB-depth\fR \fIdepth\fR?
+\fBtopologyCmd\fR \fBtype\fR \fIdepth\fR
 This method returns a string, the type of the elements at the
 specified \fIdepth\fR of the topology. An error is thrown if an
 invalid depth is specified, i.e. either a value less than zero, or
 greater than the value returned by
-.nf
+.CS
+
 
     topology depth
 
-.fi
+.CE
 .TP
-\fBtopologyCmd\fR \fBwidth\fR ?\fB-type\fR \fItype\fR?
+\fBtopologyCmd\fR \fBwidth\fR \fItype\fR
 .TP
-\fBtopologyCmd\fR \fBwidth\fR ?\fB-depth\fR \fIdepth\fR?
+\fBtopologyCmd\fR \fBwidth\fR \fIdepth\fR
 This method returns an integer value, the number of elements contained
-in the topology which are of either the specified \fItype\fR, or found
-at the specified \fIdepth\fR.
+in the topology which are of either the named \fItype\fR, or found at
+the specified \fIdepth\fR.
 .sp
 An error is thrown if an invalid depth is specified, i.e. either
 a value less than zero, or greater than the value returned by
-.nf
+.CS
+
 
     topology depth
 
-.fi
+.CE
 .sp
 Alternatively, an error is also thrown if an invalid \fItype\fR
 is specified. The value \fB0\fR is returned if the \fItype\fR is
@@ -1179,11 +1156,12 @@ has no bit set at all, or if it is empty after bit \fIprev\fR.
 .sp
 The method \fBfirst\fR is, in essence, the same as \fBnext\fR
 called with "prev == \fB-1\fR", i.e.
-.nf
+.CS
+
 
     [first bitmap] == [next bitmap -1]
 
-.fi
+.CE
 .TP
 \fBhwloc bitmap\fR \fBfrom_ulong\fR \fImask\fR
 This method takes an unsigned integer and converts it into a bitmap, based on
@@ -1225,14 +1203,15 @@ is infinite, i.e. has not a bounded weight.
 \fBhwloc bitmap\fR \fBxor\fR \fIbitmap1\fR \fIbitmap2\fR
 These four methods perform standard bitwise operations on the two bitmaps,
 returning the operations' result. See the following mapping to C expressions:
-.nf
+.CS
+
 
     and    A B == A & B
     andnot A B == A & ~B
     or     A B == A | B
     xor    A B == A ^ B
 
-.fi
+.CE
 .TP
 \fBhwloc bitmap\fR \fBis_equal\fR \fIbitmap1\fR \fIbitmap2\fR
 This method tests if the two specified bitmaps are equal in all respects.
